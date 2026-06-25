@@ -2,6 +2,7 @@ import { FOCUS_ITEMS } from "@/app/(public)/page";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/button";
+import { CodeTypingBlock } from "@/components/public-page/Landing/CodeTypingBlock";
 import Link from "next/link";
 
 export default function HeroSection(): React.JSX.Element {
@@ -111,70 +112,7 @@ export default function HeroSection(): React.JSX.Element {
             </div>
           </Card>
 
-          <Card className="overflow-hidden rounded-none p-0">
-            <div className="flex items-center gap-2.5 border-b border-border bg-secondary px-3.5 py-[11px]">
-              <span className="flex gap-1.5">
-                <span className="size-[9px] rounded-full bg-white/16" />
-                <span className="size-[9px] rounded-full bg-white/16" />
-                <span className="size-[9px] rounded-full bg-white/16" />
-              </span>
-              <span className="font-mono text-[11px] tracking-[0.04em] text-muted-foreground">
-                engineer.config.ts
-              </span>
-            </div>
-            <div className="px-[22px] py-5 font-mono text-[12.5px] leading-[2.05]">
-              <div>
-                <span className="text-muted-foreground">const</span>{" "}
-                <span className="text-secondary-foreground">engineer</span>{" "}
-                <span className="text-muted-foreground">= {"{"}</span>
-              </div>
-              <div className="pl-5">
-                <span className="text-muted-foreground/80">role</span>
-                <span className="text-muted-foreground">:</span>{" "}
-                <span className="text-foreground">&quot;Frontend Engineer&quot;</span>
-                <span className="text-muted-foreground">,</span>
-              </div>
-              <div className="pl-5">
-                <span className="text-muted-foreground/80">stack</span>
-                <span className="text-muted-foreground">: [</span>
-                <span className="text-foreground">&quot;Next.js&quot;</span>
-                <span className="text-muted-foreground">, </span>
-                <span className="text-foreground">&quot;TS&quot;</span>
-                <span className="text-muted-foreground">, </span>
-                <span className="text-foreground">&quot;React&quot;</span>
-                <span className="text-muted-foreground">],</span>
-              </div>
-              <div className="pl-5">
-                <span className="text-muted-foreground/80">domains</span>
-                <span className="text-muted-foreground">: [</span>
-                <span className="text-foreground">&quot;cms&quot;</span>
-                <span className="text-muted-foreground">, </span>
-                <span className="text-foreground">&quot;booking&quot;</span>
-                <span className="text-muted-foreground">, </span>
-                <span className="text-foreground">&quot;i18n&quot;</span>
-                <span className="text-muted-foreground">],</span>
-              </div>
-              <div className="pl-5">
-                <span className="text-muted-foreground/80">focus</span>
-                <span className="text-muted-foreground">:</span>{" "}
-                <span className="text-primary">&quot;platform-eng&quot;</span>
-                <span className="text-muted-foreground">,</span>
-              </div>
-              <div className="pl-5">
-                <span className="text-muted-foreground/80">status</span>
-                <span className="text-muted-foreground">:</span>{" "}
-                <span className="text-success">&quot;available&quot;</span>
-                <span className="text-muted-foreground">,</span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">{"}"}</span>{" "}
-                <span className="text-muted-foreground">satisfies</span>{" "}
-                <span className="text-secondary-foreground">Engineer</span>
-                <span className="text-muted-foreground">;</span>
-                <span className="ml-1 inline-block h-[15px] w-2 animate-pulse bg-foreground align-middle" />
-              </div>
-            </div>
-          </Card>
+          <CodeTypingBlock />
         </div>
       </Container>
     </section>
