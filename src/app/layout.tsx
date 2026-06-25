@@ -1,10 +1,17 @@
-import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 
-const geistSans = Geist({
+import { Suspense } from 'react'
+
+import type { Metadata } from 'next'
+import { Poppins, Geist_Mono } from 'next/font/google'
+
+import { LoadingScreen } from '@/components/ui/LoadingScreen'
+import { AppProvider } from '@/providers/AppProvider'
+
+const poppins = Poppins({
   variable: '--font-sans',
   subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
 })
 
 const geistMono = Geist_Mono({
@@ -25,9 +32,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} dark`}
+      className={`${poppins.variable} ${geistMono.variable} dark`}
     >
-      <body className="min-h-dvh flex flex-col antialiased">{children}</body>
+      <body className="min-h-dvh flex flex-col antialiased">
+        <AppProvider>
+          <Suspense fallback={<LoadingScreen />}>{children}</Suspense>
+        </AppProvider>
+      </body>
     </html>
   )
 }
