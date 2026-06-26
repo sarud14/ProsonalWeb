@@ -1,9 +1,9 @@
-import { FOCUS_ITEMS } from "@/app/(public)/page";
+import { LANDING_FOCUS_ITEMS } from '@/constants/landing'
 import { LandingReveal } from "@/components/public-page/Landing/LandingReveal";
 import { CodeTypingBlock } from "@/components/public-page/Landing/CodeTypingBlock";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/Button'
 import {
   LANDING_MOTION_HERO_BODY_DELAY_MS,
   LANDING_MOTION_HERO_CARD_DELAY_MS,
@@ -97,7 +97,7 @@ export default function HeroSection(): React.JSX.Element {
           </LandingReveal>
 
           <div className="mt-11 flex flex-wrap gap-7">
-            {FOCUS_ITEMS.map((item, index) => (
+            {LANDING_FOCUS_ITEMS.map((item, index) => (
               <LandingReveal
                 key={item.label}
                 trigger="mount"

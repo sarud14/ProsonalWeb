@@ -1,7 +1,7 @@
-export interface JournalPost {
+import type { JournalFrontmatter } from '@/validators/journal.schema'
+
+export interface JournalPost extends JournalFrontmatter {
   readonly slug: string
-  title: string
-  status: 'draft' | 'published'
-  content: string
-  publishedAt: string | null
+  readonly content: string
+  readonly publishedAt: string | null
 }

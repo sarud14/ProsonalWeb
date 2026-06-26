@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
 
-interface EditJournalPageProps {
-  params: Promise<{ id: string }>
-}
+import type { EditJournalPageProps } from '@/types/admin-page.types'
 
 export async function generateMetadata({
   params,

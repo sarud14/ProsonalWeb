@@ -10,10 +10,10 @@ A reusable Next.js-based frontend engineering portfolio system. Fork it, fill in
 |---|---|---|
 | Framework | Next.js (App Router, Turbopack) | 16.2.9 |
 | Runtime | React | 19.2.4 |
-| Language | TypeScript (strict mode) | 5.x |
-| UI | Tailwind CSS v4 + shadcn/ui (base-nova) | — |
-| ORM | Prisma (optional — only for DB features) | 7.x |
-| Validation | Zod | 4.x |
+| Language | TypeScript (strict mode) | 5.9.3 |
+| UI | Tailwind CSS v4 + shadcn/ui (base-nova) | 4.3.1 |
+| ORM | Prisma (optional — only for DB features) | 7.8.0 |
+| Validation | Zod | 4.4.3 |
 | Auth | NextAuth v5 (optional — only for admin panel) | — |
 | Content (default) | MDX, Git-driven | — |
 | Deployment | Vercel | — |

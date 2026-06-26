@@ -3,17 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { cn } from '@/lib/utils'
-
-type LandingRevealVariant = 'fade-up' | 'fade-in' | 'fade-right' | 'line-grow'
-type LandingRevealTrigger = 'mount' | 'inView'
-
-interface LandingRevealProps {
-  children: React.ReactNode
-  className?: string
-  delay?: number
-  trigger?: LandingRevealTrigger
-  variant?: LandingRevealVariant
-}
+import type { LandingRevealProps, LandingRevealVariant } from '@/types/landing-reveal.types'
 
 const VARIANT_CLASS: Record<LandingRevealVariant, string> = {
   'fade-up': 'landing-motion-fade-up',
@@ -30,20 +20,11 @@ export function LandingReveal({
   variant = 'fade-up',
 }: LandingRevealProps): React.JSX.Element {
   const ref = useRef<HTMLDivElement>(null)
-  const [isInView, setIsInView] = useState(false)
+  const [isInView, setIsInView] = useState(trigger === 'mount')
   const shouldRun = trigger === 'mount' || isInView
 
   useEffect(() => {
     if (trigger === 'mount') return
-
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches
-
-    if (prefersReducedMotion) {
-      setIsInView(true)
-      return
-    }
 
     const element = ref.current
     if (!element) return
