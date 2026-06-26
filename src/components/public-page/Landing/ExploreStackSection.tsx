@@ -1,4 +1,4 @@
-import { TECH_STACK } from "@/app/(public)/page";
+import { LANDING_TECH_STACK } from '@/constants/landing'
 import { LandingReveal } from "@/components/public-page/Landing/LandingReveal";
 import { Container } from "@/components/ui/Container";
 import {
@@ -32,7 +32,7 @@ export default function ExploreStackSection(): React.JSX.Element {
               Stack
             </span>
             <div className="mt-[18px] flex flex-wrap gap-2">
-              {TECH_STACK.map((tech, index) => (
+              {LANDING_TECH_STACK.map((tech, index) => (
                 <LandingReveal
                   key={tech}
                   className="inline-block"

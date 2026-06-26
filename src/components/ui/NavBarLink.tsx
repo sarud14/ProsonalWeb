@@ -4,11 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
-
-interface NavBarLinkProps {
-  href: string
-  label: string
-}
+import type { NavBarLinkProps } from '@/types/nav-bar-link.types'
 
 export function NavBarLink({ href, label }: NavBarLinkProps): React.JSX.Element {
   const pathname = usePathname()

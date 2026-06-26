@@ -1,17 +1,16 @@
 # Dependencies
 node_modules/
 
-# Next.js
+# Build outputs
 .next/
 out/
+dist/
 build/
 
 # Environment variables — never commit these
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*.local
 
 # Debug
 npm-debug.log*
@@ -27,16 +26,20 @@ Thumbs.db
 .vscode/
 .idea/
 
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
-
-# Prisma
-prisma/migrations/dev.db
-
 # AI tools — local only, never commit
 .claude/
 CLAUDE.md
+.cursor/
+.kiro/
+AGENTS.md
+SKILL.md
+design/
+
+# TypeScript
+*.tsbuildinfo
+
+# Prisma local dev database
+prisma/migrations/dev.db
 
 # Vercel
 .vercel
@@ -45,6 +48,4 @@ CLAUDE.md
 *.pem
 
 # Planning & design reference — local only
-FEOps Kit.html
 feops-kit-requirements.md
-AGENTS.md

@@ -1,14 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+
 import { Card } from '@/components/ui/Card'
-
-interface CodeToken {
-  readonly text: string
-  readonly className: string
-}
-
-type CodeLine = readonly CodeToken[]
+import type { CodeLine } from '@/types/code-typing.types'
 
 const CODE_LINES: readonly CodeLine[] = [
   [
@@ -68,29 +63,28 @@ const CHAR_DELAY = 30
 const LINE_DELAY = 200
 
 function flattenLines(lines: readonly CodeLine[]): string {
-  return lines.map(line => line.map(t => t.text).join('')).join('\n')
+  return lines.map((line) => line.map((token) => token.text).join('')).join('\n')
 }
 
 export function CodeTypingBlock(): React.JSX.Element {
   const fullText = flattenLines(CODE_LINES)
   const [charCount, setCharCount] = useState(0)
-  const [isDone, setIsDone] = useState(false)
+  const isDone = charCount >= fullText.length
 
   useEffect(() => {
-    if (charCount >= fullText.length) {
-      setIsDone(true)
-      return
-    }
+    if (isDone) return
 
     const currentChar = fullText[charCount]
     const delay = currentChar === '\n' ? LINE_DELAY : CHAR_DELAY
 
     const timer = setTimeout(() => {
-      setCharCount(prev => prev + 1)
+      setCharCount((prev) => prev + 1)
     }, delay)
 
-    return (): void => { clearTimeout(timer) }
-  }, [charCount, fullText])
+    return (): void => {
+      clearTimeout(timer)
+    }
+  }, [charCount, fullText, isDone])
 
   const visibleText = fullText.slice(0, charCount)
   const visibleLines = visibleText.split('\n')

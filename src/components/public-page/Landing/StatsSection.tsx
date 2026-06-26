@@ -1,4 +1,4 @@
-import { STATS } from "@/app/(public)/page";
+import { LANDING_STATS } from '@/constants/landing'
 import { LandingReveal } from "@/components/public-page/Landing/LandingReveal";
 import { Container } from "@/components/ui/Container";
 import {
@@ -11,7 +11,7 @@ export default function StatsSection(): React.JSX.Element {
     <section>
       <Container className="max-w-[1240px] px-7">
         <div className="flex flex-wrap border-y border-border">
-          {STATS.map((stat, index) => (
+          {LANDING_STATS.map((stat, index) => (
             <LandingReveal
               key={stat.label}
               delay={

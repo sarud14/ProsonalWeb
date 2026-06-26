@@ -1,7 +1,9 @@
-import { cva, type VariantProps } from 'class-variance-authority'
-import { cn } from '@/lib/utils'
+import { cva } from 'class-variance-authority'
 
-const badgeVariants = cva(
+import { cn } from '@/lib/utils'
+import type { BadgeProps } from '@/types/badge.types'
+
+export const badgeVariants = cva(
   'inline-flex items-center rounded-sm border px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em] transition-colors',
   {
     variants: {
@@ -17,10 +19,6 @@ const badgeVariants = cva(
     },
   }
 )
-
-interface BadgeProps
-  extends React.HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof badgeVariants> {}
 
 export function Badge({ className, variant, ...props }: BadgeProps): React.JSX.Element {
   return <span className={cn(badgeVariants({ variant }), className)} {...props} />

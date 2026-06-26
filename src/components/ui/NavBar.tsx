@@ -1,6 +1,8 @@
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
+
 import { NavBarLink } from '@/components/ui/NavBarLink'
+import { cn } from '@/lib/utils'
+import type { NavBarProps } from '@/types/nav-bar.types'
 
 const NAV_ITEMS = [
   { label: 'Work', href: '/work' },
@@ -11,7 +13,7 @@ const NAV_ITEMS = [
   { label: 'Resume', href: '/resume' },
 ] as const
 
-export function NavBar({ className }: { className?: string }): React.JSX.Element {
+export function NavBar({ className }: NavBarProps): React.JSX.Element {
   return (
     <header
       className={cn(

@@ -1,11 +1,5 @@
-export interface WorkCaseStudy {
+import type { WorkFrontmatter } from '@/validators/work.schema'
+
+export interface WorkCaseStudy extends WorkFrontmatter {
   readonly slug: string
-  title: string
-  status: 'draft' | 'published'
-  context: string
-  problem: string
-  constraints: string
-  architecture: string
-  decisions: string
-  impact: string
 }

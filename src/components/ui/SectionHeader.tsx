@@ -1,11 +1,5 @@
 import { cn } from '@/lib/utils'
-
-interface SectionHeaderProps {
-  number: string
-  title: string
-  trailing?: string
-  className?: string
-}
+import type { SectionHeaderProps } from '@/types/section-header.types'
 
 export function SectionHeader({
   number,

@@ -5,7 +5,8 @@ export const dbSource: ContentSource = {
     return []
   },
 
-  async getWorkBySlug(_slug: string) {
+  async getWorkBySlug(slug: string) {
+    void slug
     return null
   },
 
@@ -13,7 +14,8 @@ export const dbSource: ContentSource = {
     return []
   },
 
-  async getJournalPostBySlug(_slug: string) {
+  async getJournalPostBySlug(slug: string) {
+    void slug
     return null
   },
 }

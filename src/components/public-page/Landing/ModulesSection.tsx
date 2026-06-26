@@ -1,4 +1,4 @@
-import { MODULES } from "@/app/(public)/page";
+import { LANDING_MODULES } from '@/constants/landing'
 import { LandingReveal } from "@/components/public-page/Landing/LandingReveal";
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -23,7 +23,7 @@ export default function ModulesSection(): React.JSX.Element {
           />
         </LandingReveal>
         <div className="grid grid-cols-1 border border-white/[0.09] md:grid-cols-2 lg:grid-cols-3">
-          {MODULES.map((mod, index) => (
+          {LANDING_MODULES.map((mod, index) => (
             <LandingReveal
               key={mod.num}
               className={MODULE_CELL_CLASS}
