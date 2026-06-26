@@ -14,35 +14,38 @@ export function NavBar({ className }: { className?: string }): React.JSX.Element
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background/80 px-6 py-3 backdrop-blur-md',
+        'sticky top-0 z-50 flex items-center justify-between gap-6 border-b border-border bg-background/75 px-7 py-3.5 backdrop-blur-[14px]',
         className
       )}
     >
       <Link href="/" className="flex items-center gap-3">
-        <div className="flex size-8 items-center justify-center rounded border border-primary font-mono text-xs font-bold text-primary">
+        <div className="grid size-[30px] place-items-center border border-white/22 font-mono text-xs font-semibold tracking-[0.02em]">
           SD
         </div>
-        <div className="leading-tight">
-          <p className="text-sm font-semibold tracking-tight">Sarut Dumrongprechachan</p>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        <div className="leading-[1.15]">
+          <p className="text-[13.5px] font-semibold tracking-[-0.01em]">
+            Sarut Dumrongprechachan
+          </p>
+          <p className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase">
             Frontend Engineer
           </p>
         </div>
       </Link>
 
-      <nav className="flex items-center gap-6">
+      <nav className="flex items-center gap-1">
         {NAV_ITEMS.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className="text-xs uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:text-foreground"
+            className="px-3 py-2 font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase transition-colors hover:text-foreground"
           >
             {item.label}
           </Link>
         ))}
-        <span className="flex items-center gap-1.5 text-xs uppercase tracking-[0.1em]">
-          <span className="size-1.5 rounded-full bg-success" />
-          <span className="text-success">Available</span>
+        <span className="mx-2 h-[18px] w-px bg-white/12" />
+        <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
+          <span className="size-1.5 animate-pulse rounded-full bg-success" />
+          Available
         </span>
       </nav>
     </header>

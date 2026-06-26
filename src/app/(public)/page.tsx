@@ -1,12 +1,8 @@
+import ExploreStackSection from "@/components/public-page/Landing/ExploreStackSection";
 import HeroSection from "@/components/public-page/Landing/HeroSection";
+import ModulesSection from "@/components/public-page/Landing/ModulesSection";
 import StatsSection from "@/components/public-page/Landing/StatsSection";
-import { Badge } from "@/components/ui/Badge";
-import { Card } from "@/components/ui/Card";
-import { Container } from "@/components/ui/Container";
-import { SectionHeader } from "@/components/ui/SectionHeader";
-import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "FEOps Kit — Home",
@@ -44,8 +40,8 @@ export const MODULES = [
     title: "Work",
     desc: "Case studies — architecture, decisions, and measured impact.",
     link: "/work",
-    linkLabel: "6 entries",
-    badge: "Live",
+    linkLabel: "6 ENTRIES",
+    badge: "LIVE",
   },
   {
     num: "02",
@@ -120,75 +116,12 @@ export default function HomePage(): React.JSX.Element {
 
       {/* Stats */}
       <StatsSection />
+      
+      {/* Modules */}
+      <ModulesSection />
 
-      {/* System Modules */}
-      <section id="modules" className="py-16">
-        <Container>
-          <SectionHeader
-            number="02"
-            title="System modules"
-            trailing="Entry points — 06"
-            className="mb-8"
-          />
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {MODULES.map((mod) => (
-              <Link key={mod.num} href={mod.link}>
-                <Card className="flex h-full flex-col justify-between transition-colors hover:border-muted-foreground/30">
-                  <div>
-                    <div className="mb-3 flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">
-                        {mod.num}
-                      </span>
-                      {mod.badge && (
-                        <Badge variant="success">{mod.badge}</Badge>
-                      )}
-                    </div>
-                    <h3 className="mb-2 text-lg font-semibold">{mod.title}</h3>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {mod.desc}
-                    </p>
-                  </div>
-                  <div className="mt-6 flex items-center justify-between border-t border-border pt-3 text-xs uppercase tracking-widest text-muted-foreground">
-                    <span>{mod.linkLabel}</span>
-                    <ArrowRight className="size-3.5" />
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* Currently Exploring + Stack */}
-      <section className="py-16">
-        <Container className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          <div>
-            <p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              Currently Exploring
-            </p>
-            <p className="text-xl font-semibold leading-relaxed">
-              Frontend Platform Engineering — design systems, build tooling, and
-              the infrastructure that lets product teams ship faster.
-            </p>
-          </div>
-          <div>
-            <p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              Stack
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {TECH_STACK.map((tech) => (
-                <Badge
-                  key={tech}
-                  variant="outline"
-                  className="font-mono text-xs"
-                >
-                  {tech}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        </Container>
-      </section>
+      {/* Explore Stack */}
+      <ExploreStackSection />
     </>
   );
 }

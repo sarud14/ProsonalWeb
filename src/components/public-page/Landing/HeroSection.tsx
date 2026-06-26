@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function HeroSection(): React.JSX.Element {
   return (
-    <section className="border-b border-border pt-[88px] pb-[72px]">
+    <section className="pt-[88px] pb-[72px]">
       <Container className="grid max-w-[1240px] grid-cols-1 items-center gap-12 px-7 lg:grid-cols-[1.15fr_0.85fr]">
         <div>
           <div className="mb-7 flex items-center gap-3">

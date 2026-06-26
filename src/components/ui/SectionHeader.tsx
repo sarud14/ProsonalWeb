@@ -14,13 +14,20 @@ export function SectionHeader({
   className,
 }: SectionHeaderProps): React.JSX.Element {
   return (
-    <div className={cn('flex items-baseline justify-between', className)}>
-      <div className="flex items-baseline gap-3">
-        <span className="text-sm font-medium text-success">{number}</span>
-        <h2 className="text-2xl font-semibold">{title}</h2>
+    <div
+      className={cn(
+        'mb-9 flex items-baseline justify-between gap-4',
+        className
+      )}
+    >
+      <div className="flex items-baseline gap-3.5">
+        <span className="font-mono text-xs tracking-[0.14em] text-primary">
+          {number}
+        </span>
+        <h2 className="text-[26px] font-semibold tracking-[-0.02em]">{title}</h2>
       </div>
       {trailing && (
-        <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+        <span className="font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase">
           {trailing}
         </span>
       )}
