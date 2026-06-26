@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { NavBarLink } from '@/components/ui/NavBarLink'
 
 const NAV_ITEMS = [
   { label: 'Work', href: '/work' },
@@ -19,7 +20,7 @@ export function NavBar({ className }: { className?: string }): React.JSX.Element
       )}
     >
       <Link href="/" className="flex items-center gap-3">
-        <div className="grid size-[30px] place-items-center border border-white/22 font-mono text-xs font-semibold tracking-[0.02em]">
+        <div className="grid size-[30px] place-items-center border border-primary font-mono text-xs font-semibold tracking-[0.02em]">
           SD
         </div>
         <div className="leading-[1.15]">
@@ -34,13 +35,7 @@ export function NavBar({ className }: { className?: string }): React.JSX.Element
 
       <nav className="flex items-center gap-1">
         {NAV_ITEMS.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="px-3 py-2 font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase transition-colors hover:text-foreground"
-          >
-            {item.label}
-          </Link>
+          <NavBarLink key={item.href} href={item.href} label={item.label} />
         ))}
         <span className="mx-2 h-[18px] w-px bg-white/12" />
         <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
