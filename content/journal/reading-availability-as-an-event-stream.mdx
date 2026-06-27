@@ -1,0 +1,16 @@
+---
+title: "Reading availability as an event stream"
+status: published
+publishedAt: "2025 · 11"
+tag: "BOOKING"
+excerpt: "Optimistic UI felt fast until it sold the same slot twice. Here is what replaced it."
+readTime: "5 MIN"
+---
+
+## Optimism has a price
+
+Treating availability as client state made the UI feel instant — and occasionally oversold inventory under load. The server was the only honest source of truth.
+
+## Server-driven, event-shaped
+
+Modelling availability as an event stream let the server stay authoritative while the client subscribed to changes. Fewer states to reason about, and no double-booking class of bug.

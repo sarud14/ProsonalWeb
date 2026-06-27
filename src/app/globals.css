@@ -229,3 +229,9 @@
     }
   }
 }
+
+@media print {
+  [data-noprint] {
+    display: none !important;
+  }
+}

@@ -10,7 +10,10 @@ describe('parseMdxFrontmatter', () => {
       `---
 title: Sample Post
 status: published
-publishedAt: "2026-06-01"
+publishedAt: "2026 · 05"
+tag: "SYSTEMS"
+excerpt: "Sample excerpt for the journal list."
+readTime: "6 MIN"
 ---
 
 Body content here.`,
@@ -26,6 +29,22 @@ Body content here.`,
     if (validated.success) {
       expect(validated.data.status).toBe(JOURNAL_STATUS.PUBLISHED)
     }
+  })
+
+  it('parses JSON array frontmatter values', () => {
+    const parsed = parseMdxFrontmatter(
+      `---
+title: Atlas
+domains: ["Booking", "Multilingual"]
+stack: ["Next.js", "TS"]
+---
+
+Body content here.`,
+      'atlas'
+    )
+
+    expect(parsed.frontmatter.domains).toEqual(['Booking', 'Multilingual'])
+    expect(parsed.frontmatter.stack).toEqual(['Next.js', 'TS'])
   })
 
   it('returns raw content as body when frontmatter is missing', () => {

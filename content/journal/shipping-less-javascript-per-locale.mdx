@@ -1,0 +1,17 @@
+---
+title: "Shipping less JavaScript per locale"
+status: published
+publishedAt: "2026 · 01"
+tag: "PERFORMANCE"
+excerpt: "Four markets used to download four translation bundles. Moving resolution server-side fixed that."
+readTime: "4 MIN"
+pull: "The fastest bundle is the one you never send."
+---
+
+## The hidden cost of locales
+
+Client-side i18n quietly ships every translation a user might need. Across four markets that was a lot of bytes doing nothing on most page loads.
+
+## Resolve on the server
+
+Moving locale resolution into edge middleware meant each request rendered with exactly the strings it needed. The client stopped paying for markets it would never show.

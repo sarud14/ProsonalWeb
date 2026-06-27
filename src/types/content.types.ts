@@ -1,3 +1,4 @@
+import type { EngineeringNote } from '@/types/engineering.types'
 import type { WorkCaseStudy } from '@/types/work.types'
 import type { JournalPost } from '@/types/journal.types'
 
@@ -6,4 +7,6 @@ export interface ContentSource {
   getWorkBySlug(slug: string): Promise<WorkCaseStudy | null>
   getAllJournalPosts(): Promise<readonly JournalPost[]>
   getJournalPostBySlug(slug: string): Promise<JournalPost | null>
+  getAllEngineeringNotes(): Promise<readonly EngineeringNote[]>
+  getEngineeringNoteBySlug(slug: string): Promise<EngineeringNote | null>
 }

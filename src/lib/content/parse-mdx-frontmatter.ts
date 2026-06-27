@@ -17,13 +17,27 @@ export function parseMdxFrontmatter(raw: string, slug: string): ParsedMdxFile {
 
     const key = line.slice(0, separatorIndex).trim()
     const rawValue = line.slice(separatorIndex + 1).trim()
-    const value =
-      rawValue === 'null'
-        ? null
-        : rawValue.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1')
-
-    frontmatter[key] = value
+    frontmatter[key] = parseFrontmatterValue(rawValue)
   }
 
   return { slug, frontmatter, body }
+}
+
+function parseFrontmatterValue(rawValue: string): unknown {
+  if (rawValue === 'null') return null
+  if (rawValue === 'true') return true
+  if (rawValue === 'false') return false
+
+  if (rawValue.startsWith('[') || rawValue.startsWith('{')) {
+    try {
+      return JSON.parse(rawValue) as unknown
+    } catch {
+      return rawValue
+    }
+  }
+
+  const quotedMatch = rawValue.match(/^"(.*)"$/) ?? rawValue.match(/^'(.*)'$/)
+  if (quotedMatch) return quotedMatch[1]
+
+  return rawValue
 }

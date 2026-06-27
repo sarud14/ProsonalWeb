@@ -18,4 +18,13 @@ export const dbSource: ContentSource = {
     void slug
     return null
   },
+
+  async getAllEngineeringNotes() {
+    return []
+  },
+
+  async getEngineeringNoteBySlug(slug: string) {
+    void slug
+    return null
+  },
 }

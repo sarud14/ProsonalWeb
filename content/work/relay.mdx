@@ -1,0 +1,20 @@
+---
+title: "Relay"
+status: published
+listId: "05"
+role: "FE"
+tagline: "Multi-tenant admin dashboard with role-scoped views and a schema-driven form engine."
+domains: ["CMS", "Architecture"]
+stack: ["Next.js", "TS", "Zod"]
+metric: "-40%"
+metricLabel: "TICKETS"
+year: "2023"
+context: "Operations teams managing content across tenants with inconsistent admin tooling."
+problem: "Every new entity type required bespoke forms and duplicated validation logic."
+constraints: "Role-based access had to stay strict; forms needed to work offline-tolerant on poor VPN."
+architecture: "Schema-driven form renderer with Zod validation shared between client and server actions."
+decisions: "Single form engine over per-entity components; tenant scope enforced at the data layer."
+impact: "Support tickets for admin errors fell while new entity types shipped faster."
+---
+
+Case study body — replace with your NDA-safe write-up.

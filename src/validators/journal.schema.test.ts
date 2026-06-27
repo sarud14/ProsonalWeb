@@ -8,7 +8,10 @@ describe('journalFrontmatterSchema', () => {
     const result = journalFrontmatterSchema.safeParse({
       title: 'Shipping notes',
       status: JOURNAL_STATUS.PUBLISHED,
-      publishedAt: '2026-06-01',
+      publishedAt: '2026 · 05',
+      tag: 'SYSTEMS',
+      excerpt: 'Why I rebuilt mine as an engineering system.',
+      readTime: '6 MIN',
     })
 
     expect(result.success).toBe(true)
