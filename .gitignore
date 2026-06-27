@@ -7,7 +7,7 @@ out/
 dist/
 build/
 
-# Environment variables — never commit these
+# Environment variables - never commit these
 .env
 .env.local
 .env.*.local
@@ -26,12 +26,13 @@ Thumbs.db
 .vscode/
 .idea/
 
-# AI tools — local only, never commit
+# AI tools - local only, never commit
 .claude/
 CLAUDE.md
 .cursor/
 .kiro/
 AGENTS.md
+AGENTS.template.md
 SKILL.md
 design/
 
@@ -47,5 +48,11 @@ prisma/migrations/dev.db
 # Keys
 *.pem
 
-# Planning & design reference — local only
-feops-kit-requirements.md
+# Planning & design reference - local only (all requirement/architecture docs live here)
+requirement/
+
+# Reusable project starter kit - local only
+project-starter-kit/
+
+# DB export backup output
+export/

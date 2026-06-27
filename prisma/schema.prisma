@@ -6,28 +6,301 @@ datasource db {
   provider = "postgresql"
 }
 
-model WorkCaseStudy {
-  id           String @id @default(cuid())
-  slug         String @unique
-  title        String
-  status       String
-  context      String
-  problem      String
-  constraints  String
-  architecture String
-  decisions    String
-  impact       String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
 }
 
-model JournalPost {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  status      String
-  content     String
+enum EngineeringNoteType {
+  ARCHITECTURE
+  DECISIONS
+  PERFORMANCE
+}
+
+enum Role {
+  ADMIN
+}
+
+// ---------------------------------------------------------------------------
+// Auth — NextAuth v5 (Auth.js) Prisma adapter, single-admin model
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(ADMIN)
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------------------------------------------------------------------------
+// Work case studies (from content/work/*.mdx)
+// ---------------------------------------------------------------------------
+
+model WorkCaseStudy {
+  id        String        @id @default(cuid())
+  slug      String        @unique
+  title     String
+  status    ContentStatus @default(DRAFT)
+  sortOrder Int           @default(0)
+
+  role        String
+  tagline     String
+  metric      String
+  metricLabel String
+  year        String
+  stack       String[]
+
+  context      String @db.Text
+  problem      String @db.Text
+  constraints  String @db.Text
+  architecture String @db.Text
+  decisions    String @db.Text
+  impact       String @db.Text
+  body         String @db.Text
+
+  domains  Domain[]             @relation("WorkDomains")
+  inResume ResumeSelectedWork[] @relation("WorkInResume")
+
+  coverImageId String?
+  coverImage   MediaAsset? @relation("WorkCover", fields: [coverImageId], references: [id])
+
   publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Taxonomy — CMS-managed work domain filters
+// ---------------------------------------------------------------------------
+
+model Domain {
+  id        String          @id @default(cuid())
+  label     String          @unique
+  sortOrder Int             @default(0)
+  works     WorkCaseStudy[] @relation("WorkDomains")
+}
+
+// ---------------------------------------------------------------------------
+// Journal posts (from content/journal/*.mdx)
+// ---------------------------------------------------------------------------
+
+model JournalPost {
+  id        String        @id @default(cuid())
+  slug      String        @unique
+  title     String
+  status    ContentStatus @default(DRAFT)
+  sortOrder Int           @default(0)
+  excerpt   String
+  body      String        @db.Text
+  tag       String
+  readTime  String
+  pull      String?
+
+  coverImageId String?
+  coverImage   MediaAsset? @relation("JournalCover", fields: [coverImageId], references: [id])
+
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Engineering notes (from content/engineering/*.mdx)
+// ---------------------------------------------------------------------------
+
+model EngineeringNote {
+  id        String              @id @default(cuid())
+  slug      String              @unique
+  title     String
+  status    ContentStatus       @default(DRAFT)
+  sortOrder Int                 @default(0)
+  type      EngineeringNoteType
+  summary   String              @db.Text
+  noteDate  String
+  readTime  String
+  body      String              @db.Text
+
+  coverImageId String?
+  coverImage   MediaAsset? @relation("EngineeringCover", fields: [coverImageId], references: [id])
+
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Page singletons — JSON blocks (from src/constants/*)
+// ---------------------------------------------------------------------------
+
+model PageSection {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  data      Json
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+}
+
+// ---------------------------------------------------------------------------
+// Resume — normalized tables + link to Work
+// ---------------------------------------------------------------------------
+
+model ResumeProfile {
+  id            String   @id @default(cuid())
+  name          String
+  role          String
+  contactLine   String
+  skills        String[]
+  coreTools     String[]
+  sectionLayout Json?
+  updatedAt     DateTime @updatedAt
+
+  experiences  ResumeExperience[]
+  education    ResumeEducation[]
+  languages    ResumeLanguage[]
+  selectedWork ResumeSelectedWork[]
+}
+
+model ResumeExperience {
+  id        String        @id @default(cuid())
+  profileId String
+  profile   ResumeProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title     String
+  org       String
+  period    String
+  bullets   String[]
+  sortOrder Int           @default(0)
+}
+
+model ResumeEducation {
+  id        String        @id @default(cuid())
+  profileId String
+  profile   ResumeProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title     String
+  note      String
+  period    String
+  sortOrder Int           @default(0)
+}
+
+model ResumeLanguage {
+  id        String        @id @default(cuid())
+  profileId String
+  profile   ResumeProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  name      String
+  level     String
+  sortOrder Int           @default(0)
+}
+
+model ResumeSelectedWork {
+  id           String        @id @default(cuid())
+  profileId    String
+  profile      ResumeProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  workId       String
+  work         WorkCaseStudy @relation("WorkInResume", fields: [workId], references: [id])
+  noteOverride String?
+  sortOrder    Int           @default(0)
+
+  @@unique([profileId, workId])
+}
+
+// ---------------------------------------------------------------------------
+// Revision history — compensates for losing Git diff
+// ---------------------------------------------------------------------------
+
+model ContentRevision {
+  id          String   @id @default(cuid())
+  contentType String
+  contentId   String
+  snapshot    Json
+  authorId    String?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  @@index([contentType, contentId])
+}
+
+// ---------------------------------------------------------------------------
+// Media library
+// ---------------------------------------------------------------------------
+
+model MediaAsset {
+  id        String   @id @default(cuid())
+  url       String
+  pathname  String   @unique
+  alt       String   @default("")
+  mimeType  String
+  width     Int?
+  height    Int?
+  sizeBytes Int?
+  folder    String?  @default("uncategorized")
+  createdAt DateTime @default(now())
+
+  workCovers        WorkCaseStudy[]   @relation("WorkCover")
+  journalCovers     JournalPost[]     @relation("JournalCover")
+  engineeringCovers EngineeringNote[] @relation("EngineeringCover")
+}
+
+// ---------------------------------------------------------------------------
+// Interaction data (optional — build when ready)
+// ---------------------------------------------------------------------------
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  archived  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model PostReaction {
+  id          String @id @default(cuid())
+  contentType String
+  slug        String
+  kind        String
+  count       Int    @default(0)
+
+  @@unique([contentType, slug, kind])
 }

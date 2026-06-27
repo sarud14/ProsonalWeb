@@ -4,16 +4,7 @@ import { NavBarLink } from '@/components/ui/NavBarLink'
 import { cn } from '@/lib/utils'
 import type { NavBarProps } from '@/types/nav-bar.types'
 
-const NAV_ITEMS = [
-  { label: 'Work', href: '/work' },
-  { label: 'Engineering', href: '/engineering' },
-  { label: 'Journal', href: '/journal' },
-  { label: 'Focus', href: '/focus' },
-  { label: 'Stack', href: '/stack' },
-  { label: 'Resume', href: '/resume' },
-] as const
-
-export function NavBar({ className }: NavBarProps): React.JSX.Element {
+export function NavBar({ items, className }: NavBarProps): React.JSX.Element {
   return (
     <header
       className={cn(
@@ -36,7 +27,7 @@ export function NavBar({ className }: NavBarProps): React.JSX.Element {
       </Link>
 
       <nav className="flex items-center gap-1">
-        {NAV_ITEMS.map((item) => (
+        {items.map((item) => (
           <NavBarLink key={item.href} href={item.href} label={item.label} />
         ))}
         <span className="mx-2 h-[18px] w-px bg-white/12" />

@@ -6,6 +6,7 @@ export const env = {
   authGithubId: process.env.AUTH_GITHUB_ID ?? '',
   authGithubSecret: process.env.AUTH_GITHUB_SECRET ?? '',
   contentSource: (process.env.CONTENT_SOURCE ?? 'mdx') as 'mdx' | 'db',
+  blobReadWriteToken: process.env.BLOB_READ_WRITE_TOKEN ?? '',
 } as const
 
 export function isAuthConfigured(): boolean {

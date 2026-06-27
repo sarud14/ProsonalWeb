@@ -1,9 +1,11 @@
 import 'server-only'
 
-/**
- * Prisma client entry point.
- * Run `yarn prisma generate` after configuring DATABASE_URL when DB features are enabled.
- */
-export async function getPrismaClient(): Promise<never> {
-  throw new Error('Database features are not configured. Set DATABASE_URL and run prisma generate.')
+import { PrismaClient } from '@prisma/client'
+
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined }
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClient()
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma
 }
