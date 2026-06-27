@@ -51,17 +51,31 @@ src/
 │   └── layout.tsx             # root layout (Geist fonts, dark mode)
 ├── actions/                   # server actions ("use server") — admin CRUD mutations
 ├── components/
-│   └── ui/                    # shared UI components (Button, Card, Badge, NavBar, etc.)
+│   ├── ui/                    # shared UI (Button, Card, Badge, NavBar, Footer, Skeleton, etc.)
+│   ├── public-page/           # page-specific components, grouped by domain
+│   │   ├── Landing/           # HeroSection, ModulesSection, StatsSection, etc.
+│   │   ├── Work/              # WorkListSection, WorkCaseDetailView, WorkCaseHero, etc.
+│   │   ├── Journal/           # JournalPostList, JournalPostDetailView
+│   │   ├── Engineering/       # EngineeringListSection
+│   │   ├── Focus/             # FocusPageView
+│   │   ├── Resume/            # ResumePageView, ResumeSavePdfButton
+│   │   └── Stack/             # StackPageView
+│   └── admin-page/            # admin-specific components (placeholder)
+├── providers/                 # React context providers (AppProvider)
 ├── lib/
 │   ├── content/               # content abstraction layer
 │   │   ├── source.ts          # interface — pages import this, never the implementations
 │   │   ├── mdx-source.ts      # Git-MDX implementation (default)
-│   │   └── db-source.ts       # DB implementation (swap via CONTENT_SOURCE env var)
+│   │   ├── db-source.ts       # DB implementation (swap via CONTENT_SOURCE env var)
+│   │   └── parse-mdx-frontmatter.ts  # MDX frontmatter parser
 │   ├── db/                    # Prisma client (guarded with server-only)
-│   └── auth/                  # NextAuth config
+│   ├── auth/                  # NextAuth config + session helpers
+│   ├── work-case-detail.ts    # work case study data helpers
+│   ├── journal-post-content.ts # journal post data helpers
+│   └── utils.ts               # shared utility functions
 ├── types/                     # all TypeScript types — never declare inline in components
-├── constants/                 # shared constants
-├── validators/                # Zod schemas
+├── constants/                 # shared constants (landing data, page data, filters, etc.)
+├── validators/                # Zod schemas (work, journal, engineering frontmatter)
 └── env.ts                     # typed wrapper for process.env
 
 content/                       # Git-MDX source — deliberately OUTSIDE src/
@@ -74,6 +88,7 @@ content/                       # Git-MDX source — deliberately OUTSIDE src/
 
 - **`content/` lives outside `src/`** — MDX content is data, not application code. Forkers can find "where do I put my writing" separately from "where is the app."
 - **Route groups split auth boundaries** — `(public)` never imports admin logic, `(admin)` never ships to anonymous visitors.
+- **Components split by domain** — `public-page/` groups components by page (Landing, Work, Journal, etc.), while `ui/` holds shared primitives. Page routes stay thin — they import a view component rather than inlining layout logic.
 - **Content abstraction** — all content reads go through `lib/content/source.ts`. Switching from Git-MDX to DB-driven content is a one-line env var change (`CONTENT_SOURCE=db`), not a rewrite of every page.
 - **`server-only` guard** — any module touching the database or secrets imports `server-only` at the top, causing a build error if a Client Component accidentally imports it.
 
@@ -127,6 +142,49 @@ Only required for:
 - Auth (NextAuth) for admin login
 
 If you only want the static portfolio, **skip to Section 6 (Deploy)** — you don't need any of the steps below.
+
+### Database schema
+
+The admin panel stores content in two Postgres tables managed by Prisma:
+
+```
+┌─────────────────────────────────────┐
+│           WorkCaseStudy             │
+├─────────────────────────────────────┤
+│ id           String  (cuid, PK)    │
+│ slug         String  (unique)      │
+│ title        String                │
+│ status       String                │
+│ context      String                │
+│ problem      String                │
+│ constraints  String                │
+│ architecture String                │
+│ decisions    String                │
+│ impact       String                │
+│ createdAt    DateTime (auto)       │
+│ updatedAt    DateTime (auto)       │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│           JournalPost              │
+├─────────────────────────────────────┤
+│ id           String   (cuid, PK)   │
+│ slug         String   (unique)     │
+│ title        String                │
+│ status       String                │
+│ content      String                │
+│ publishedAt  DateTime (nullable)   │
+│ createdAt    DateTime (auto)       │
+│ updatedAt    DateTime (auto)       │
+└─────────────────────────────────────┘
+```
+
+- **`WorkCaseStudy`** — mirrors the MDX frontmatter sections for case studies (context, problem, constraints, architecture, decisions, impact). Each field is a freeform text block — the admin editor renders them as separate form sections.
+- **`JournalPost`** — blog/journal entries with a single `content` body. `publishedAt` is nullable so draft posts can exist without a publish date.
+- **`status`** on both models controls visibility (`draft` / `published`). The content abstraction layer in `lib/content/source.ts` filters by status when serving public pages.
+- **Auth is handled by NextAuth v5 (JWT strategy)** — no user/session tables in the schema. Only GitHub OAuth is configured. Any authenticated GitHub user can access the admin panel — restrict access by keeping the `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` credentials private to your own OAuth app.
+
+The full schema lives at `prisma/schema.prisma`. Config (Prisma 7 format) is at `prisma.config.ts`.
 
 ---
 
@@ -234,7 +292,7 @@ Colors are defined as oklch tokens in `src/app/globals.css`. The site is dark-fi
 
 ### Components
 
-Shared UI lives in `src/components/ui/`. Restyle `Card`, `Badge`, `Button`, `NavBar`, `Footer` etc. to change the look across the entire site without touching individual pages.
+Shared UI lives in `src/components/ui/` — restyle `Card`, `Badge`, `Button`, `NavBar`, `Footer`, `Skeleton` etc. to change the look across the entire site. Page-specific components live in `src/components/public-page/<Domain>/` (e.g. `Landing/`, `Work/`, `Journal/`) — edit these to change the layout of individual sections.
 
 ---
 
