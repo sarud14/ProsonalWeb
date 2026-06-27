@@ -1,0 +1,20 @@
+---
+title: "Beacon"
+status: published
+listId: "03"
+role: "FE"
+tagline: "Real-time availability engine with optimistic UI and a resilient offline-first cache."
+domains: ["Booking", "Performance"]
+stack: ["React", "WS", "IndexedDB"]
+metric: "-63%"
+metricLabel: "P75 LCP"
+year: "2024"
+context: "A booking flow where inventory changed faster than the UI could reflect without full reloads."
+problem: "Perceived latency and stale availability eroded trust during peak booking windows."
+constraints: "Mobile-first traffic, flaky networks, and strict accuracy for sold-out states."
+architecture: "WebSocket fan-out, optimistic mutations with rollback, and IndexedDB cache warm paths."
+decisions: "Server remained authoritative; client optimism only covered non-destructive UI states."
+impact: "P75 LCP improved materially and support tickets for stale availability dropped."
+---
+
+Case study body — replace with your NDA-safe write-up.

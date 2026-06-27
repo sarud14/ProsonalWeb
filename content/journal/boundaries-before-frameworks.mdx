@@ -1,0 +1,17 @@
+---
+title: "Boundaries before frameworks"
+status: published
+publishedAt: "2026 · 03"
+tag: "ARCHITECTURE"
+excerpt: "The most useful thing I did on a rebuild was resist picking tools until the seams were obvious."
+readTime: "8 MIN"
+pull: "Frameworks are easy to swap. Boundaries are not."
+---
+
+## Find the seams first
+
+When a monolith hurts, the temptation is to reach for a shinier framework. But a framework cannot fix a boundary that does not exist. I spent the first weeks just mapping where content, availability, and presentation actually wanted to separate.
+
+## Then the tools chose themselves
+
+With the seams drawn, the stack was almost boring to pick. A headless CMS for content, a typed service for availability, an App Router frontend for presentation. Each tool had one job because each boundary had one reason to change.

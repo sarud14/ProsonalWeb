@@ -4,11 +4,14 @@ import fs from 'fs/promises'
 import path from 'path'
 
 import { JOURNAL_STATUS, WORK_STATUS } from '@/constants/content'
+import { ENGINEERING_NOTE_STATUS } from '@/constants/engineering'
 import type { ContentSource } from '@/types/content.types'
+import type { EngineeringNote } from '@/types/engineering.types'
 import type { JournalPost } from '@/types/journal.types'
 import type { ParsedMdxFile } from '@/types/parsed-mdx.types'
 import type { WorkCaseStudy } from '@/types/work.types'
 import { parseMdxFrontmatter } from '@/lib/content/parse-mdx-frontmatter'
+import { engineeringFrontmatterSchema } from '@/validators/engineering.schema'
 import { journalFrontmatterSchema } from '@/validators/journal.schema'
 import { workFrontmatterSchema } from '@/validators/work.schema'
 
@@ -55,10 +58,18 @@ function toJournalPost(file: ParsedMdxFile): JournalPost | null {
 
   return {
     slug: file.slug,
-    title: parsed.data.title,
-    status: parsed.data.status,
+    ...parsed.data,
     content: file.body,
-    publishedAt: parsed.data.publishedAt ?? null,
+  }
+}
+
+function toEngineeringNote(file: ParsedMdxFile): EngineeringNote | null {
+  const parsed = engineeringFrontmatterSchema.safeParse(file.frontmatter)
+  if (!parsed.success) return null
+
+  return {
+    slug: file.slug,
+    ...parsed.data,
   }
 }
 
@@ -99,5 +110,24 @@ export const mdxSource: ContentSource = {
     if (!post || post.status !== JOURNAL_STATUS.PUBLISHED) return null
 
     return post
+  },
+
+  async getAllEngineeringNotes() {
+    const files = await readMdxDirectory('engineering')
+    return files
+      .map(toEngineeringNote)
+      .filter((item): item is EngineeringNote => item !== null)
+      .filter((item) => item.status === ENGINEERING_NOTE_STATUS.PUBLISHED)
+  },
+
+  async getEngineeringNoteBySlug(slug: string) {
+    const files = await readMdxDirectory('engineering')
+    const match = files.find((file) => file.slug === slug)
+    if (!match) return null
+
+    const note = toEngineeringNote(match)
+    if (!note || note.status !== ENGINEERING_NOTE_STATUS.PUBLISHED) return null
+
+    return note
   },
 }
