@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, type Prisma } from '@prisma/client'
 import fs from 'fs/promises'
 import path from 'path'
 
@@ -408,8 +408,8 @@ async function seedPageSections(): Promise<void> {
   for (const page of pages) {
     await prisma.pageSection.upsert({
       where: { key: page.key },
-      update: { data: page.data as object },
-      create: { key: page.key, data: page.data as object },
+      update: { data: page.data as Prisma.InputJsonValue },
+      create: { key: page.key, data: page.data as Prisma.InputJsonValue },
     })
   }
 

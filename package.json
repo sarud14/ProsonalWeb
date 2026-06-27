@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "type-check": "tsc --noEmit",
+    "postinstall": "prisma generate",
+    "type-check": "prisma generate && tsc --noEmit && tsc --noEmit -p prisma",
     "test": "vitest run"
   },
   "dependencies": {
