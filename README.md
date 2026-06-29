@@ -1,6 +1,6 @@
 # FEOps Kit
 
-A reusable Next.js-based frontend engineering portfolio system. Fork it, fill in your own case studies, deploy it as your own.
+A reusable Next.js-based frontend engineering portfolio system with a full CMS. Fork it, fill in your own case studies, deploy it as your own.
 
 ---
 
@@ -12,10 +12,13 @@ A reusable Next.js-based frontend engineering portfolio system. Fork it, fill in
 | Runtime | React | 19.2.4 |
 | Language | TypeScript (strict mode) | 5.9.3 |
 | UI | Tailwind CSS v4 + shadcn/ui (base-nova) | 4.3.1 |
-| ORM | Prisma (optional — only for DB features) | 7.8.0 |
+| ORM | Prisma | 7.8.0 |
 | Validation | Zod | 4.4.3 |
-| Auth | NextAuth v5 (optional — only for admin panel) | — |
+| Auth | NextAuth v5 (optional — only for admin panel) | 5.0.0-beta.30 |
+| Media | Vercel Blob (presigned upload) | 2.5.0 |
+| PDF | @react-pdf/renderer (live resume PDF) | 4.5.1 |
 | Content (default) | MDX, Git-driven | — |
+| Content (CMS) | PostgreSQL via Prisma | — |
 | Deployment | Vercel | — |
 
 ---
@@ -45,51 +48,73 @@ Edit/add `.mdx` files under `/content/work`, `/content/journal`, `/content/engin
 src/
 ├── app/
 │   ├── (public)/              # public pages — /, /work, /journal, /engineering, etc.
-│   ├── (admin)/               # admin panel — /admin/*, /login (auth required)
-│   ├── api/                   # route handlers (webhooks, NextAuth, external API)
+│   ├── (admin)/               # admin panel — /admin/* (auth required)
+│   ├── api/
+│   │   ├── media/upload/      # Vercel Blob presigned upload (session-gated)
+│   │   └── resume/pdf/        # live PDF generation from DB/constants
 │   ├── globals.css            # dark-first theme with oklch color tokens
 │   └── layout.tsx             # root layout (Geist fonts, dark mode)
-├── actions/                   # server actions ("use server") — admin CRUD mutations
+├── actions/                   # server actions ("use server") — all CMS mutations
+│   ├── work.actions.ts        # work CRUD + publish/unpublish
+│   ├── journal.actions.ts     # journal CRUD + publish/unpublish
+│   ├── engineering.actions.ts # engineering CRUD + publish/unpublish
+│   ├── resume.actions.ts      # profile + experience/education/language/selectedWork
+│   ├── page.actions.ts        # singleton page upsert
+│   ├── media.actions.ts       # media CRUD (blocks delete if referenced)
+│   ├── taxonomy.actions.ts    # domain CRUD (blocks delete if used)
+│   ├── contact.actions.ts     # public submit + admin read/archive/delete
+│   └── reaction.actions.ts    # public add + get reactions
 ├── components/
-│   ├── ui/                    # shared UI (Button, Card, Badge, NavBar, Footer, Skeleton, etc.)
+│   ├── ui/                    # shared UI (Button, Card, Badge, NavBar, Footer, etc.)
 │   ├── public-page/           # page-specific components, grouped by domain
-│   │   ├── Landing/           # HeroSection, ModulesSection, StatsSection, etc.
-│   │   ├── Work/              # WorkListSection, WorkCaseDetailView, WorkCaseHero, etc.
-│   │   ├── Journal/           # JournalPostList, JournalPostDetailView
-│   │   ├── Engineering/       # EngineeringListSection
-│   │   ├── Focus/             # FocusPageView
-│   │   ├── Resume/            # ResumePageView, ResumeSavePdfButton
-│   │   └── Stack/             # StackPageView
 │   └── admin-page/            # admin-specific components (placeholder)
-├── providers/                 # React context providers (AppProvider)
 ├── lib/
 │   ├── content/               # content abstraction layer
 │   │   ├── source.ts          # interface — pages import this, never the implementations
 │   │   ├── mdx-source.ts      # Git-MDX implementation (default)
-│   │   ├── db-source.ts       # DB implementation (swap via CONTENT_SOURCE env var)
-│   │   └── parse-mdx-frontmatter.ts  # MDX frontmatter parser
-│   ├── db/                    # Prisma client (guarded with server-only)
+│   │   ├── db-source.ts       # DB implementation (via DAL)
+│   │   ├── site-config.ts     # navbar items from data (Phase 3 seam)
+│   │   └── landing-registry.ts # landing block type → component map (Phase 3 seam)
+│   ├── data/                  # DAL — all Prisma queries centralized here
+│   │   ├── work.data.ts       # WorkCaseStudy + Domain relations
+│   │   ├── journal.data.ts    # JournalPost
+│   │   ├── engineering.data.ts # EngineeringNote
+│   │   ├── resume.data.ts     # Profile + Experience/Education/Language/SelectedWork
+│   │   ├── page.data.ts       # PageSection (getByKey, upsert)
+│   │   ├── media.data.ts      # MediaAsset + reference check
+│   │   ├── taxonomy.data.ts   # Domain + works reference check
+│   │   ├── contact.data.ts    # ContactMessage
+│   │   └── reaction.data.ts   # PostReaction (upsert + increment)
+│   ├── db/                    # Prisma client singleton (server-only)
 │   ├── auth/                  # NextAuth config + session helpers
-│   ├── work-case-detail.ts    # work case study data helpers
-│   ├── journal-post-content.ts # journal post data helpers
-│   └── utils.ts               # shared utility functions
-├── types/                     # all TypeScript types — never declare inline in components
-├── constants/                 # shared constants (landing data, page data, filters, etc.)
-├── validators/                # Zod schemas (work, journal, engineering frontmatter)
+│   ├── actions/               # shared action helpers (requireAdminSession, createRevision)
+│   ├── media/                 # upload helpers (mime validation, path builder)
+│   └── resume/                # PDF document component + data fetcher
+├── types/                     # all TypeScript types — never declare inline
+├── constants/                 # shared constants (landing data, page data, filters)
+├── validators/                # Zod schemas (content forms, contact, reactions, frontmatter)
 └── env.ts                     # typed wrapper for process.env
 
+prisma/
+├── schema.prisma              # 20+ models (auth, content, resume, media, interactions)
+├── prisma.config.ts           # Prisma 7 config
+└── seed.ts                    # idempotent seed — reads MDX + constants into DB
+
+scripts/
+└── export-to-mdx.ts           # DB → MDX/JSON backup
+
 content/                       # Git-MDX source — deliberately OUTSIDE src/
-├── work/*.mdx                 # case study content
-├── journal/*.mdx              # blog/journal posts
-└── engineering/*.mdx          # architecture notes, decision logs
+├── work/*.mdx
+├── journal/*.mdx
+└── engineering/*.mdx
 ```
 
 ### Key design decisions
 
 - **`content/` lives outside `src/`** — MDX content is data, not application code. Forkers can find "where do I put my writing" separately from "where is the app."
 - **Route groups split auth boundaries** — `(public)` never imports admin logic, `(admin)` never ships to anonymous visitors.
-- **Components split by domain** — `public-page/` groups components by page (Landing, Work, Journal, etc.), while `ui/` holds shared primitives. Page routes stay thin — they import a view component rather than inlining layout logic.
 - **Content abstraction** — all content reads go through `lib/content/source.ts`. Switching from Git-MDX to DB-driven content is a one-line env var change (`CONTENT_SOURCE=db`), not a rewrite of every page.
+- **DAL pattern** — all Prisma queries live in `src/lib/data/*.data.ts`. Actions, db-source, and get-resume-data call through the DAL — never import `prisma` directly outside `src/lib/data/`.
 - **`server-only` guard** — any module touching the database or secrets imports `server-only` at the top, causing a build error if a Client Component accidentally imports it.
 
 ---
@@ -120,71 +145,51 @@ content/                       # Git-MDX source — deliberately OUTSIDE src/
 | `/login` | Auth login |
 | `/admin` | Dashboard |
 | `/admin/work` | Manage case studies |
-| `/admin/work/[id]/edit` | Edit case study |
 | `/admin/journal` | Manage journal posts |
-| `/admin/journal/[id]/edit` | Edit journal post |
-| `/admin/settings` | Site settings |
+| `/admin/engineering` | Manage engineering notes |
+| `/admin/resume` | Edit resume (structured form) |
+| `/admin/pages/landing` | Edit landing page |
+| `/admin/pages/focus` | Edit focus page |
+| `/admin/pages/stack` | Edit stack page |
+| `/admin/pages/site` | Site config (nav, SEO, theme) |
+| `/admin/media` | Media library |
+| `/admin/taxonomy` | Domain management |
+| `/admin/messages` | Contact messages |
 
 ### API
 
-| Route | Purpose |
-|---|---|
-| `/api/work` | Work data endpoint (external clients) |
-| `/api/og` | Open Graph image generation |
+| Route | Method | Purpose |
+|---|---|---|
+| `/api/media/upload` | POST | Vercel Blob presigned upload (session-gated) |
+| `/api/resume/pdf` | GET | Live PDF generation from resume data |
 
 ---
 
-## 4. When you need the database
+## 4. Database Schema
 
-Only required for:
-- The `/admin` panel (login + CRUD UI instead of editing `.mdx` files directly)
-- Interaction features (contact form submissions, reactions, analytics)
-- Auth (NextAuth) for admin login
-
-If you only want the static portfolio, **skip to Section 6 (Deploy)** — you don't need any of the steps below.
-
-### Database schema
-
-The admin panel stores content in two Postgres tables managed by Prisma:
+The project uses **20+ Prisma models** organized into groups:
 
 ```
-┌─────────────────────────────────────┐
-│           WorkCaseStudy             │
-├─────────────────────────────────────┤
-│ id           String  (cuid, PK)    │
-│ slug         String  (unique)      │
-│ title        String                │
-│ status       String                │
-│ context      String                │
-│ problem      String                │
-│ constraints  String                │
-│ architecture String                │
-│ decisions    String                │
-│ impact       String                │
-│ createdAt    DateTime (auto)       │
-│ updatedAt    DateTime (auto)       │
-└─────────────────────────────────────┘
-
-┌─────────────────────────────────────┐
-│           JournalPost              │
-├─────────────────────────────────────┤
-│ id           String   (cuid, PK)   │
-│ slug         String   (unique)     │
-│ title        String                │
-│ status       String                │
-│ content      String                │
-│ publishedAt  DateTime (nullable)   │
-│ createdAt    DateTime (auto)       │
-│ updatedAt    DateTime (auto)       │
-└─────────────────────────────────────┘
+Auth:         User, Account, Session, VerificationToken
+Content:      WorkCaseStudy, JournalPost, EngineeringNote
+Taxonomy:     Domain (many-to-many with Work)
+Pages:        PageSection (singleton JSON blobs — landing, focus, stack, site)
+Resume:       ResumeProfile, ResumeExperience, ResumeEducation,
+              ResumeLanguage, ResumeSelectedWork (links to Work)
+Media:        MediaAsset (referenced by content cover images)
+History:      ContentRevision (snapshot on every edit)
+Interactions: ContactMessage, PostReaction
 ```
-
-- **`WorkCaseStudy`** — mirrors the MDX frontmatter sections for case studies (context, problem, constraints, architecture, decisions, impact). Each field is a freeform text block — the admin editor renders them as separate form sections.
-- **`JournalPost`** — blog/journal entries with a single `content` body. `publishedAt` is nullable so draft posts can exist without a publish date.
-- **`status`** on both models controls visibility (`draft` / `published`). The content abstraction layer in `lib/content/source.ts` filters by status when serving public pages.
-- **Auth is handled by NextAuth v5 (JWT strategy)** — no user/session tables in the schema. Only GitHub OAuth is configured. Any authenticated GitHub user can access the admin panel — restrict access by keeping the `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` credentials private to your own OAuth app.
 
 The full schema lives at `prisma/schema.prisma`. Config (Prisma 7 format) is at `prisma.config.ts`.
+
+### Design choices
+
+- **Content articles** (Work, Journal, Engineering) are normalized tables with per-item CRUD, draft/publish status, and sortOrder.
+- **Singleton pages** (Landing, Focus, Stack, Site) use a single `PageSection` table with a JSON blob — edited rarely, no cross-relations.
+- **Resume is normalized** (not JSON) — edited often, needs add/remove/reorder per item, `selectedWork` links to Work as a single source for the PDF.
+- **Work domains** are a `Domain` table (editable from CMS). Engineering type is a Prisma `enum` (fixed at 3 values).
+- **ContentRevision** snapshots every edit to compensate for losing Git diff history.
 
 ---
 
@@ -192,19 +197,15 @@ The full schema lives at `prisma/schema.prisma`. Config (Prisma 7 format) is at 
 
 ### 5.1 Choose a provider
 
-Pick one (both have a free tier):
+Pick one (all have a free tier):
 
-- **Supabase** — https://supabase.com → New Project
-- **Neon** — https://neon.tech → New Project
+- **Neon** — https://neon.tech
+- **Supabase** — https://supabase.com
+- **Vercel Postgres** — via Vercel dashboard
 
-Either works — both are Postgres.
+All are Postgres.
 
-### 5.2 Get your connection string
-
-- **Supabase:** Project Settings → Database → Connection string (URI). Use the **pooled** connection string (port `6543`, `pgbouncer=true`) for `DATABASE_URL` on serverless deploys, and the **direct** string for `DIRECT_URL` (used by Prisma Migrate).
-- **Neon:** Dashboard → Connection Details → copy the `postgres://...` string.
-
-### 5.3 Create your `.env` file
+### 5.2 Create your `.env` file
 
 ```bash
 cp .env.example .env
@@ -212,27 +213,37 @@ cp .env.example .env
 
 Fill in the values:
 
-```bash
+```env
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DBNAME?sslmode=require"
-DIRECT_URL=""
-NEXTAUTH_SECRET=""        # generate with: openssl rand -base64 32
+DIRECT_URL=""                  # non-pooled string for Prisma Migrate (if provider requires)
+NEXTAUTH_SECRET=""             # generate with: openssl rand -base64 32
 NEXTAUTH_URL="http://localhost:3000"
-AUTH_GITHUB_ID=""
+AUTH_GITHUB_ID=""              # GitHub OAuth app credentials
 AUTH_GITHUB_SECRET=""
-CONTENT_SOURCE="mdx"
+CONTENT_SOURCE="mdx"          # "mdx" (default) or "db"
+BLOB_READ_WRITE_TOKEN=""       # Vercel Blob token (for media uploads)
 ```
 
 **Never commit `.env`.** It's already in `.gitignore`.
 
-### 5.4 Run the migration
+### 5.3 Generate Prisma client + run migrations
 
 ```bash
+npx prisma generate
 npx prisma migrate dev
 ```
 
+### 5.4 Seed the database
+
+```bash
+npx prisma db seed
+```
+
+This reads all existing MDX files + TS constants and inserts them into the database. The seed is idempotent — safe to run multiple times.
+
 To inspect data visually: `npx prisma studio` (opens at `http://localhost:5555`).
 
-### 5.5 Switch content source to DB-driven
+### 5.5 Switch content source to DB
 
 Set `CONTENT_SOURCE="db"` in `.env` — this swaps the implementation behind `lib/content/source.ts` from `mdx-source.ts` to `db-source.ts`. No page code changes needed.
 
@@ -242,16 +253,34 @@ Set `CONTENT_SOURCE="db"` in `.env` — this swaps the implementation behind `li
 
 | Variable | Required? | Description |
 |---|---|---|
-| `DATABASE_URL` | Only if using DB features | Postgres connection string from Supabase/Neon |
-| `DIRECT_URL` | Only if provider requires pooling | Non-pooled connection string for Prisma Migrate |
-| `NEXTAUTH_SECRET` | Only if using `/admin` | Session encryption secret (`openssl rand -base64 32`) |
-| `NEXTAUTH_URL` | Only if using `/admin` | Base app URL — `http://localhost:3000` in dev, real domain in prod |
-| `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | Optional | Only if GitHub OAuth login is enabled for admin |
-| `CONTENT_SOURCE` | No (defaults to `mdx`) | `mdx` or `db` — controls which content implementation is used |
+| `DATABASE_URL` | Only if using DB features | Postgres connection string |
+| `DIRECT_URL` | Only if provider requires pooling | Non-pooled connection for Prisma Migrate |
+| `NEXTAUTH_SECRET` | Only if using `/admin` | Session encryption secret |
+| `NEXTAUTH_URL` | Only if using `/admin` | Base app URL |
+| `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | Only if using `/admin` | GitHub OAuth credentials |
+| `CONTENT_SOURCE` | No (defaults to `mdx`) | `mdx` or `db` |
+| `BLOB_READ_WRITE_TOKEN` | Only if using media uploads | Vercel Blob storage token |
 
 ---
 
-## 7. Deploy to Vercel
+## 7. Scripts
+
+| Command | Description |
+|---|---|
+| `yarn dev` | Start dev server (Turbopack) |
+| `yarn build` | Production build |
+| `yarn lint` | Run ESLint |
+| `yarn type-check` | Run `tsc --noEmit` |
+| `yarn test` | Run Vitest tests |
+| `npx prisma generate` | Generate Prisma client types |
+| `npx prisma migrate dev` | Run database migrations |
+| `npx prisma db seed` | Seed database from MDX + constants |
+| `npx prisma studio` | Open Prisma data browser |
+| `npx tsx scripts/export-to-mdx.ts` | Export DB → MDX/JSON backup |
+
+---
+
+## 8. Deploy to Vercel
 
 1. Push your repo to GitHub.
 2. Go to [vercel.com/new](https://vercel.com/new) and import the repo.
@@ -267,7 +296,7 @@ npx prisma migrate deploy
 
 ---
 
-## 8. Common Issues
+## 9. Common Issues
 
 **"Can't reach database server" on Vercel but works locally**
 → Serverless functions need the pooled connection string. On Supabase, use port `6543` with `pgbouncer=true` for `DATABASE_URL`, and the direct string for `DIRECT_URL`.
@@ -278,13 +307,18 @@ npx prisma migrate deploy
 **Admin panel redirects to login in a loop**
 → Check `NEXTAUTH_URL` matches the actual URL (including `http` vs `https`) and that `NEXTAUTH_SECRET` is set.
 
+**Type errors about `@prisma/client`**
+→ Run `npx prisma generate` — the client types are generated, not shipped in the repo.
+
 ---
 
-## 9. Customizing
+## 10. Customizing
 
 ### Content
 
 Replace the `.mdx` files in `/content` with your own case studies, journal posts, and engineering notes. Each file uses frontmatter for metadata — check existing samples for the expected shape.
+
+If using the DB, seed your content and manage it via the admin panel instead.
 
 ### Theme
 
@@ -293,6 +327,16 @@ Colors are defined as oklch tokens in `src/app/globals.css`. The site is dark-fi
 ### Components
 
 Shared UI lives in `src/components/ui/` — restyle `Card`, `Badge`, `Button`, `NavBar`, `Footer`, `Skeleton` etc. to change the look across the entire site. Page-specific components live in `src/components/public-page/<Domain>/` (e.g. `Landing/`, `Work/`, `Journal/`) — edit these to change the layout of individual sections.
+
+### Backup
+
+Export all DB content back to MDX/JSON files:
+
+```bash
+npx tsx scripts/export-to-mdx.ts --out ./backup
+```
+
+This creates MDX files (with frontmatter) for work/journal/engineering, plus JSON files for resume and page sections.
 
 ---
 
