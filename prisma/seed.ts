@@ -1,8 +1,19 @@
+import 'dotenv/config'
+
+import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient, type Prisma } from '@prisma/client'
+import { Pool } from 'pg'
 import fs from 'fs/promises'
 import path from 'path'
 
-const prisma = new PrismaClient()
+const connectionString =
+  process.env.DIRECT_URL?.trim() ||
+  process.env.DATABASE_URL?.trim() ||
+  'postgresql://localhost:5432/postgres'
+
+const pool = new Pool({ connectionString })
+const adapter = new PrismaPg(pool)
+const prisma = new PrismaClient({ adapter })
 
 // ---------------------------------------------------------------------------
 // Minimal frontmatter parser (can't use @/ aliases in seed context)

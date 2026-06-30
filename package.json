@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "prisma generate && next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "prisma db seed",
     "type-check": "prisma generate && tsc --noEmit && tsc --noEmit -p prisma",
     "test": "vitest run"
   },
