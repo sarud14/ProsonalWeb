@@ -8,7 +8,7 @@ A reusable Next.js-based frontend engineering portfolio system with a full CMS. 
 
 | Layer | Tool | Version |
 |---|---|---|
-| Framework | Next.js (App Router, Turbopack) | 16.2.9 |
+| Framework | Next.js (App Router, webpack in dev/build) | 16.2.9 |
 | Runtime | React | 19.2.4 |
 | Language | TypeScript (strict mode) | 5.9.3 |
 | UI | Tailwind CSS v4 + shadcn/ui (base-nova) | 4.3.1 |
@@ -37,6 +37,8 @@ yarn dev
 This repo uses `yarn` — if you prefer `npm` or `pnpm`, delete `yarn.lock` and run your preferred installer instead. Just don't mix lockfiles within the same clone.
 
 Open `http://localhost:3000` — the site is populated with sample content from `/content`. No `.env`, no database, no signup required.
+
+> **Admin panel (`/admin`)** requires Postgres + env setup — see [§5 Setting up the database](#5-setting-up-the-database).
 
 Edit/add `.mdx` files under `/content/work`, `/content/journal`, `/content/engineering` to replace sample content with your own. Commit and push — that's the entire content workflow if you don't need the admin panel.
 
@@ -67,7 +69,7 @@ src/
 ├── components/
 │   ├── ui/                    # shared UI (Button, Card, Badge, NavBar, Footer, etc.)
 │   ├── public-page/           # page-specific components, grouped by domain
-│   └── admin-page/            # admin-specific components (placeholder)
+│   └── admin-page/            # admin CMS UI (dashboard, CRUD, pages, media, etc.)
 ├── lib/
 │   ├── content/               # content abstraction layer
 │   │   ├── source.ts          # interface — pages import this, never the implementations
@@ -199,11 +201,20 @@ The full schema lives at `prisma/schema.prisma`. Config (Prisma 7 format) is at 
 
 Pick one (all have a free tier):
 
+- **Supabase** — https://supabase.com *(recommended if you want a hosted Postgres + dashboard)*
 - **Neon** — https://neon.tech
-- **Supabase** — https://supabase.com
 - **Vercel Postgres** — via Vercel dashboard
 
 All are Postgres.
+
+#### Supabase connection strings
+
+From **Project Settings → Database → Connection string**:
+
+| Env var | Supabase setting | Notes |
+|---|---|---|
+| `DATABASE_URL` | **Transaction pooler** (port `6543`) | Add `?pgbouncer=true` for Prisma runtime queries |
+| `DIRECT_URL` | **Session pooler** (port `5432`) or direct | Used by `prisma migrate` |
 
 ### 5.2 Create your `.env` file
 
@@ -214,17 +225,28 @@ cp .env.example .env
 Fill in the values:
 
 ```env
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DBNAME?sslmode=require"
-DIRECT_URL=""                  # non-pooled string for Prisma Migrate (if provider requires)
+# Dev server — Next.js reads PORT; NEXTAUTH_URL defaults to APP_HOST:PORT
+PORT="3000"
+APP_HOST="http://localhost"
+
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://USER:PASSWORD@HOST:5432/postgres"
 NEXTAUTH_SECRET=""             # generate with: openssl rand -base64 32
-NEXTAUTH_URL="http://localhost:3000"
+# Optional — leave empty to auto-derive from APP_HOST + PORT
+NEXTAUTH_URL=""
 AUTH_GITHUB_ID=""              # GitHub OAuth app credentials
 AUTH_GITHUB_SECRET=""
-CONTENT_SOURCE="mdx"          # "mdx" (default) or "db"
+CONTENT_SOURCE="mdx"           # "mdx" (default) or "db"
 BLOB_READ_WRITE_TOKEN=""       # Vercel Blob token (for media uploads)
 ```
 
 **Never commit `.env`.** It's already in `.gitignore`.
+
+For GitHub OAuth, set the callback URL to:
+
+`http://localhost:<PORT>/api/auth/callback/github`
+
+(e.g. `http://localhost:3000/...` when `PORT=3000`)
 
 ### 5.3 Generate Prisma client + run migrations
 
@@ -253,11 +275,13 @@ Set `CONTENT_SOURCE="db"` in `.env` — this swaps the implementation behind `li
 
 | Variable | Required? | Description |
 |---|---|---|
-| `DATABASE_URL` | Only if using DB features | Postgres connection string |
-| `DIRECT_URL` | Only if provider requires pooling | Non-pooled connection for Prisma Migrate |
-| `NEXTAUTH_SECRET` | Only if using `/admin` | Session encryption secret |
-| `NEXTAUTH_URL` | Only if using `/admin` | Base app URL |
-| `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | Only if using `/admin` | GitHub OAuth credentials |
+| `PORT` | No (defaults to `3000`) | Dev server port — Next.js reads this automatically |
+| `APP_HOST` | No (defaults to `http://localhost`) | Base URL host for deriving `NEXTAUTH_URL` in dev |
+| `DATABASE_URL` | Only if using DB / admin panel | Postgres connection string (pooled for runtime) |
+| `DIRECT_URL` | Only if provider requires pooling | Non-pooled / session connection for Prisma Migrate |
+| `NEXTAUTH_SECRET` | Only if using `/admin` auth | Session encryption secret |
+| `NEXTAUTH_URL` | Optional in dev | Override base app URL; if empty, derived as `APP_HOST:PORT` via `src/env.ts` |
+| `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | Only if using GitHub login | GitHub OAuth credentials |
 | `CONTENT_SOURCE` | No (defaults to `mdx`) | `mdx` or `db` |
 | `BLOB_READ_WRITE_TOKEN` | Only if using media uploads | Vercel Blob storage token |
 
@@ -267,7 +291,7 @@ Set `CONTENT_SOURCE="db"` in `.env` — this swaps the implementation behind `li
 
 | Command | Description |
 |---|---|
-| `yarn dev` | Start dev server (Turbopack) |
+| `yarn dev` | Start dev server (webpack — required for Prisma 7) |
 | `yarn build` | Production build |
 | `yarn lint` | Run ESLint |
 | `yarn type-check` | Run `tsc --noEmit` |
@@ -298,6 +322,15 @@ npx prisma migrate deploy
 
 ## 9. Common Issues
 
+**`TypeError: (void 0) is not a constructor` at `new PrismaClient()` in dev**
+→ Dev must use webpack, not Turbopack. This repo's `yarn dev` runs `next dev --webpack`. Restart the dev server after pulling.
+
+**"Can't reach database server" / `ECONNREFUSED` on `/admin`**
+→ Postgres is not reachable. Check `DATABASE_URL`, run `npx prisma migrate dev` and `npx prisma db seed`, and confirm Supabase project is running.
+
+**`MissingSecret` from Auth.js on `/admin`**
+→ Set `NEXTAUTH_SECRET` in `.env`. Ensure `NEXTAUTH_URL` matches the running port (or leave it empty and set `PORT` + `APP_HOST`).
+
 **"Can't reach database server" on Vercel but works locally**
 → Serverless functions need the pooled connection string. On Supabase, use port `6543` with `pgbouncer=true` for `DATABASE_URL`, and the direct string for `DIRECT_URL`.
 
@@ -305,7 +338,7 @@ npx prisma migrate deploy
 → Run `npx prisma generate` after any `schema.prisma` change or fresh install.
 
 **Admin panel redirects to login in a loop**
-→ Check `NEXTAUTH_URL` matches the actual URL (including `http` vs `https`) and that `NEXTAUTH_SECRET` is set.
+→ Check `NEXTAUTH_URL` matches the actual URL (including port, `http` vs `https`) and that `NEXTAUTH_SECRET` is set. GitHub OAuth callback must use the same port as `PORT`.
 
 **Type errors about `@prisma/client`**
 → Run `npx prisma generate` — the client types are generated, not shipped in the repo.

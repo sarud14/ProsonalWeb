@@ -19,5 +19,5 @@ export async function getOptionalAdminSession() {
   return auth()
 }
 
-export { isAuthConfigured, isGithubAuthConfigured } from '@/env'
+export { isAuthConfigured, isGithubAuthConfigured, isGoogleAuthConfigured } from '@/env'
 export { auth, signIn, signOut, AUTH_PROVIDER }

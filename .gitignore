@@ -39,8 +39,8 @@ design/
 # TypeScript
 *.tsbuildinfo
 
-# Prisma local dev database
-prisma/migrations/dev.db
+# Prisma migrations — local only; apply per environment with `yarn prisma:migrate`
+prisma/migrations/
 
 # Vercel
 .vercel

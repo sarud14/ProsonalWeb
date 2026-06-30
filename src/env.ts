@@ -1,10 +1,45 @@
+const DEFAULT_PORT = '3000'
+const DEFAULT_APP_HOST = 'http://localhost'
+
+function resolvePort(): string {
+  const raw = process.env.PORT?.trim()
+  return raw && raw.length > 0 ? raw : DEFAULT_PORT
+}
+
+function resolveAppHost(): string {
+  const raw = process.env.APP_HOST?.trim()
+  return raw && raw.length > 0 ? raw.replace(/\/$/, '') : DEFAULT_APP_HOST
+}
+
+function resolveNextAuthUrl(port: string, appHost: string): string {
+  const explicit = process.env.NEXTAUTH_URL?.trim()
+  if (explicit && explicit.length > 0) {
+    return explicit.replace(/\/$/, '')
+  }
+
+  const derived = `${appHost}:${port}`
+
+  // Auth.js reads process.env directly — keep derived URL in sync.
+  process.env.NEXTAUTH_URL = derived
+
+  return derived
+}
+
+const port = resolvePort()
+const appHost = resolveAppHost()
+const nextAuthUrl = resolveNextAuthUrl(port, appHost)
+
 export const env = {
+  port,
+  appHost,
   databaseUrl: process.env.DATABASE_URL ?? '',
   directUrl: process.env.DIRECT_URL ?? '',
-  nextAuthUrl: process.env.NEXTAUTH_URL ?? '',
+  nextAuthUrl,
   nextAuthSecret: process.env.NEXTAUTH_SECRET ?? '',
   authGithubId: process.env.AUTH_GITHUB_ID ?? '',
   authGithubSecret: process.env.AUTH_GITHUB_SECRET ?? '',
+  authGoogleId: process.env.AUTH_GOOGLE_ID ?? '',
+  authGoogleSecret: process.env.AUTH_GOOGLE_SECRET ?? '',
   contentSource: (process.env.CONTENT_SOURCE ?? 'mdx') as 'mdx' | 'db',
   blobReadWriteToken: process.env.BLOB_READ_WRITE_TOKEN ?? '',
 } as const
@@ -15,4 +50,8 @@ export function isAuthConfigured(): boolean {
 
 export function isGithubAuthConfigured(): boolean {
   return env.authGithubId.length > 0 && env.authGithubSecret.length > 0
+}
+
+export function isGoogleAuthConfigured(): boolean {
+  return env.authGoogleId.length > 0 && env.authGoogleSecret.length > 0
 }
