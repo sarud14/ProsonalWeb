@@ -7,6 +7,13 @@ export const taxonomyData = {
     return prisma.domain.findMany({ orderBy: { sortOrder: 'asc' } })
   },
 
+  async getAllWithWorkCounts() {
+    return prisma.domain.findMany({
+      orderBy: { sortOrder: 'asc' },
+      include: { _count: { select: { works: true } } },
+    })
+  },
+
   async getById(id: string) {
     return prisma.domain.findUnique({ where: { id } })
   },

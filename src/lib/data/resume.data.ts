@@ -128,6 +128,16 @@ export const resumeData = {
     })
   },
 
+  async updateSelectedWork(
+    id: string,
+    data: {
+      noteOverride?: string | null
+      sortOrder?: number
+    }
+  ) {
+    return prisma.resumeSelectedWork.update({ where: { id }, data })
+  },
+
   async deleteSelectedWork(id: string) {
     return prisma.resumeSelectedWork.delete({ where: { id } })
   },
