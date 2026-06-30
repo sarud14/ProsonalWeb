@@ -7,6 +7,21 @@ export const mediaData = {
     return prisma.mediaAsset.findMany({ orderBy: { createdAt: 'desc' } })
   },
 
+  async getAllWithReferenceCounts() {
+    return prisma.mediaAsset.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        _count: {
+          select: {
+            workCovers: true,
+            journalCovers: true,
+            engineeringCovers: true,
+          },
+        },
+      },
+    })
+  },
+
   async getById(id: string) {
     return prisma.mediaAsset.findUnique({ where: { id } })
   },

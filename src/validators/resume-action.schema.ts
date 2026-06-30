@@ -42,8 +42,15 @@ export const addSelectedWorkSchema = z.object({
   sortOrder: z.number().int().min(0).optional(),
 })
 
+export const updateSelectedWorkSchema = z.object({
+  id: z.string().min(1),
+  noteOverride: z.string().nullable().optional(),
+  sortOrder: z.number().int().min(0).optional(),
+})
+
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>
 export type UpsertExperienceInput = z.infer<typeof upsertExperienceSchema>
 export type UpsertEducationInput = z.infer<typeof upsertEducationSchema>
 export type UpsertLanguageInput = z.infer<typeof upsertLanguageSchema>
 export type AddSelectedWorkInput = z.infer<typeof addSelectedWorkSchema>
+export type UpdateSelectedWorkInput = z.infer<typeof updateSelectedWorkSchema>

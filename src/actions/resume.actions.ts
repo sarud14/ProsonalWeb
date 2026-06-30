@@ -11,6 +11,7 @@ import {
   upsertEducationSchema,
   upsertLanguageSchema,
   addSelectedWorkSchema,
+  updateSelectedWorkSchema,
 } from '@/validators/resume-action.schema'
 
 const RESUME_PATHS = ['/resume'] as const
@@ -153,6 +154,21 @@ export async function addSelectedWork(
   if (!parsed.success) return { success: false, error: parsed.error.message }
 
   const sw = await resumeData.createSelectedWork(parsed.data)
+
+  revalidateResume()
+  return { success: true, data: { id: sw.id } }
+}
+
+export async function updateSelectedWork(
+  input: unknown
+): Promise<ActionResult<{ id: string }>> {
+  await requireAdminSession()
+
+  const parsed = updateSelectedWorkSchema.safeParse(input)
+  if (!parsed.success) return { success: false, error: parsed.error.message }
+
+  const { id, ...data } = parsed.data
+  const sw = await resumeData.updateSelectedWork(id, data)
 
   revalidateResume()
   return { success: true, data: { id: sw.id } }
