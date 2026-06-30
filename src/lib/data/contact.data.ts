@@ -16,6 +16,12 @@ export const contactData = {
     })
   },
 
+  async countUnread(): Promise<number> {
+    return prisma.contactMessage.count({
+      where: { read: false, archived: false },
+    })
+  },
+
   async getById(id: string) {
     return prisma.contactMessage.findUnique({ where: { id } })
   },
