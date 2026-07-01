@@ -43,9 +43,9 @@ export function ContentListClient({
 
   const handleEdit = useCallback(
     (id: string) => {
-      router.push(config.editHref(id))
+      router.push(config.editHrefTemplate.replace('{id}', id))
     },
-    [config, router]
+    [config.editHrefTemplate, router]
   )
 
   const handleTogglePublish = useCallback(

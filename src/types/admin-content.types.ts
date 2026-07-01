@@ -15,7 +15,7 @@ export interface AdminContentListConfig {
   readonly newLabel: string
   readonly listHref: string
   readonly newHref: string
-  readonly editHref: (id: string) => string
+  readonly editHrefTemplate: string
   readonly gridTemplate: string
 }
 

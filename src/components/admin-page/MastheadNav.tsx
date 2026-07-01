@@ -5,14 +5,20 @@ import Link from 'next/link'
 import { ADMIN_NAV_ITEMS } from '@/constants/admin-nav'
 
 import { AdminUserMenu } from '@/components/admin-page/AdminUserMenu'
+import type { AdminSessionUser } from '@/types/auth.types'
 import { cn } from '@/lib/utils'
 
 interface MastheadNavProps {
   readonly activeKey: string
   readonly unreadCount: number
+  readonly user: AdminSessionUser
 }
 
-export function MastheadNav({ activeKey, unreadCount }: MastheadNavProps): React.JSX.Element {
+export function MastheadNav({
+  activeKey,
+  unreadCount,
+  user,
+}: MastheadNavProps): React.JSX.Element {
   return (
     <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-9 bg-sidebar px-7 text-sidebar-foreground">
       <div className="mr-2 flex items-baseline gap-2.5">
@@ -48,7 +54,7 @@ export function MastheadNav({ activeKey, unreadCount }: MastheadNavProps): React
         })}
       </nav>
 
-      <AdminUserMenu />
+      <AdminUserMenu user={user} />
     </header>
   )
 }
