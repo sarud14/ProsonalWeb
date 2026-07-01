@@ -38,6 +38,8 @@ function toClientBlocks(blocks: readonly LandingBlock[]): ClientLandingBlock[] {
 
 export function LandingPageEditor({
   initialData,
+  media,
+  uploadEnabled,
 }: LandingPageEditorProps): React.JSX.Element {
   const router = useRouter()
   const [blocks, setBlocks] = useState<readonly ClientLandingBlock[]>(() =>
@@ -173,7 +175,13 @@ export function LandingPageEditor({
     <div>
       <SectionHeading kicker="Page editor" title="Landing" />
 
-      <LandingHeroEditor hero={hero} isSaving={isSaving} onSave={handleSaveHero} />
+      <LandingHeroEditor
+        hero={hero}
+        media={media}
+        uploadEnabled={uploadEnabled}
+        isSaving={isSaving}
+        onSave={handleSaveHero}
+      />
 
       <div className="mb-4 flex items-center justify-between">
         <p className="text-[13px] text-muted-foreground">

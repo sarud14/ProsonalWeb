@@ -67,7 +67,7 @@ src/
 │   ├── contact.actions.ts     # public submit + admin read/archive/delete
 │   └── reaction.actions.ts    # public add + get reactions
 ├── components/
-│   ├── ui/                    # shared UI (Button, Card, Badge, NavBar, Footer, etc.)
+│   ├── ui/                    # shared UI (Button, Card, Badge, NavBar, Footer, ImagePicker, etc.)
 │   ├── public-page/           # page-specific components, grouped by domain
 │   └── admin-page/            # admin CMS UI (dashboard, CRUD, pages, media, etc.)
 ├── lib/
@@ -90,7 +90,8 @@ src/
 │   ├── db/                    # Prisma client singleton (server-only)
 │   ├── auth/                  # NextAuth config + session helpers
 │   ├── actions/               # shared action helpers (requireAdminSession, createRevision)
-│   ├── media/                 # upload helpers (mime validation, path builder)
+│   ├── media/                 # upload helpers (mime validation, path builder, client upload)
+│   ├── admin/                 # CMS helpers (site theme, landing hero, page-section defaults)
 │   └── resume/                # PDF document component + data fetcher
 ├── types/                     # all TypeScript types — never declare inline
 ├── constants/                 # shared constants (landing data, page data, filters)
@@ -127,7 +128,7 @@ content/                       # Git-MDX source — deliberately OUTSIDE src/
 
 | Route | Page |
 |---|---|
-| `/` | Home — hero, profile card, system modules, tech stack |
+| `/` | Home — hero (CMS when `CONTENT_SOURCE=db`), profile card, landing blocks |
 | `/work` | Case study index |
 | `/work/[slug]` | Individual case study |
 | `/engineering` | Engineering notes hub |
@@ -150,11 +151,11 @@ content/                       # Git-MDX source — deliberately OUTSIDE src/
 | `/admin/journal` | Manage journal posts |
 | `/admin/engineering` | Manage engineering notes |
 | `/admin/resume` | Edit resume (structured form) |
-| `/admin/pages/landing` | Edit landing page |
+| `/admin/pages/landing` | Landing page — hero (profile image, code snippet), reorderable blocks |
 | `/admin/pages/focus` | Edit focus page |
 | `/admin/pages/stack` | Edit stack page |
-| `/admin/pages/site` | Site config (nav, SEO, theme) |
-| `/admin/media` | Media library |
+| `/admin/pages/site` | Site settings — brand, nav, SEO, social, contact, footer, theme colors |
+| `/admin/media` | Media library (uploads via Vercel Blob when configured) |
 | `/admin/taxonomy` | Domain management |
 | `/admin/messages` | Contact messages |
 
@@ -188,7 +189,7 @@ The full schema lives at `prisma/schema.prisma`. Config (Prisma 7 format) is at 
 ### Design choices
 
 - **Content articles** (Work, Journal, Engineering) are normalized tables with per-item CRUD, draft/publish status, and sortOrder.
-- **Singleton pages** (Landing, Focus, Stack, Site) use a single `PageSection` table with a JSON blob — edited rarely, no cross-relations.
+- **Singleton pages** (Landing, Focus, Stack, Site) use a single `PageSection` table with a JSON blob — landing holds hero + ordered blocks; `site` holds brand, nav, SEO, social, contact, footer, and theme.
 - **Resume is normalized** (not JSON) — edited often, needs add/remove/reorder per item, `selectedWork` links to Work as a single source for the PDF.
 - **Work domains** are a `Domain` table (editable from CMS). Engineering type is a Prisma `enum` (fixed at 3 values).
 - **ContentRevision** snapshots every edit to compensate for losing Git diff history.
@@ -269,6 +270,19 @@ To inspect data visually: `npx prisma studio` (opens at `http://localhost:5555`)
 
 Set `CONTENT_SOURCE="db"` in `.env` — this swaps the implementation behind `lib/content/source.ts` from `mdx-source.ts` to `db-source.ts`. No page code changes needed.
 
+### 5.6 Vercel Blob (media uploads)
+
+Media uploads in the admin panel (`/admin/media`, cover images, site OG image, landing hero profile image) use **Vercel Blob** via a presigned client upload to `POST /api/media/upload`.
+
+1. In the [Vercel dashboard](https://vercel.com), open your project → **Storage** → create a **Blob** store.
+2. Use a **Public** store — the upload client requests `access: 'public'`. A private store causes upload failures.
+3. Copy the **read/write token** into `.env` as `BLOB_READ_WRITE_TOKEN`.
+4. Restart `yarn dev` after changing env vars.
+
+Uploads are session-gated (admin login required). After upload, the client saves metadata via the `createMedia` server action. Images are organized by folder (`site`, `landing`, work/journal covers, etc.) in the blob path.
+
+> **Local dev:** the upload route does not use Vercel's `onUploadCompleted` callback, so you do not need to configure a public callback URL for localhost.
+
 ---
 
 ## 6. Environment Variable Reference
@@ -284,7 +298,7 @@ Set `CONTENT_SOURCE="db"` in `.env` — this swaps the implementation behind `li
 | `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | Only if using GitHub login | GitHub OAuth credentials |
 | `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | Only if using Google login | Google OAuth credentials |
 | `CONTENT_SOURCE` | No (defaults to `mdx`) | `mdx` or `db` |
-| `BLOB_READ_WRITE_TOKEN` | Only if using media uploads | Vercel Blob storage token |
+| `BLOB_READ_WRITE_TOKEN` | Only if using media uploads | Vercel Blob read/write token — store must be **Public** |
 
 ---
 
@@ -296,7 +310,7 @@ Set `CONTENT_SOURCE="db"` in `.env` — this swaps the implementation behind `li
 | `yarn build` | Production build |
 | `yarn lint` | Run ESLint |
 | `yarn type-check` | Run `tsc --noEmit` |
-| `yarn test` | Run Vitest tests |
+| `yarn test` | Run Vitest (11 files, 35 tests) |
 | `npx prisma generate` | Generate Prisma client types |
 | `npx prisma migrate dev` | Run database migrations |
 | `yarn prisma:migrate:deploy` | Apply migrations to production DB |
@@ -311,7 +325,7 @@ Set `CONTENT_SOURCE="db"` in `.env` — this swaps the implementation behind `li
 
 ### 8.1 One-time Vercel setup
 
-1. Push your repo to GitHub ( branch or merge to `main`).
+1. Push your repo to GitHub (your branch or merge to `main`).
 2. Go to [vercel.com/new](https://vercel.com/new) and import the repo.
 3. Add env vars from `.env` into **Project Settings → Environment Variables** (Production + Preview):
 
@@ -324,16 +338,18 @@ Set `CONTENT_SOURCE="db"` in `.env` — this swaps the implementation behind `li
 | `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | GitHub OAuth app |
 | `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | Google OAuth client |
 | `CONTENT_SOURCE` | `db` |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob → Storage → token |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob → Storage → **Public** store → read/write token |
 
-4. **OAuth callback URLs** (add every domain you deploy to):
+4. **Blob store:** create a **Public** Blob store in Vercel Storage. Private stores reject client uploads.
+
+5. **OAuth callback URLs** (add every domain you deploy to):
 
 | Provider | Callback |
 |---|---|
 | GitHub | `https://your-domain.vercel.app/api/auth/callback/github` |
 | Google | `https://your-domain.vercel.app/api/auth/callback/google` |
 
-5. Provision the production database (run locally against prod `DIRECT_URL`):
+6. Provision the production database (run locally against prod `DIRECT_URL`):
 
 ```bash
 yarn prisma:migrate:deploy
@@ -342,7 +358,7 @@ yarn prisma:seed
 
 > Migrations are local-only in this repo — apply per environment with `yarn prisma:migrate:deploy`, not via git.
 
-6. Deploy. After deploy, verify:
+7. Deploy. After deploy, verify:
 
 ```bash
 yarn smoke:web https://your-domain.vercel.app
@@ -358,10 +374,33 @@ yarn smoke:web https://your-domain.vercel.app
 | **CRUD** | `/admin/work` → New → Save → **Publish** | `/work` shows item |
 | **Journal / Engineering** | Same pattern under `/admin/journal`, `/admin/engineering` | `/journal`, `/engineering` |
 | **Resume** | `/admin/resume` → edit profile → Save | `/resume` + `/api/resume/pdf` |
-| **Media** | `/admin/media` → upload image (needs Blob token) | Use in work/journal cover |
+| **Site settings** | `/admin/pages/site` → brand, nav, SEO, social, contact, footer, theme → Save | Navbar brand, availability dot, theme colors on all pages |
+| **Landing hero** | `/admin/pages/landing` → Hero → profile image (upload or pick from media) → **Save hero** | `/` hero profile image + code snippet |
+| **Media** | `/admin/media` → upload (needs `BLOB_READ_WRITE_TOKEN`) | Reuse in covers, site OG image, landing hero |
 | **Publish** | Toggle Publish in content list or form | Draft hidden on public site |
 
 Draft content stays admin-only; only `PUBLISHED` rows appear on public pages when `CONTENT_SOURCE=db`.
+
+#### Site settings (`/admin/pages/site`)
+
+Structured forms (not raw JSON) for:
+
+- **Brand** — site name, initials fallback, availability status
+- **Navigation** — reorderable nav items (label, href, enabled)
+- **SEO** — title, description, OG image (`ImagePicker`: upload or choose from media library)
+- **Social links** — label + URL list
+- **Contact** — email, location, response-time copy
+- **Footer** — copyright, tagline
+- **Theme** — native color pickers for primary, background, foreground, success, destructive (`src/lib/admin/site-theme.ts`)
+
+When theme colors match the design defaults, the app skips injecting custom CSS variables so `globals.css` tokens apply as-is.
+
+#### Landing page (`/admin/pages/landing`)
+
+- **Hero** — headline, subtitles, status label, profile image (`ImagePicker`), code-snippet fields
+- **Blocks** — reorderable landing sections (system modules, tech stack, etc.)
+
+Save hero and block order separately; each persists to the `PageSection` key `landing`.
 
 ### 8.3 Local smoke test (before deploy)
 
@@ -398,6 +437,18 @@ Adjust the port if Next.js picks another (e.g. `3001`).
 **Type errors about `@prisma/client`**
 → Run `npx prisma generate` — the client types are generated, not shipped in the repo.
 
+**Media upload returns `400` / `Invalid token`**
+→ Check `BLOB_READ_WRITE_TOKEN` matches the Blob store on the same Vercel project. Regenerate the token if it was rotated or copied incorrectly.
+
+**Media upload fails with access / private store errors**
+→ The Blob store must be **Public**. Create a new public store or change access in Vercel Storage, then update the token in `.env` / Vercel env vars.
+
+**`Blob storage is not configured` (503) on upload**
+→ `BLOB_READ_WRITE_TOKEN` is empty. Set it in `.env` and restart the dev server.
+
+**Theme colors change but the grid disappears**
+→ The grid overlay (`--grid-line`) is always defined in `globals.css`, not the CMS. Only page background / accent colors come from site theme settings. If the grid is missing, check `globals.css` `html::before` layering — not the theme pickers.
+
 ---
 
 ## 10. Customizing
@@ -410,11 +461,15 @@ If using the DB, seed your content and manage it via the admin panel instead.
 
 ### Theme
 
-Colors are defined as oklch tokens in `src/app/globals.css`. The site is dark-first by default. Edit the CSS custom properties to match your brand.
+**Default (no CMS):** colors are oklch tokens in `src/app/globals.css`. The site is dark-first with a subtle grid overlay on `html::before`.
+
+**With CMS (`CONTENT_SOURCE=db`):** edit theme colors under `/admin/pages/site` → Theme. Pickers write hex values into the `site` `PageSection`; `src/lib/admin/site-theme.ts` maps them to CSS variables on the root layout. The **grid lines stay in `globals.css`** — only canvas background and accent colors are CMS-controlled.
+
+To change the grid itself or base typography, edit `globals.css` and shared UI in `src/components/ui/`.
 
 ### Components
 
-Shared UI lives in `src/components/ui/` — restyle `Card`, `Badge`, `Button`, `NavBar`, `Footer`, `Skeleton` etc. to change the look across the entire site. Page-specific components live in `src/components/public-page/<Domain>/` (e.g. `Landing/`, `Work/`, `Journal/`) — edit these to change the layout of individual sections.
+Shared UI lives in `src/components/ui/` — restyle `Card`, `Badge`, `Button`, `NavBar`, `Footer`, `ImagePicker`, `Skeleton` etc. to change the look across the entire site. Page-specific components live in `src/components/public-page/<Domain>/` (e.g. `Landing/`, `Work/`, `Journal/`) — edit these to change the layout of individual sections.
 
 ### Backup
 
