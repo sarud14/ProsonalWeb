@@ -36,7 +36,7 @@ export const WORK_LIST_CONFIG: AdminContentListConfig = {
   newLabel: 'New Work',
   listHref: '/admin/work',
   newHref: '/admin/work/new',
-  editHref: (id) => `/admin/work/${id}/edit`,
+  editHrefTemplate: '/admin/work/{id}/edit',
   gridTemplate: WORK_LIST_GRID,
 }
 
@@ -47,7 +47,7 @@ export const JOURNAL_LIST_CONFIG: AdminContentListConfig = {
   newLabel: 'New Journal',
   listHref: '/admin/journal',
   newHref: '/admin/journal/new',
-  editHref: (id) => `/admin/journal/${id}/edit`,
+  editHrefTemplate: '/admin/journal/{id}/edit',
   gridTemplate: JOURNAL_LIST_GRID,
 }
 
@@ -58,7 +58,7 @@ export const ENGINEERING_LIST_CONFIG: AdminContentListConfig = {
   newLabel: 'New Note',
   listHref: '/admin/engineering',
   newHref: '/admin/engineering/new',
-  editHref: (id) => `/admin/engineering/${id}/edit`,
+  editHrefTemplate: '/admin/engineering/{id}/edit',
   gridTemplate: ENGINEERING_LIST_GRID,
 }
 

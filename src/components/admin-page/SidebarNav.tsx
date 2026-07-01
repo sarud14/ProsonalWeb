@@ -5,14 +5,20 @@ import Link from 'next/link'
 import { ADMIN_NAV_ITEMS } from '@/constants/admin-nav'
 
 import { AdminUserMenu } from '@/components/admin-page/AdminUserMenu'
+import type { AdminSessionUser } from '@/types/auth.types'
 import { cn } from '@/lib/utils'
 
 interface SidebarNavProps {
   readonly activeKey: string
   readonly unreadCount: number
+  readonly user: AdminSessionUser
 }
 
-export function SidebarNav({ activeKey, unreadCount }: SidebarNavProps): React.JSX.Element {
+export function SidebarNav({
+  activeKey,
+  unreadCount,
+  user,
+}: SidebarNavProps): React.JSX.Element {
   return (
     <aside className="flex w-[232px] shrink-0 flex-col border-r border-sidebar-border bg-sidebar py-6">
       <div className="mb-4 border-b border-border px-6 pb-6">
@@ -54,7 +60,7 @@ export function SidebarNav({ activeKey, unreadCount }: SidebarNavProps): React.J
       </nav>
 
       <div className="mt-4 border-t border-border px-6 pt-4">
-        <AdminUserMenu showLabel />
+        <AdminUserMenu user={user} showLabel />
       </div>
     </aside>
   )

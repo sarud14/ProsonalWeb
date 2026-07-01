@@ -4,6 +4,7 @@ import { useCallback, useSyncExternalStore } from 'react'
 import { usePathname } from 'next/navigation'
 
 import type { AdminLayoutMode } from '@/types/admin-page.types'
+import type { AdminSessionUser } from '@/types/auth.types'
 
 import { ADMIN_LAYOUT_STORAGE_KEY, ADMIN_NAV_ITEMS } from '@/constants/admin-nav'
 
@@ -15,6 +16,7 @@ import { SplitNav } from '@/components/admin-page/SplitNav'
 interface AdminShellProps {
   readonly children: React.ReactNode
   readonly unreadCount?: number
+  readonly user: AdminSessionUser
 }
 
 function getActiveKey(pathname: string): string {
@@ -39,7 +41,11 @@ function getLayoutServerSnapshot(): AdminLayoutMode {
   return 'masthead'
 }
 
-export function AdminShell({ children, unreadCount = 0 }: AdminShellProps): React.JSX.Element {
+export function AdminShell({
+  children,
+  unreadCount = 0,
+  user,
+}: AdminShellProps): React.JSX.Element {
   const pathname = usePathname()
   const activeKey = getActiveKey(pathname)
 
@@ -53,12 +59,12 @@ export function AdminShell({ children, unreadCount = 0 }: AdminShellProps): Reac
   return (
     <div className="flex min-h-screen flex-col bg-background font-sans text-sm text-foreground">
       {layout === 'masthead' && (
-        <MastheadNav activeKey={activeKey} unreadCount={unreadCount} />
+        <MastheadNav activeKey={activeKey} unreadCount={unreadCount} user={user} />
       )}
 
       <div className="flex min-h-0 flex-1">
         {layout === 'sidebar' && (
-          <SidebarNav activeKey={activeKey} unreadCount={unreadCount} />
+          <SidebarNav activeKey={activeKey} unreadCount={unreadCount} user={user} />
         )}
 
         {layout === 'split' && (

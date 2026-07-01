@@ -12,16 +12,20 @@ function resolveAppHost(): string {
 }
 
 function resolveNextAuthUrl(port: string, appHost: string): string {
+  if (process.env.NODE_ENV !== 'production') {
+    // Next.js may bind a different port than PORT when the default is busy.
+    // Let Auth.js resolve the URL per request via trustHost instead of pinning here.
+    delete process.env.NEXTAUTH_URL
+    return ''
+  }
+
   const explicit = process.env.NEXTAUTH_URL?.trim()
   if (explicit && explicit.length > 0) {
     return explicit.replace(/\/$/, '')
   }
 
   const derived = `${appHost}:${port}`
-
-  // Auth.js reads process.env directly — keep derived URL in sync.
   process.env.NEXTAUTH_URL = derived
-
   return derived
 }
 
@@ -45,7 +49,9 @@ export const env = {
 } as const
 
 export function isAuthConfigured(): boolean {
-  return env.nextAuthSecret.length > 0 && env.nextAuthUrl.length > 0
+  if (env.nextAuthSecret.length === 0) return false
+  if (process.env.NODE_ENV !== 'production') return true
+  return env.nextAuthUrl.length > 0
 }
 
 export function isGithubAuthConfigured(): boolean {
