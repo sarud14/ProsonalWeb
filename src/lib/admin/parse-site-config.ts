@@ -1,6 +1,18 @@
 import type { SiteBrand } from '@/types/site-brand.types'
 import type { NavItem, SiteConfig } from '@/types/site.types'
 
+import {
+  DEFAULT_SITE_CONTACT,
+  DEFAULT_SITE_FOOTER,
+  DEFAULT_SITE_SEO,
+  DEFAULT_SITE_SOCIAL_LINKS,
+  parseSiteContact,
+  parseSiteFooter,
+  parseSiteSeo,
+  parseSiteSocialLinks,
+} from '@/lib/admin/site-settings'
+import { DEFAULT_SITE_THEME, parseSiteTheme } from '@/lib/admin/site-theme'
+
 export const DEFAULT_SITE_BRAND: SiteBrand = {
   name: 'Sarut Dumrongprechachan',
   role: 'Frontend Engineer',
@@ -44,21 +56,24 @@ export function parseSiteConfig(value: unknown): SiteConfig {
     return {
       brand: DEFAULT_SITE_BRAND,
       nav: [],
-      theme: {},
-      seo: {},
-      socialLinks: {},
-      contact: {},
+      seo: DEFAULT_SITE_SEO,
+      socialLinks: DEFAULT_SITE_SOCIAL_LINKS,
+      contact: DEFAULT_SITE_CONTACT,
+      footer: DEFAULT_SITE_FOOTER,
+      theme: DEFAULT_SITE_THEME,
     }
   }
 
   const nav = Array.isArray(value.nav) ? value.nav.filter(isNavItem) : []
+  const contact = parseSiteContact(value.contact)
 
   return {
     brand: parseSiteBrand(value.brand),
     nav,
-    theme: isRecord(value.theme) ? value.theme : {},
-    seo: isRecord(value.seo) ? value.seo : {},
-    socialLinks: isRecord(value.socialLinks) ? value.socialLinks : {},
-    contact: isRecord(value.contact) ? value.contact : {},
+    seo: parseSiteSeo(value.seo),
+    socialLinks: parseSiteSocialLinks(value.socialLinks),
+    contact,
+    footer: parseSiteFooter(value.footer, value.contact),
+    theme: parseSiteTheme(value.theme),
   }
 }

@@ -1,5 +1,12 @@
 import type { LandingHeroData } from '@/types/landing.types'
 import type { SiteBrand } from '@/types/site-brand.types'
+import type {
+  SiteContactSettings,
+  SiteFooterSettings,
+  SiteSeoSettings,
+  SiteSocialLink,
+  SiteThemeSettings,
+} from '@/types/site-settings.types'
 
 export interface NavItem {
   readonly key: string
@@ -24,8 +31,9 @@ export interface LandingPageData {
 export interface SiteConfig {
   readonly brand: SiteBrand
   readonly nav: readonly NavItem[]
-  readonly theme: Record<string, unknown>
-  readonly seo: Record<string, unknown>
-  readonly socialLinks: Record<string, unknown>
-  readonly contact: Record<string, unknown>
+  readonly seo: SiteSeoSettings
+  readonly socialLinks: readonly SiteSocialLink[]
+  readonly contact: SiteContactSettings
+  readonly footer: SiteFooterSettings
+  readonly theme: SiteThemeSettings
 }

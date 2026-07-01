@@ -4,9 +4,6 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 
 import { updatePage } from '@/actions/page.actions'
-import { getInitialsFromName } from '@/lib/format/get-initials-from-name'
-import { getSiteAvailabilityDisplay } from '@/constants/site-availability'
-import { cn } from '@/lib/utils'
 import { NavItemModal } from '@/components/admin-page/Pages/NavItemModal'
 import {
   AdminFormField,
@@ -17,11 +14,32 @@ import { FormSection } from '@/components/ui/FormSection'
 import { ReorderableList } from '@/components/ui/ReorderableList'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { Toast } from '@/components/ui/Toast'
+import { getSiteAvailabilityDisplay } from '@/constants/site-availability'
+import { getInitialsFromName } from '@/lib/format/get-initials-from-name'
+import { cn } from '@/lib/utils'
 import type { NavItemModalState, SitePageEditorProps } from '@/types/admin-pages.types'
 import type { NavItem, SiteConfig } from '@/types/site.types'
 import type { SiteBrand } from '@/types/site-brand.types'
+import type {
+  SiteContactSettings,
+  SiteFooterSettings,
+  SiteSeoSettings,
+  SiteSocialLink,
+  SiteThemeSettings,
+} from '@/types/site-settings.types'
+import {
+  DEFAULT_SITE_THEME,
+  DEFAULT_THEME_PICKER_HEX,
+  parseSiteTheme,
+  SITE_THEME_COLOR_FIELDS,
+  toThemePickerHex,
+} from '@/lib/admin/site-theme'
 
 interface ClientNavItem extends NavItem {
+  readonly clientId: string
+}
+
+interface ClientSocialLink extends SiteSocialLink {
   readonly clientId: string
 }
 
@@ -36,21 +54,57 @@ function toClientNav(nav: readonly NavItem[]): ClientNavItem[] {
   }))
 }
 
+function toClientSocial(links: readonly SiteSocialLink[]): ClientSocialLink[] {
+  return links.map((link, index) => ({
+    ...link,
+    clientId: `social-${link.label}-${index}`,
+  }))
+}
+
+function ThemeColorField({
+  label,
+  hint,
+  value,
+  pickerFallback,
+  onChange,
+}: {
+  readonly label: string
+  readonly hint: string
+  readonly value: string
+  readonly pickerFallback: string
+  readonly onChange: (value: string) => void
+}): React.JSX.Element {
+  const pickerValue = toThemePickerHex(value, pickerFallback)
+
+  return (
+    <AdminFormField label={label}>
+      <div className="flex flex-col gap-2">
+        <input
+          type="color"
+          value={pickerValue}
+          onChange={(e) => onChange(e.target.value)}
+          className="size-10 cursor-pointer rounded-md border border-border bg-transparent p-1"
+          aria-label={`${label} color picker`}
+        />
+        <p className="text-xs text-muted-foreground">{hint}</p>
+      </div>
+    </AdminFormField>
+  )
+}
+
 export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.Element {
   const router = useRouter()
   const [brand, setBrand] = useState<SiteBrand>(initialData.brand)
   const [nav, setNav] = useState<readonly ClientNavItem[]>(() => toClientNav(initialData.nav))
-  const [themeJson, setThemeJson] = useState(() => JSON.stringify(initialData.theme, null, 2))
-  const [seoJson, setSeoJson] = useState(() => JSON.stringify(initialData.seo, null, 2))
-  const [socialJson, setSocialJson] = useState(() =>
-    JSON.stringify(initialData.socialLinks, null, 2)
+  const [seo, setSeo] = useState<SiteSeoSettings>(initialData.seo)
+  const [socialLinks, setSocialLinks] = useState<readonly ClientSocialLink[]>(() =>
+    toClientSocial(initialData.socialLinks)
   )
-  const [contactJson, setContactJson] = useState(() =>
-    JSON.stringify(initialData.contact, null, 2)
-  )
+  const [contact, setContact] = useState<SiteContactSettings>(initialData.contact)
+  const [footer, setFooter] = useState<SiteFooterSettings>(initialData.footer)
+  const [theme, setTheme] = useState<SiteThemeSettings>(initialData.theme)
   const [modal, setModal] = useState<NavItemModalState | null>(null)
   const [toast, setToast] = useState<string | null>(null)
-  const [jsonError, setJsonError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
   const listItems = useMemo(
@@ -66,6 +120,16 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
         ),
       })),
     [nav]
+  )
+
+  const socialListItems = useMemo(
+    () =>
+      socialLinks.map((link) => ({
+        id: link.clientId,
+        primary: link.label || 'Social link',
+        secondary: link.url || 'No URL yet',
+      })),
+    [socialLinks]
   )
 
   const persist = useCallback(
@@ -85,21 +149,17 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
   )
 
   const handleSave = useCallback(() => {
-    try {
-      const config: SiteConfig = {
-        brand,
-        nav: normalizeNavOrders(nav.map(({ clientId: _id, ...item }) => item)),
-        theme: JSON.parse(themeJson) as Record<string, unknown>,
-        seo: JSON.parse(seoJson) as Record<string, unknown>,
-        socialLinks: JSON.parse(socialJson) as Record<string, unknown>,
-        contact: JSON.parse(contactJson) as Record<string, unknown>,
-      }
-      setJsonError(null)
-      void persist(config)
-    } catch {
-      setJsonError('Theme, SEO, social, or contact fields must be valid JSON')
+    const config: SiteConfig = {
+      brand,
+      nav: normalizeNavOrders(nav.map(({ clientId: _id, ...item }) => item)),
+      seo,
+      socialLinks: socialLinks.map(({ clientId: _id, ...link }) => link),
+      contact,
+      footer,
+      theme: parseSiteTheme(theme),
     }
-  }, [brand, contactJson, nav, persist, seoJson, socialJson, themeJson])
+    void persist(config)
+  }, [brand, contact, footer, nav, persist, seo, socialLinks, theme])
 
   const handleNavMove = useCallback((id: string, direction: 'up' | 'down') => {
     const index = nav.findIndex((item) => item.clientId === id)
@@ -113,6 +173,18 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
     setNav(toClientNav(next.map(({ clientId: _id, ...item }) => item)))
   }, [nav])
 
+  const handleSocialMove = useCallback((id: string, direction: 'up' | 'down') => {
+    const index = socialLinks.findIndex((link) => link.clientId === id)
+    if (index < 0) return
+
+    const swapIndex = direction === 'up' ? index - 1 : index + 1
+    if (swapIndex < 0 || swapIndex >= socialLinks.length) return
+
+    const next = [...socialLinks]
+    ;[next[index], next[swapIndex]] = [next[swapIndex], next[index]]
+    setSocialLinks(toClientSocial(next.map(({ clientId: _id, ...link }) => link)))
+  }, [socialLinks])
+
   const handleSaveNavItem = useCallback(
     (item: NavItemModalState['item']) => {
       if (modal?.isNew) {
@@ -124,11 +196,13 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
       } else if (modal?.itemKey) {
         setNav((current) =>
           toClientNav(
-            current.map((entry) =>
-              entry.clientId === modal.itemKey
-                ? { ...entry, ...item, key: entry.key }
-                : entry
-            ).map(({ clientId: _id, ...entry }) => entry)
+            current
+              .map((entry) =>
+                entry.clientId === modal.itemKey
+                  ? { ...entry, ...item, key: entry.key }
+                  : entry
+              )
+              .map(({ clientId: _id, ...entry }) => entry)
           )
         )
       }
@@ -193,6 +267,34 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
           </AdminFormField>
         </FormSection>
 
+        <FormSection label="Theme colors" columns="1fr 1fr">
+          <p className="col-span-full mb-1 text-[13px] text-muted-foreground">
+            Accent, background, text, and status colors — the grid overlay stays fixed in the
+            design. Save, then refresh the public site to see changes.
+          </p>
+          {SITE_THEME_COLOR_FIELDS.map((field) => (
+            <ThemeColorField
+              key={field.key}
+              label={field.label}
+              hint={field.hint}
+              value={theme[field.key]}
+              pickerFallback={DEFAULT_THEME_PICKER_HEX[field.key]}
+              onChange={(value) =>
+                setTheme((current) => ({ ...current, [field.key]: value }))
+              }
+            />
+          ))}
+          <div className="col-span-full">
+            <button
+              type="button"
+              onClick={() => setTheme(DEFAULT_SITE_THEME)}
+              className="cursor-pointer rounded-lg border border-border bg-secondary px-3 py-2 text-xs font-semibold text-foreground"
+            >
+              Reset to defaults
+            </button>
+          </div>
+        </FormSection>
+
         <ReorderableList
           label="Navigation"
           items={listItems}
@@ -228,52 +330,128 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
           )}
         />
 
-        <FormSection label="Advanced (JSON)" columns="1fr">
-          <AdminFormField label="Theme">
+        <FormSection label="SEO" columns="1fr">
+          <AdminFormField label="Site title" required>
+            <input
+              className={adminInputClassName}
+              value={seo.title}
+              onChange={(e) => setSeo((current) => ({ ...current, title: e.target.value }))}
+            />
+          </AdminFormField>
+          <AdminFormField label="Description" required>
             <textarea
               className={adminTextareaClassName}
-              rows={4}
-              value={themeJson}
+              rows={3}
+              value={seo.description}
+              onChange={(e) => setSeo((current) => ({ ...current, description: e.target.value }))}
+            />
+          </AdminFormField>
+          <AdminFormField label="Social preview image URL (optional)">
+            <input
+              className={adminInputClassName}
+              value={seo.ogImageUrl ?? ''}
+              placeholder="https://…"
               onChange={(e) => {
-                setThemeJson(e.target.value)
-                setJsonError(null)
+                const value = e.target.value.trim()
+                setSeo((current) => ({
+                  ...current,
+                  ogImageUrl: value.length > 0 ? value : null,
+                }))
               }}
             />
           </AdminFormField>
-          <AdminFormField label="SEO">
-            <textarea
-              className={adminTextareaClassName}
-              rows={4}
-              value={seoJson}
-              onChange={(e) => {
-                setSeoJson(e.target.value)
-                setJsonError(null)
-              }}
+        </FormSection>
+
+        <ReorderableList
+          label="Social links"
+          items={socialListItems}
+          onMoveUp={(id) => handleSocialMove(id, 'up')}
+          onMoveDown={(id) => handleSocialMove(id, 'down')}
+          onRemove={(id) =>
+            setSocialLinks((current) => current.filter((link) => link.clientId !== id))
+          }
+          onAdd={() =>
+            setSocialLinks((current) => [
+              ...current,
+              { clientId: `social-new-${Date.now()}`, label: '', url: '' },
+            ])
+          }
+          renderExtra={(item) => (
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <input
+                className={adminInputClassName}
+                value={socialLinks.find((entry) => entry.clientId === item.id)?.label ?? ''}
+                placeholder="GitHub"
+                onChange={(e) =>
+                  setSocialLinks((current) =>
+                    current.map((entry) =>
+                      entry.clientId === item.id ? { ...entry, label: e.target.value } : entry
+                    )
+                  )
+                }
+              />
+              <input
+                className={adminInputClassName}
+                value={socialLinks.find((entry) => entry.clientId === item.id)?.url ?? ''}
+                placeholder="https://github.com/…"
+                onChange={(e) =>
+                  setSocialLinks((current) =>
+                    current.map((entry) =>
+                      entry.clientId === item.id ? { ...entry, url: e.target.value } : entry
+                    )
+                  )
+                }
+              />
+            </div>
+          )}
+        />
+
+        <FormSection label="Contact" columns="1fr 1fr">
+          <AdminFormField label="Email">
+            <input
+              className={adminInputClassName}
+              type="email"
+              value={contact.email}
+              placeholder="hello@example.com"
+              onChange={(e) => setContact((current) => ({ ...current, email: e.target.value }))}
             />
           </AdminFormField>
-          <AdminFormField label="Social links">
-            <textarea
-              className={adminTextareaClassName}
-              rows={4}
-              value={socialJson}
-              onChange={(e) => {
-                setSocialJson(e.target.value)
-                setJsonError(null)
-              }}
+          <AdminFormField label="Location">
+            <input
+              className={adminInputClassName}
+              value={contact.location}
+              placeholder="Australia — Remote"
+              onChange={(e) => setContact((current) => ({ ...current, location: e.target.value }))}
             />
           </AdminFormField>
-          <AdminFormField label="Contact">
-            <textarea
-              className={adminTextareaClassName}
-              rows={4}
-              value={contactJson}
-              onChange={(e) => {
-                setContactJson(e.target.value)
-                setJsonError(null)
-              }}
+        </FormSection>
+
+        <FormSection label="Footer" columns="1fr">
+          <AdminFormField label="Copyright name" required>
+            <input
+              className={adminInputClassName}
+              value={footer.copyrightName}
+              onChange={(e) =>
+                setFooter((current) => ({ ...current, copyrightName: e.target.value }))
+              }
             />
           </AdminFormField>
-          {jsonError && <p className="text-sm text-primary">{jsonError}</p>}
+          <AdminFormField label="Center tagline" required>
+            <input
+              className={adminInputClassName}
+              value={footer.tagline}
+              onChange={(e) => setFooter((current) => ({ ...current, tagline: e.target.value }))}
+            />
+          </AdminFormField>
+          <AdminFormField label="Build label" required>
+            <input
+              className={adminInputClassName}
+              value={footer.buildLabel}
+              onChange={(e) =>
+                setFooter((current) => ({ ...current, buildLabel: e.target.value }))
+              }
+            />
+          </AdminFormField>
         </FormSection>
       </div>
 

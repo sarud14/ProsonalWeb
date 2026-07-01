@@ -6,6 +6,8 @@ import type { Metadata } from 'next'
 import { Poppins, Geist_Mono } from 'next/font/google'
 
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
+import { buildThemeCssVars, shouldApplyCustomTheme } from '@/lib/admin/site-theme'
+import { getSiteSeo, getSiteTheme } from '@/lib/content/site-config'
 import { AppProvider } from '@/providers/AppProvider'
 
 const poppins = Poppins({
@@ -19,20 +21,38 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
-export const metadata: Metadata = {
-  title: 'FEOps Kit',
-  description: 'A reusable Next.js-based frontend engineering portfolio system',
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSiteSeo()
+
+  return {
+    title: {
+      default: seo.title,
+      template: `%s — ${seo.title}`,
+    },
+    description: seo.description,
+    openGraph: seo.ogImageUrl
+      ? {
+          title: seo.title,
+          description: seo.description,
+          images: [{ url: seo.ogImageUrl }],
+        }
+      : undefined,
+  }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
-}>): React.JSX.Element {
+}>): Promise<React.JSX.Element> {
+  const theme = await getSiteTheme()
+  const themeStyle = shouldApplyCustomTheme(theme) ? buildThemeCssVars(theme) : undefined
+
   return (
     <html
       lang="en"
       className={`${poppins.variable} ${geistMono.variable} dark`}
+      style={themeStyle}
     >
       <body className="min-h-dvh flex flex-col antialiased">
         <AppProvider>

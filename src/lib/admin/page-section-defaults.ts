@@ -7,6 +7,13 @@ import { LANDING_MODULES, LANDING_STATS, LANDING_TECH_STACK } from '@/constants/
 import { DEFAULT_LANDING_HERO } from '@/lib/admin/landing-hero'
 import { STACK_PAGE_DATA } from '@/constants/stack-page-data'
 import { DEFAULT_SITE_BRAND } from '@/lib/admin/parse-site-config'
+import {
+  DEFAULT_SITE_CONTACT,
+  DEFAULT_SITE_FOOTER,
+  DEFAULT_SITE_SEO,
+  DEFAULT_SITE_SOCIAL_LINKS,
+} from '@/lib/admin/site-settings'
+import { DEFAULT_SITE_THEME } from '@/lib/admin/site-theme'
 
 export const DEFAULT_LANDING_PAGE_DATA: LandingPageData = {
   hero: DEFAULT_LANDING_HERO,
@@ -46,10 +53,11 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
     { key: 'stack', label: 'Stack', href: '/stack', enabled: true, order: 4 },
     { key: 'resume', label: 'Résumé', href: '/resume', enabled: true, order: 5 },
   ],
-  theme: {},
-  seo: {},
-  socialLinks: {},
-  contact: {},
+  theme: DEFAULT_SITE_THEME,
+  seo: DEFAULT_SITE_SEO,
+  socialLinks: DEFAULT_SITE_SOCIAL_LINKS,
+  contact: DEFAULT_SITE_CONTACT,
+  footer: DEFAULT_SITE_FOOTER,
 }
 
 export function getLandingBlockHeadline(block: LandingBlock): string {
