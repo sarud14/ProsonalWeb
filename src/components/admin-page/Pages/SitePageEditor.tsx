@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 
 import { updatePage } from '@/actions/page.actions'
+import { MediaPickerDialog } from '@/components/admin-page/shared/MediaPickerDialog'
 import { NavItemModal } from '@/components/admin-page/Pages/NavItemModal'
 import {
   AdminFormField,
@@ -11,11 +12,13 @@ import {
   adminTextareaClassName,
 } from '@/components/admin-page/shared/AdminFormField'
 import { FormSection } from '@/components/ui/FormSection'
+import { ImagePicker } from '@/components/ui/ImagePicker'
 import { ReorderableList } from '@/components/ui/ReorderableList'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { Toast } from '@/components/ui/Toast'
 import { getSiteAvailabilityDisplay } from '@/constants/site-availability'
 import { getInitialsFromName } from '@/lib/format/get-initials-from-name'
+import { uploadMediaFile } from '@/lib/media/client-upload'
 import { cn } from '@/lib/utils'
 import type { NavItemModalState, SitePageEditorProps } from '@/types/admin-pages.types'
 import type { NavItem, SiteConfig } from '@/types/site.types'
@@ -92,7 +95,11 @@ function ThemeColorField({
   )
 }
 
-export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.Element {
+export function SitePageEditor({
+  initialData,
+  media,
+  uploadEnabled,
+}: SitePageEditorProps): React.JSX.Element {
   const router = useRouter()
   const [brand, setBrand] = useState<SiteBrand>(initialData.brand)
   const [nav, setNav] = useState<readonly ClientNavItem[]>(() => toClientNav(initialData.nav))
@@ -104,6 +111,8 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
   const [footer, setFooter] = useState<SiteFooterSettings>(initialData.footer)
   const [theme, setTheme] = useState<SiteThemeSettings>(initialData.theme)
   const [modal, setModal] = useState<NavItemModalState | null>(null)
+  const [ogMediaOpen, setOgMediaOpen] = useState(false)
+  const [isOgUploading, setIsOgUploading] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
@@ -184,6 +193,36 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
     ;[next[index], next[swapIndex]] = [next[swapIndex], next[index]]
     setSocialLinks(toClientSocial(next.map(({ clientId: _id, ...link }) => link)))
   }, [socialLinks])
+
+  const handleOgImageUpload = useCallback(
+    async (file: File) => {
+      setIsOgUploading(true)
+      const result = await uploadMediaFile(file, 'site')
+      setIsOgUploading(false)
+
+      if (!result.success) {
+        setToast(result.error)
+        return
+      }
+
+      setSeo((current) => ({ ...current, ogImageUrl: result.url }))
+      router.refresh()
+    },
+    [router]
+  )
+
+  const handleOgImageSelect = useCallback(
+    (mediaId: string) => {
+      const asset = media.find((item) => item.id === mediaId)
+      if (!asset) {
+        setToast('Selected media could not be found.')
+        return
+      }
+
+      setSeo((current) => ({ ...current, ogImageUrl: asset.url }))
+    },
+    [media]
+  )
 
   const handleSaveNavItem = useCallback(
     (item: NavItemModalState['item']) => {
@@ -346,18 +385,15 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
               onChange={(e) => setSeo((current) => ({ ...current, description: e.target.value }))}
             />
           </AdminFormField>
-          <AdminFormField label="Social preview image URL (optional)">
-            <input
-              className={adminInputClassName}
-              value={seo.ogImageUrl ?? ''}
-              placeholder="https://…"
-              onChange={(e) => {
-                const value = e.target.value.trim()
-                setSeo((current) => ({
-                  ...current,
-                  ogImageUrl: value.length > 0 ? value : null,
-                }))
-              }}
+          <AdminFormField label="Social preview image (optional)">
+            <ImagePicker
+              imageUrl={seo.ogImageUrl}
+              altText="Social preview"
+              uploadEnabled={uploadEnabled}
+              isUploading={isOgUploading}
+              onUpload={handleOgImageUpload}
+              onPickFromMedia={() => setOgMediaOpen(true)}
+              onRemove={() => setSeo((current) => ({ ...current, ogImageUrl: null }))}
             />
           </AdminFormField>
         </FormSection>
@@ -474,6 +510,13 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
           onSave={handleSaveNavItem}
         />
       )}
+
+      <MediaPickerDialog
+        open={ogMediaOpen}
+        media={media}
+        onSelect={handleOgImageSelect}
+        onClose={() => setOgMediaOpen(false)}
+      />
 
       <Toast message={toast ?? ''} open={toast !== null} onClose={() => setToast(null)} />
     </div>

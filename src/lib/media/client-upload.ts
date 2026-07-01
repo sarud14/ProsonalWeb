@@ -5,7 +5,7 @@ import { upload } from '@vercel/blob/client'
 import { createMedia } from '@/actions/media.actions'
 
 export type MediaUploadResult =
-  | { readonly success: true; readonly id: string }
+  | { readonly success: true; readonly id: string; readonly url: string }
   | { readonly success: false; readonly error: string }
 
 export async function uploadMediaFile(
@@ -31,7 +31,7 @@ export async function uploadMediaFile(
       return { success: false, error: result.error }
     }
 
-    return { success: true, id: result.data.id }
+    return { success: true, id: result.data.id, url: result.data.url }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Upload failed'
     return { success: false, error: message }

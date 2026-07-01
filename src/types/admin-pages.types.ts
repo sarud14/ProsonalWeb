@@ -1,9 +1,12 @@
+import type { AdminMediaOption } from '@/types/admin-content.types'
 import type { FocusPageData } from '@/types/focus.types'
 import type { LandingBlock, LandingPageData, NavItem, SiteConfig } from '@/types/site.types'
 import type { StackGroup, StackPageData } from '@/types/stack.types'
 
 export interface LandingPageEditorProps {
   readonly initialData: LandingPageData
+  readonly media: readonly AdminMediaOption[]
+  readonly uploadEnabled: boolean
 }
 
 export interface FocusPageEditorProps {
@@ -16,6 +19,8 @@ export interface StackPageEditorProps {
 
 export interface SitePageEditorProps {
   readonly initialData: SiteConfig
+  readonly media: readonly AdminMediaOption[]
+  readonly uploadEnabled: boolean
 }
 
 export interface LandingBlockModalState {

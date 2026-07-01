@@ -1,15 +1,21 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 
+import { MediaPickerDialog } from '@/components/admin-page/shared/MediaPickerDialog'
 import {
   AdminFormField,
   adminInputClassName,
   adminTextareaClassName,
 } from '@/components/admin-page/shared/AdminFormField'
 import { FormSection } from '@/components/ui/FormSection'
+import { ImagePicker } from '@/components/ui/ImagePicker'
 import { ReorderableList } from '@/components/ui/ReorderableList'
 import { TagInput } from '@/components/ui/TagInput'
+import { Toast } from '@/components/ui/Toast'
+import { uploadMediaFile } from '@/lib/media/client-upload'
+import type { AdminMediaOption } from '@/types/admin-content.types'
 import type { LandingFocusItem, LandingHeroData } from '@/types/landing.types'
 
 interface ClientMetaItem extends LandingFocusItem {
@@ -18,6 +24,8 @@ interface ClientMetaItem extends LandingFocusItem {
 
 interface LandingHeroEditorProps {
   readonly hero: LandingHeroData
+  readonly media: readonly AdminMediaOption[]
+  readonly uploadEnabled: boolean
   readonly isSaving: boolean
   readonly onSave: (hero: LandingHeroData) => void
 }
@@ -31,13 +39,19 @@ function toClientMeta(items: readonly LandingFocusItem[]): ClientMetaItem[] {
 
 export function LandingHeroEditor({
   hero: initialHero,
+  media,
+  uploadEnabled,
   isSaving,
   onSave,
 }: LandingHeroEditorProps): React.JSX.Element {
+  const router = useRouter()
   const [hero, setHero] = useState<LandingHeroData>(initialHero)
   const [metaItems, setMetaItems] = useState<readonly ClientMetaItem[]>(() =>
     toClientMeta(initialHero.metaItems)
   )
+  const [profileMediaOpen, setProfileMediaOpen] = useState(false)
+  const [isProfileUploading, setIsProfileUploading] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
 
   const handleSave = useCallback(() => {
     onSave({
@@ -57,6 +71,48 @@ export function LandingHeroEditor({
     ;[next[index], next[swapIndex]] = [next[swapIndex], next[index]]
     setMetaItems(next)
   }, [metaItems])
+
+  const handleProfileImageUpload = useCallback(
+    async (file: File) => {
+      setIsProfileUploading(true)
+      const result = await uploadMediaFile(file, 'landing')
+      setIsProfileUploading(false)
+
+      if (!result.success) {
+        setToast(result.error)
+        return
+      }
+
+      setHero((current) => ({
+        ...current,
+        profileImageUrl: result.url,
+        profileImageAlt:
+          current.profileImageAlt.trim().length > 0
+            ? current.profileImageAlt
+            : file.name.replace(/\.[^.]+$/, ''),
+      }))
+      router.refresh()
+    },
+    [router]
+  )
+
+  const handleProfileImageSelect = useCallback(
+    (mediaId: string) => {
+      const asset = media.find((item) => item.id === mediaId)
+      if (!asset) {
+        setToast('Selected media could not be found.')
+        return
+      }
+
+      setHero((current) => ({
+        ...current,
+        profileImageUrl: asset.url,
+        profileImageAlt:
+          current.profileImageAlt.trim().length > 0 ? current.profileImageAlt : asset.alt,
+      }))
+    },
+    [media]
+  )
 
   return (
     <div className="mb-8 flex flex-col gap-6 rounded-xl border border-border bg-card p-6">
@@ -177,18 +233,15 @@ export function LandingHeroEditor({
             onChange={(e) => setHero((current) => ({ ...current, profileStatus: e.target.value }))}
           />
         </AdminFormField>
-        <AdminFormField label="Image URL (optional)">
-          <input
-            className={adminInputClassName}
-            value={hero.profileImageUrl ?? ''}
-            placeholder="https://… or /uploads/…"
-            onChange={(e) => {
-              const value = e.target.value.trim()
-              setHero((current) => ({
-                ...current,
-                profileImageUrl: value.length > 0 ? value : null,
-              }))
-            }}
+        <AdminFormField label="Profile image (optional)" span="1 / -1">
+          <ImagePicker
+            imageUrl={hero.profileImageUrl}
+            altText={hero.profileImageAlt}
+            uploadEnabled={uploadEnabled}
+            isUploading={isProfileUploading}
+            onUpload={handleProfileImageUpload}
+            onPickFromMedia={() => setProfileMediaOpen(true)}
+            onRemove={() => setHero((current) => ({ ...current, profileImageUrl: null }))}
           />
         </AdminFormField>
         <AdminFormField label="Image alt text" span="1 / -1">
@@ -293,12 +346,21 @@ export function LandingHeroEditor({
         <button
           type="button"
           onClick={handleSave}
-          disabled={isSaving}
+          disabled={isSaving || isProfileUploading}
           className="cursor-pointer rounded-lg bg-primary px-[22px] py-3 text-[13px] font-bold text-primary-foreground disabled:opacity-50"
         >
           Save hero
         </button>
       </div>
+
+      <MediaPickerDialog
+        open={profileMediaOpen}
+        media={media}
+        onSelect={handleProfileImageSelect}
+        onClose={() => setProfileMediaOpen(false)}
+      />
+
+      <Toast message={toast ?? ''} open={toast !== null} onClose={() => setToast(null)} />
     </div>
   )
 }

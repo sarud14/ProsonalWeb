@@ -27,9 +27,8 @@ export async function POST(request: Request): Promise<NextResponse> {
           maximumSizeInBytes: MAX_FILE_SIZE_BYTES,
         }
       },
-      onUploadCompleted: async () => {
-        // Metadata saved client-side via createMedia action after upload
-      },
+      // Metadata is saved client-side via createMedia action after upload.
+      // Keep this route token-only to avoid requiring Vercel callback URL config in local dev.
     })
 
     return NextResponse.json(jsonResponse)
