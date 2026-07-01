@@ -2,6 +2,7 @@ import { LANDING_MODULES } from '@/constants/landing'
 import { LandingReveal } from "@/components/public-page/Landing/LandingReveal";
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import type { LandingModule } from '@/types/landing.types'
 import {
   LANDING_MOTION_MODULES_HEADER_DELAY_MS,
   LANDING_MOTION_MODULES_ITEM_BASE_DELAY_MS,
@@ -11,7 +12,13 @@ import Link from "next/link";
 const MODULE_CELL_CLASS =
   "flex flex-col gap-3.5 border-b border-white/[0.07] max-md:last:border-b-0 md:border-r md:[&:nth-child(2n)]:border-r-0 md:[&:nth-last-child(-n+2)]:border-b-0 lg:border-r lg:[&:nth-child(2n)]:border-r lg:[&:nth-child(3n)]:border-r-0 lg:[&:nth-last-child(-n+2)]:border-b lg:[&:nth-last-child(-n+3)]:border-b-0";
 
-export default function ModulesSection(): React.JSX.Element {
+interface ModulesSectionProps {
+  readonly items?: readonly LandingModule[]
+}
+
+export default function ModulesSection({
+  items = LANDING_MODULES,
+}: ModulesSectionProps): React.JSX.Element {
   return (
     <section id="modules" className="pt-20 pb-10">
       <Container className="max-w-[1240px] px-7">
@@ -23,7 +30,7 @@ export default function ModulesSection(): React.JSX.Element {
           />
         </LandingReveal>
         <div className="grid grid-cols-1 border border-white/[0.09] md:grid-cols-2 lg:grid-cols-3">
-          {LANDING_MODULES.map((mod, index) => (
+          {items.map((mod, index) => (
             <LandingReveal
               key={mod.num}
               className={MODULE_CELL_CLASS}

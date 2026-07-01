@@ -1,12 +1,10 @@
 import { Container } from '@/components/ui/Container'
 import { PageRouteHeader } from '@/components/ui/PageRouteHeader'
-import {
-  getStackToolCount,
-  STACK_PAGE_DATA,
-} from '@/constants/stack-page-data'
+import { getStackToolCount } from '@/constants/stack-page-data'
+import type { StackPageViewProps } from '@/types/stack.types'
 
-export function StackPageView(): React.JSX.Element {
-  const { groups } = STACK_PAGE_DATA
+export function StackPageView({ data }: StackPageViewProps): React.JSX.Element {
+  const { groups } = data
   const toolCount = getStackToolCount(groups)
   const trailingLabel = `${String(toolCount).padStart(2, '0')} TOOLS`
 

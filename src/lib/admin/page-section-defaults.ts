@@ -3,10 +3,13 @@ import type { LandingBlock, LandingPageData, SiteConfig } from '@/types/site.typ
 import type { StackPageData } from '@/types/stack.types'
 
 import { FOCUS_PAGE_DATA } from '@/constants/focus-page-data'
-import { LANDING_FOCUS_ITEMS, LANDING_MODULES, LANDING_STATS, LANDING_TECH_STACK } from '@/constants/landing'
+import { LANDING_MODULES, LANDING_STATS, LANDING_TECH_STACK } from '@/constants/landing'
+import { DEFAULT_LANDING_HERO } from '@/lib/admin/landing-hero'
 import { STACK_PAGE_DATA } from '@/constants/stack-page-data'
+import { DEFAULT_SITE_BRAND } from '@/lib/admin/parse-site-config'
 
 export const DEFAULT_LANDING_PAGE_DATA: LandingPageData = {
+  hero: DEFAULT_LANDING_HERO,
   blocks: [
     {
       type: 'stats',
@@ -26,12 +29,6 @@ export const DEFAULT_LANDING_PAGE_DATA: LandingPageData = {
       order: 2,
       props: { items: [...LANDING_TECH_STACK] },
     },
-    {
-      type: 'focusItems',
-      enabled: true,
-      order: 3,
-      props: { items: [...LANDING_FOCUS_ITEMS] },
-    },
   ],
 }
 
@@ -40,6 +37,7 @@ export const DEFAULT_FOCUS_PAGE_DATA: FocusPageData = FOCUS_PAGE_DATA
 export const DEFAULT_STACK_PAGE_DATA: StackPageData = STACK_PAGE_DATA
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
+  brand: DEFAULT_SITE_BRAND,
   nav: [
     { key: 'work', label: 'Work', href: '/work', enabled: true, order: 0 },
     { key: 'engineering', label: 'Engineering', href: '/engineering', enabled: true, order: 1 },
@@ -70,10 +68,6 @@ export function getLandingBlockHeadline(block: LandingBlock): string {
       return Array.isArray(items) && typeof items[0] === 'string'
         ? `${items.slice(0, 2).join(', ')}…`
         : 'Tech stack'
-    case 'focusItems':
-      return Array.isArray(items) && items[0] && typeof items[0] === 'object' && 'value' in items[0]
-        ? String((items[0] as { value: string }).value)
-        : 'Focus items'
     default:
       return block.type
   }

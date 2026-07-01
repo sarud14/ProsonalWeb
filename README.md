@@ -282,6 +282,7 @@ Set `CONTENT_SOURCE="db"` in `.env` — this swaps the implementation behind `li
 | `NEXTAUTH_SECRET` | Only if using `/admin` auth | Session encryption secret |
 | `NEXTAUTH_URL` | Optional in dev | Override base app URL; if empty, derived as `APP_HOST:PORT` via `src/env.ts` |
 | `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | Only if using GitHub login | GitHub OAuth credentials |
+| `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | Only if using Google login | Google OAuth credentials |
 | `CONTENT_SOURCE` | No (defaults to `mdx`) | `mdx` or `db` |
 | `BLOB_READ_WRITE_TOKEN` | Only if using media uploads | Vercel Blob storage token |
 
@@ -298,25 +299,79 @@ Set `CONTENT_SOURCE="db"` in `.env` — this swaps the implementation behind `li
 | `yarn test` | Run Vitest tests |
 | `npx prisma generate` | Generate Prisma client types |
 | `npx prisma migrate dev` | Run database migrations |
+| `yarn prisma:migrate:deploy` | Apply migrations to production DB |
 | `npx prisma db seed` | Seed database from MDX + constants |
+| `yarn smoke:web` | Smoke-test public routes + `/api/health` (pass base URL as arg) |
 | `npx prisma studio` | Open Prisma data browser |
 | `npx tsx scripts/export-to-mdx.ts` | Export DB → MDX/JSON backup |
 
 ---
 
-## 8. Deploy to Vercel
+## 8. Deploy to Vercel + CMS integration flow
 
-1. Push your repo to GitHub.
+### 8.1 One-time Vercel setup
+
+1. Push your repo to GitHub ( branch or merge to `main`).
 2. Go to [vercel.com/new](https://vercel.com/new) and import the repo.
-3. If using the database, add the same env vars from `.env` into **Project Settings → Environment Variables**.
-4. Set `NEXTAUTH_URL` to your production URL (e.g. `https://yourname.vercel.app`).
-5. Deploy.
+3. Add env vars from `.env` into **Project Settings → Environment Variables** (Production + Preview):
 
-If using a database, run the migration against production once:
+| Variable | Production value |
+|---|---|
+| `DATABASE_URL` | Supabase pooler `6543` + `?pgbouncer=true` |
+| `DIRECT_URL` | Supabase session/direct `5432` |
+| `NEXTAUTH_SECRET` | `openssl rand -base64 32` |
+| `NEXTAUTH_URL` | `https://your-domain.vercel.app` (no trailing slash) |
+| `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | GitHub OAuth app |
+| `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | Google OAuth client |
+| `CONTENT_SOURCE` | `db` |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob → Storage → token |
+
+4. **OAuth callback URLs** (add every domain you deploy to):
+
+| Provider | Callback |
+|---|---|
+| GitHub | `https://your-domain.vercel.app/api/auth/callback/github` |
+| Google | `https://your-domain.vercel.app/api/auth/callback/google` |
+
+5. Provision the production database (run locally against prod `DIRECT_URL`):
 
 ```bash
-npx prisma migrate deploy
+yarn prisma:migrate:deploy
+yarn prisma:seed
 ```
+
+> Migrations are local-only in this repo — apply per environment with `yarn prisma:migrate:deploy`, not via git.
+
+6. Deploy. After deploy, verify:
+
+```bash
+yarn smoke:web https://your-domain.vercel.app
+```
+
+`GET /api/health` should return `"ok": true`, `"contentSource": "db"`, `"database": "connected"`.
+
+### 8.2 End-to-end CMS flow (manual browser check)
+
+| Step | Admin | Public verify |
+|---|---|---|
+| **Login** | `/login` → GitHub or Google | — |
+| **CRUD** | `/admin/work` → New → Save → **Publish** | `/work` shows item |
+| **Journal / Engineering** | Same pattern under `/admin/journal`, `/admin/engineering` | `/journal`, `/engineering` |
+| **Resume** | `/admin/resume` → edit profile → Save | `/resume` + `/api/resume/pdf` |
+| **Media** | `/admin/media` → upload image (needs Blob token) | Use in work/journal cover |
+| **Publish** | Toggle Publish in content list or form | Draft hidden on public site |
+
+Draft content stays admin-only; only `PUBLISHED` rows appear on public pages when `CONTENT_SOURCE=db`.
+
+### 8.3 Local smoke test (before deploy)
+
+```bash
+yarn dev
+# in another terminal:
+yarn smoke:web http://localhost:3000
+```
+
+Adjust the port if Next.js picks another (e.g. `3001`).
 
 ---
 

@@ -4,9 +4,13 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 
 import { updatePage } from '@/actions/page.actions'
+import { getInitialsFromName } from '@/lib/format/get-initials-from-name'
+import { getSiteAvailabilityDisplay } from '@/constants/site-availability'
+import { cn } from '@/lib/utils'
 import { NavItemModal } from '@/components/admin-page/Pages/NavItemModal'
 import {
   AdminFormField,
+  adminInputClassName,
   adminTextareaClassName,
 } from '@/components/admin-page/shared/AdminFormField'
 import { FormSection } from '@/components/ui/FormSection'
@@ -15,6 +19,7 @@ import { SectionHeading } from '@/components/ui/SectionHeading'
 import { Toast } from '@/components/ui/Toast'
 import type { NavItemModalState, SitePageEditorProps } from '@/types/admin-pages.types'
 import type { NavItem, SiteConfig } from '@/types/site.types'
+import type { SiteBrand } from '@/types/site-brand.types'
 
 interface ClientNavItem extends NavItem {
   readonly clientId: string
@@ -33,6 +38,7 @@ function toClientNav(nav: readonly NavItem[]): ClientNavItem[] {
 
 export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.Element {
   const router = useRouter()
+  const [brand, setBrand] = useState<SiteBrand>(initialData.brand)
   const [nav, setNav] = useState<readonly ClientNavItem[]>(() => toClientNav(initialData.nav))
   const [themeJson, setThemeJson] = useState(() => JSON.stringify(initialData.theme, null, 2))
   const [seoJson, setSeoJson] = useState(() => JSON.stringify(initialData.seo, null, 2))
@@ -81,6 +87,7 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
   const handleSave = useCallback(() => {
     try {
       const config: SiteConfig = {
+        brand,
         nav: normalizeNavOrders(nav.map(({ clientId: _id, ...item }) => item)),
         theme: JSON.parse(themeJson) as Record<string, unknown>,
         seo: JSON.parse(seoJson) as Record<string, unknown>,
@@ -92,7 +99,7 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
     } catch {
       setJsonError('Theme, SEO, social, or contact fields must be valid JSON')
     }
-  }, [contactJson, nav, persist, seoJson, socialJson, themeJson])
+  }, [brand, contactJson, nav, persist, seoJson, socialJson, themeJson])
 
   const handleNavMove = useCallback((id: string, direction: 'up' | 'down') => {
     const index = nav.findIndex((item) => item.clientId === id)
@@ -135,6 +142,57 @@ export function SitePageEditor({ initialData }: SitePageEditorProps): React.JSX.
       <SectionHeading kicker="Page editor" title="Site config" />
 
       <div className="flex flex-col gap-6">
+        <FormSection label="Navbar brand" columns="1fr 1fr">
+          <AdminFormField label="Name" required>
+            <input
+              className={adminInputClassName}
+              value={brand.name}
+              onChange={(e) => setBrand((current) => ({ ...current, name: e.target.value }))}
+            />
+          </AdminFormField>
+          <AdminFormField label="Initials preview">
+            <div className="flex h-10 items-center font-mono text-sm text-muted-foreground">
+              {getInitialsFromName(brand.name)}
+            </div>
+          </AdminFormField>
+          <AdminFormField label="Role" required span="1 / -1">
+            <input
+              className={adminInputClassName}
+              value={brand.role}
+              onChange={(e) => setBrand((current) => ({ ...current, role: e.target.value }))}
+            />
+          </AdminFormField>
+          <AdminFormField label="Site availability" span="1 / -1">
+            <label className="flex cursor-pointer items-center gap-3 text-sm text-foreground">
+              <input
+                type="checkbox"
+                checked={brand.isAvailable}
+                onChange={(e) =>
+                  setBrand((current) => ({ ...current, isAvailable: e.target.checked }))
+                }
+                className="size-4 accent-primary"
+              />
+              <span
+                className={cn(
+                  'flex items-center gap-2 font-mono text-[11px] tracking-[0.08em] uppercase',
+                  getSiteAvailabilityDisplay(brand.isAvailable).textClassName
+                )}
+              >
+                <span
+                  className={cn(
+                    'size-1.5 rounded-full',
+                    getSiteAvailabilityDisplay(brand.isAvailable).dotClassName
+                  )}
+                />
+                {getSiteAvailabilityDisplay(brand.isAvailable).label}
+              </span>
+            </label>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Shown in the public navbar — green when open, red when closed.
+            </p>
+          </AdminFormField>
+        </FormSection>
+
         <ReorderableList
           label="Navigation"
           items={listItems}

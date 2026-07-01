@@ -10,7 +10,9 @@
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:seed": "prisma db seed",
+    "smoke:web": "bash scripts/smoke-web-flow.sh",
     "type-check": "prisma generate && tsc --noEmit && tsc --noEmit -p prisma",
     "test": "vitest run"
   },

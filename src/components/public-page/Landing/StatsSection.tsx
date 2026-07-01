@@ -1,17 +1,24 @@
 import { LANDING_STATS } from '@/constants/landing'
 import { LandingReveal } from "@/components/public-page/Landing/LandingReveal";
 import { Container } from "@/components/ui/Container";
+import type { LandingStat } from '@/types/landing.types'
 import {
   LANDING_MOTION_STATS_BASE_DELAY_MS,
   LANDING_MOTION_STAGGER_MS,
 } from "@/constants/landing-motion";
 
-export default function StatsSection(): React.JSX.Element {
+interface StatsSectionProps {
+  readonly items?: readonly LandingStat[]
+}
+
+export default function StatsSection({
+  items = LANDING_STATS,
+}: StatsSectionProps): React.JSX.Element {
   return (
     <section>
       <Container className="max-w-[1240px] px-7">
         <div className="flex flex-wrap border-y border-border">
-          {LANDING_STATS.map((stat, index) => (
+          {items.map((stat, index) => (
             <LandingReveal
               key={stat.label}
               delay={
