@@ -1,3 +1,6 @@
+import type { LandingHeroData } from '@/types/landing.types'
+import type { SiteBrand } from '@/types/site-brand.types'
+
 export interface NavItem {
   readonly key: string
   readonly label: string
@@ -14,10 +17,12 @@ export interface LandingBlock {
 }
 
 export interface LandingPageData {
+  readonly hero: LandingHeroData
   readonly blocks: readonly LandingBlock[]
 }
 
 export interface SiteConfig {
+  readonly brand: SiteBrand
   readonly nav: readonly NavItem[]
   readonly theme: Record<string, unknown>
   readonly seo: Record<string, unknown>

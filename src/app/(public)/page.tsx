@@ -1,20 +1,19 @@
-import ExploreStackSection from '@/components/public-page/Landing/ExploreStackSection'
 import HeroSection from '@/components/public-page/Landing/HeroSection'
-import ModulesSection from '@/components/public-page/Landing/ModulesSection'
-import StatsSection from '@/components/public-page/Landing/StatsSection'
+import { LandingBlocks } from '@/components/public-page/Landing/LandingBlocks'
+import { getLandingHeroData } from '@/lib/content/landing-page'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'FEOps Kit — Home',
 }
 
-export default function HomePage(): React.JSX.Element {
+export default async function HomePage(): Promise<React.JSX.Element> {
+  const hero = await getLandingHeroData()
+
   return (
     <>
-      <HeroSection />
-      <StatsSection />
-      <ModulesSection />
-      <ExploreStackSection />
+      <HeroSection hero={hero} />
+      <LandingBlocks />
     </>
   )
 }

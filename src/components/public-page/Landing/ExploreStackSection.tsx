@@ -7,7 +7,13 @@ import {
   LANDING_MOTION_STACK_TAG_STAGGER_MS,
 } from "@/constants/landing-motion";
 
-export default function ExploreStackSection(): React.JSX.Element {
+interface ExploreStackSectionProps {
+  readonly items?: readonly string[]
+}
+
+export default function ExploreStackSection({
+  items = LANDING_TECH_STACK,
+}: ExploreStackSectionProps): React.JSX.Element {
   return (
     <section className="mb-[88px]">
       <Container className="max-w-[1240px] px-7">
@@ -32,7 +38,7 @@ export default function ExploreStackSection(): React.JSX.Element {
               Stack
             </span>
             <div className="mt-[18px] flex flex-wrap gap-2">
-              {LANDING_TECH_STACK.map((tech, index) => (
+              {items.map((tech, index) => (
                 <LandingReveal
                   key={tech}
                   className="inline-block"

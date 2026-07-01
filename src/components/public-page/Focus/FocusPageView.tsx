@@ -1,7 +1,7 @@
 import { Container } from '@/components/ui/Container'
-import { FOCUS_PAGE_DATA } from '@/constants/focus-page-data'
 import { FOCUS_ROADMAP_DOT } from '@/constants/focus'
 import { cn } from '@/lib/utils'
+import type { FocusPageViewProps } from '@/types/focus.types'
 import type { FocusRoadmapDot } from '@/constants/focus'
 
 const ROADMAP_DOT_CLASS: Record<FocusRoadmapDot, string> = {
@@ -10,9 +10,8 @@ const ROADMAP_DOT_CLASS: Record<FocusRoadmapDot, string> = {
   [FOCUS_ROADMAP_DOT.EXPLORING]: 'bg-white/[0.22]',
 }
 
-export function FocusPageView(): React.JSX.Element {
-  const { updatedLabel, topic, intro, roadmap, learning, reading } =
-    FOCUS_PAGE_DATA
+export function FocusPageView({ data }: FocusPageViewProps): React.JSX.Element {
+  const { updatedLabel, topic, intro, roadmap, learning, reading } = data
 
   const introBefore = intro.split(topic)[0] ?? ''
   const introAfter = intro.split(topic)[1] ?? ''

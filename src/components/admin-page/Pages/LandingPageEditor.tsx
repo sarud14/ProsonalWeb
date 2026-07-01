@@ -5,16 +5,25 @@ import { useCallback, useMemo, useState } from 'react'
 
 import { updatePage } from '@/actions/page.actions'
 import { LandingBlockModal } from '@/components/admin-page/Pages/LandingBlockModal'
+import { LandingHeroEditor } from '@/components/admin-page/Pages/LandingHeroEditor'
 import { ReorderableList } from '@/components/ui/ReorderableList'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { Toast } from '@/components/ui/Toast'
-import { LANDING_BLOCK_TYPES, normalizeLandingBlockOrders } from '@/constants/admin-pages'
+import {
+  assignLandingBlockOrders,
+  LANDING_BLOCK_TYPES,
+  normalizeLandingBlockOrders,
+} from '@/constants/admin-pages'
+import {
+  getDefaultLandingBlockProps,
+} from '@/lib/admin/landing-block-props'
 import {
   getLandingBlockHeadline,
   getLandingBlockSubline,
 } from '@/lib/admin/page-section-defaults'
 import type { LandingBlockModalState, LandingPageEditorProps } from '@/types/admin-pages.types'
 import type { LandingBlock } from '@/types/site.types'
+import type { LandingHeroData } from '@/types/landing.types'
 
 interface ClientLandingBlock extends LandingBlock {
   readonly clientId: string
@@ -34,6 +43,7 @@ export function LandingPageEditor({
   const [blocks, setBlocks] = useState<readonly ClientLandingBlock[]>(() =>
     toClientBlocks(initialData.blocks)
   )
+  const [hero, setHero] = useState<LandingHeroData>(initialData.hero)
   const [modal, setModal] = useState<LandingBlockModalState | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -54,10 +64,11 @@ export function LandingPageEditor({
   )
 
   const persist = useCallback(
-    async (nextBlocks: readonly ClientLandingBlock[]) => {
+    async (nextHero: LandingHeroData, nextBlocks: readonly ClientLandingBlock[]) => {
       setIsSaving(true)
       const payload = {
-        blocks: normalizeLandingBlockOrders(
+        hero: nextHero,
+        blocks: assignLandingBlockOrders(
           nextBlocks.map(({ clientId: _id, ...block }) => block)
         ),
       }
@@ -69,9 +80,24 @@ export function LandingPageEditor({
         return
       }
 
+      setHero(nextHero)
       router.refresh()
     },
     [router]
+  )
+
+  const persistBlocks = useCallback(
+    async (nextBlocks: readonly ClientLandingBlock[]) => {
+      await persist(hero, nextBlocks)
+    },
+    [hero, persist]
+  )
+
+  const handleSaveHero = useCallback(
+    (nextHero: LandingHeroData) => {
+      void persist(nextHero, blocks)
+    },
+    [blocks, persist]
   )
 
   const handleMove = useCallback(
@@ -85,12 +111,12 @@ export function LandingPageEditor({
       const next = [...blocks]
       ;[next[index], next[swapIndex]] = [next[swapIndex], next[index]]
       const normalized = toClientBlocks(
-        normalizeLandingBlockOrders(next.map(({ clientId: _id, ...block }) => block))
+        assignLandingBlockOrders(next.map(({ clientId: _id, ...block }) => block))
       )
       setBlocks(normalized)
-      void persist(normalized)
+      void persistBlocks(normalized)
     },
-    [blocks, persist]
+    [blocks, persistBlocks]
   )
 
   const handleRemove = useCallback(
@@ -101,9 +127,9 @@ export function LandingPageEditor({
           .map(({ clientId: _id, ...block }) => block)
       )
       setBlocks(next)
-      void persist(next)
+      void persistBlocks(next)
     },
-    [blocks, persist]
+    [blocks, persistBlocks]
   )
 
   const handleAddBlock = useCallback(() => {
@@ -116,7 +142,7 @@ export function LandingPageEditor({
         type: typeDef.value,
         enabled: true,
         order: blocks.length,
-        props: { ...typeDef.defaultProps },
+        props: getDefaultLandingBlockProps(typeDef.value),
       },
     })
   }, [blocks.length])
@@ -138,14 +164,16 @@ export function LandingPageEditor({
 
       setBlocks(next)
       setModal(null)
-      void persist(next)
+      void persistBlocks(next)
     },
-    [blocks, modal, persist]
+    [blocks, modal, persistBlocks]
   )
 
   return (
     <div>
       <SectionHeading kicker="Page editor" title="Landing" />
+
+      <LandingHeroEditor hero={hero} isSaving={isSaving} onSave={handleSaveHero} />
 
       <div className="mb-4 flex items-center justify-between">
         <p className="text-[13px] text-muted-foreground">
@@ -180,7 +208,7 @@ export function LandingPageEditor({
             }}
             className="mt-2 cursor-pointer border-none bg-transparent p-0 text-xs font-semibold text-primary"
           >
-            Edit props
+            Edit
           </button>
         )}
       />

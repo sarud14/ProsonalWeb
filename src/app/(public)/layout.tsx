@@ -1,17 +1,17 @@
 import { NavBar } from '@/components/ui/NavBar'
 import { Footer } from '@/components/ui/Footer'
-import { getNavItems } from '@/lib/content/site-config'
+import { getNavItems, getSiteBrand } from '@/lib/content/site-config'
 
 export default async function PublicLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>): Promise<React.JSX.Element> {
-  const navItems = await getNavItems()
+  const [navItems, brand] = await Promise.all([getNavItems(), getSiteBrand()])
 
   return (
     <>
-      <NavBar items={navItems} />
+      <NavBar items={navItems} brand={brand} />
       <main className="flex-1">{children}</main>
       <Footer />
     </>

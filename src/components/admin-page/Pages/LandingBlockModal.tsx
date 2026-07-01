@@ -2,14 +2,20 @@
 
 import { useCallback, useState } from 'react'
 
+import { LandingBlockPropsEditor } from '@/components/admin-page/Pages/LandingBlockPropsEditor'
 import type { LandingBlockModalState } from '@/types/admin-pages.types'
 import type { LandingBlock } from '@/types/site.types'
 
 import {
   AdminFormField,
   adminInputClassName,
-  adminTextareaClassName,
 } from '@/components/admin-page/shared/AdminFormField'
+import { LANDING_BLOCK_TYPES } from '@/constants/admin-pages'
+import {
+  getDefaultLandingBlockProps,
+  landingBlockTypeLabel,
+  type LandingBlockType,
+} from '@/lib/admin/landing-block-props'
 
 interface LandingBlockModalProps {
   readonly state: LandingBlockModalState
@@ -23,19 +29,20 @@ export function LandingBlockModal({
   onSave,
 }: LandingBlockModalProps): React.JSX.Element {
   const [block, setBlock] = useState<LandingBlock>(state.block)
-  const [propsJson, setPropsJson] = useState(() =>
-    JSON.stringify(state.block.props, null, 2)
-  )
-  const [error, setError] = useState<string | null>(null)
+
+  const handleTypeChange = useCallback((nextType: LandingBlockType) => {
+    setBlock((current) => ({
+      ...current,
+      type: nextType,
+      props: getDefaultLandingBlockProps(nextType),
+    }))
+  }, [])
 
   const handleSave = useCallback(() => {
-    try {
-      const props = JSON.parse(propsJson) as Record<string, unknown>
-      onSave({ ...block, props })
-    } catch {
-      setError('Props must be valid JSON')
-    }
-  }, [block, onSave, propsJson])
+    onSave(block)
+  }, [block, onSave])
+
+  const typeLabel = landingBlockTypeLabel(block.type)
 
   return (
     <div
@@ -44,37 +51,53 @@ export function LandingBlockModal({
       role="presentation"
     >
       <div
-        className="max-h-[85vh] w-[90%] max-w-[560px] overflow-y-auto rounded-[14px] border border-border bg-card p-7"
+        className="max-h-[85vh] w-[90%] max-w-[640px] overflow-y-auto rounded-[14px] border border-border bg-card p-7"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="mb-5 text-[22px] font-medium">
-          {state.isNew ? 'Add' : 'Edit'} block — {block.type}
+        <h3 className="mb-2 text-[22px] font-medium">
+          {state.isNew ? 'Add' : 'Edit'} landing block
         </h3>
+        <p className="mb-5 text-sm text-muted-foreground">
+          {state.isNew
+            ? 'Choose a section type and fill in the fields below.'
+            : `Editing “${typeLabel}” section.`}
+        </p>
 
-        <div className="flex flex-col gap-4">
-          <AdminFormField label="Type">
-            <input className={adminInputClassName} value={block.type} readOnly />
+        <div className="flex flex-col gap-5">
+          <AdminFormField label="Section type">
+            {state.isNew ? (
+              <select
+                className={adminInputClassName}
+                value={block.type}
+                onChange={(e) => handleTypeChange(e.target.value as LandingBlockType)}
+              >
+                {LANDING_BLOCK_TYPES.map((entry) => (
+                  <option key={entry.value} value={entry.value}>
+                    {entry.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input className={adminInputClassName} value={typeLabel} readOnly />
+            )}
           </AdminFormField>
-          <label className="flex items-center gap-2 text-sm">
+
+          <label className="flex items-center gap-2 text-base">
             <input
               type="checkbox"
               checked={block.enabled}
-              onChange={(e) => setBlock((current) => ({ ...current, enabled: e.target.checked }))}
+              onChange={(e) =>
+                setBlock((current) => ({ ...current, enabled: e.target.checked }))
+              }
             />
-            Enabled on landing page
+            Show on landing page
           </label>
-          <AdminFormField label="Props (JSON)">
-            <textarea
-              className={adminTextareaClassName}
-              rows={12}
-              value={propsJson}
-              onChange={(e) => {
-                setPropsJson(e.target.value)
-                setError(null)
-              }}
-            />
-          </AdminFormField>
-          {error && <p className="text-sm text-primary">{error}</p>}
+
+          <LandingBlockPropsEditor
+            type={block.type}
+            props={block.props}
+            onChange={(props) => setBlock((current) => ({ ...current, props }))}
+          />
         </div>
 
         <div className="mt-6 flex justify-end gap-2.5">
@@ -90,7 +113,7 @@ export function LandingBlockModal({
             onClick={handleSave}
             className="cursor-pointer rounded-lg bg-primary px-[18px] py-2.5 text-[13px] font-bold text-primary-foreground"
           >
-            Apply
+            Save
           </button>
         </div>
       </div>

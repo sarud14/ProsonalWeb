@@ -13,7 +13,6 @@ export const LANDING_BLOCK_TYPES = [
   { value: 'stats', label: 'Stats', defaultProps: { items: [] } },
   { value: 'modules', label: 'Modules', defaultProps: { items: [] } },
   { value: 'techStack', label: 'Tech stack', defaultProps: { items: [] } },
-  { value: 'focusItems', label: 'Focus items', defaultProps: { items: [] } },
 ] as const
 
 export function createLandingBlockId(): string {
@@ -24,9 +23,15 @@ export function sortLandingBlocks(blocks: readonly LandingBlock[]): LandingBlock
   return [...blocks].sort((a, b) => a.order - b.order)
 }
 
-export function normalizeLandingBlockOrders(blocks: readonly LandingBlock[]): LandingBlock[] {
-  return sortLandingBlocks(blocks).map((block, index) => ({
+/** Assign `order` from current array position — does not re-sort (use after drag/reorder). */
+export function assignLandingBlockOrders(blocks: readonly LandingBlock[]): LandingBlock[] {
+  return blocks.map((block, index) => ({
     ...block,
     order: index,
   }))
+}
+
+/** Sort by stored `order`, then re-index — use when loading from DB or seed. */
+export function normalizeLandingBlockOrders(blocks: readonly LandingBlock[]): LandingBlock[] {
+  return assignLandingBlockOrders(sortLandingBlocks(blocks))
 }

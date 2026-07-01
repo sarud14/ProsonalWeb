@@ -290,6 +290,36 @@ async function seedPageSections(): Promise<void> {
     {
       key: 'landing',
       data: {
+        hero: {
+          eyebrowLabel: 'Engineering System',
+          eyebrowVersion: 'v1.0',
+          titleLine1: 'Building scalable',
+          titleLine2: 'digital products,',
+          titleLine3: 'framed as systems.',
+          body:
+            'Frontend engineer working in Next.js, TypeScript, and AI-assisted workflows. Focused on CMS platforms, booking systems, multilingual applications, and frontend architecture.',
+          bodyHighlights: ['Next.js', 'TypeScript'],
+          primaryCtaLabel: 'View the work',
+          primaryCtaHref: '/work',
+          secondaryCtaLabel: 'Browse the system',
+          secondaryCtaHref: '#modules',
+          metaItems: [
+            { label: 'Focus', value: 'Frontend Platform Engineering' },
+            { label: 'Base', value: 'Australia — Remote' },
+            { label: 'Lang', value: 'EN / TH multilingual' },
+          ],
+          profileName: 'Sarut Dumrongprechachan',
+          profileSubtitle: 'FE-Eng · AU / Remote',
+          profileStatus: 'Open',
+          profileImageUrl: null,
+          profileImageAlt: '',
+          codeFilename: 'engineer.config.ts',
+          codeRole: 'Frontend Engineer',
+          codeStack: ['Next.js', 'TS', 'React'],
+          codeDomains: ['cms', 'booking', 'i18n'],
+          codeFocus: 'platform-eng',
+          codeStatus: 'available',
+        },
         blocks: [
           {
             type: 'stats',
@@ -325,18 +355,6 @@ async function seedPageSections(): Promise<void> {
             order: 2,
             props: {
               items: ['Next.js', 'TypeScript', 'React', 'Node.js', 'Tailwind', 'PostgreSQL', 'GraphQL', 'i18n', 'Playwright', 'AI-assisted'],
-            },
-          },
-          {
-            type: 'focusItems',
-            enabled: true,
-            order: 3,
-            props: {
-              items: [
-                { label: 'Focus', value: 'Frontend Platform Engineering' },
-                { label: 'Base', value: 'Australia — Remote' },
-                { label: 'Lang', value: 'EN / TH multilingual' },
-              ],
             },
           },
         ],
@@ -400,6 +418,11 @@ async function seedPageSections(): Promise<void> {
     {
       key: 'site',
       data: {
+        brand: {
+          name: 'Sarut Dumrongprechachan',
+          role: 'Frontend Engineer',
+          isAvailable: true,
+        },
         nav: [
           { key: 'work', label: 'Work', href: '/work', enabled: true, order: 0 },
           { key: 'engineering', label: 'Engineering', href: '/engineering', enabled: true, order: 1 },

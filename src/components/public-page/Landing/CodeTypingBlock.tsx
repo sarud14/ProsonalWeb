@@ -1,73 +1,29 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Card } from '@/components/ui/Card'
+import { buildEngineerCodeLines } from '@/lib/landing/engineer-code-lines'
 import type { CodeLine } from '@/types/code-typing.types'
-
-const CODE_LINES: readonly CodeLine[] = [
-  [
-    { text: 'const', className: 'text-muted-foreground' },
-    { text: ' ', className: '' },
-    { text: 'engineer', className: 'text-secondary-foreground' },
-    { text: ' ', className: '' },
-    { text: '= {', className: 'text-muted-foreground' },
-  ],
-  [
-    { text: '  role', className: 'text-muted-foreground/80' },
-    { text: ': ', className: 'text-muted-foreground' },
-    { text: '"Frontend Engineer"', className: 'text-foreground' },
-    { text: ',', className: 'text-muted-foreground' },
-  ],
-  [
-    { text: '  stack', className: 'text-muted-foreground/80' },
-    { text: ': [', className: 'text-muted-foreground' },
-    { text: '"Next.js"', className: 'text-foreground' },
-    { text: ', ', className: 'text-muted-foreground' },
-    { text: '"TS"', className: 'text-foreground' },
-    { text: ', ', className: 'text-muted-foreground' },
-    { text: '"React"', className: 'text-foreground' },
-    { text: '],', className: 'text-muted-foreground' },
-  ],
-  [
-    { text: '  domains', className: 'text-muted-foreground/80' },
-    { text: ': [', className: 'text-muted-foreground' },
-    { text: '"cms"', className: 'text-foreground' },
-    { text: ', ', className: 'text-muted-foreground' },
-    { text: '"booking"', className: 'text-foreground' },
-    { text: ', ', className: 'text-muted-foreground' },
-    { text: '"i18n"', className: 'text-foreground' },
-    { text: '],', className: 'text-muted-foreground' },
-  ],
-  [
-    { text: '  focus', className: 'text-muted-foreground/80' },
-    { text: ': ', className: 'text-muted-foreground' },
-    { text: '"platform-eng"', className: 'text-primary' },
-    { text: ',', className: 'text-muted-foreground' },
-  ],
-  [
-    { text: '  status', className: 'text-muted-foreground/80' },
-    { text: ': ', className: 'text-muted-foreground' },
-    { text: '"available"', className: 'text-success' },
-    { text: ',', className: 'text-muted-foreground' },
-  ],
-  [
-    { text: '}', className: 'text-muted-foreground' },
-    { text: ' satisfies ', className: 'text-muted-foreground' },
-    { text: 'Engineer', className: 'text-secondary-foreground' },
-    { text: ';', className: 'text-muted-foreground' },
-  ],
-]
+import type { LandingHeroData } from '@/types/landing.types'
 
 const CHAR_DELAY = 30
 const LINE_DELAY = 200
+
+interface CodeTypingBlockProps {
+  readonly config: Pick<
+    LandingHeroData,
+    'codeFilename' | 'codeRole' | 'codeStack' | 'codeDomains' | 'codeFocus' | 'codeStatus'
+  >
+}
 
 function flattenLines(lines: readonly CodeLine[]): string {
   return lines.map((line) => line.map((token) => token.text).join('')).join('\n')
 }
 
-export function CodeTypingBlock(): React.JSX.Element {
-  const fullText = flattenLines(CODE_LINES)
+export function CodeTypingBlock({ config }: CodeTypingBlockProps): React.JSX.Element {
+  const codeLines = useMemo(() => buildEngineerCodeLines(config), [config])
+  const fullText = useMemo(() => flattenLines(codeLines), [codeLines])
   const [charCount, setCharCount] = useState(0)
   const isDone = charCount >= fullText.length
 
@@ -98,13 +54,13 @@ export function CodeTypingBlock(): React.JSX.Element {
           <span className="size-[9px] rounded-full bg-white/16" />
         </span>
         <span className="font-mono text-[11px] tracking-[0.04em] text-muted-foreground">
-          engineer.config.ts
+          {config.codeFilename}
         </span>
       </div>
       <div className="px-[22px] py-5 font-mono text-[12.5px] leading-[2.05]">
         {visibleLines.map((lineText, lineIdx) => (
           <div key={lineIdx}>
-            {renderLineTokens(lineIdx, lineText)}
+            {renderLineTokens(codeLines, lineIdx, lineText)}
             {lineIdx === visibleLines.length - 1 && (
               <span
                 className={`ml-0.5 inline-block h-[15px] w-2 align-middle ${isDone ? 'animate-pulse' : ''} bg-primary`}
@@ -117,10 +73,14 @@ export function CodeTypingBlock(): React.JSX.Element {
   )
 }
 
-function renderLineTokens(lineIdx: number, visibleLineText: string): React.JSX.Element {
-  if (lineIdx >= CODE_LINES.length) return <></>
+function renderLineTokens(
+  codeLines: readonly CodeLine[],
+  lineIdx: number,
+  visibleLineText: string
+): React.JSX.Element {
+  if (lineIdx >= codeLines.length) return <></>
 
-  const tokens = CODE_LINES[lineIdx]
+  const tokens = codeLines[lineIdx]
   const elements: React.JSX.Element[] = []
   let consumed = 0
 

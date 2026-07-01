@@ -25,3 +25,7 @@ export interface FocusPageData {
   readonly learning: readonly string[]
   readonly reading: readonly FocusReadingItem[]
 }
+
+export interface FocusPageViewProps {
+  readonly data: FocusPageData
+}
