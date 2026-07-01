@@ -431,10 +431,31 @@ async function seedPageSections(): Promise<void> {
           { key: 'stack', label: 'Stack', href: '/stack', enabled: true, order: 4 },
           { key: 'resume', label: 'Résumé', href: '/resume', enabled: true, order: 5 },
         ],
-        theme: {},
-        seo: {},
-        socialLinks: {},
-        contact: {},
+        theme: {
+          primary: 'oklch(0.45 0.13 250)',
+          background: 'oklch(0.035 0.005 250)',
+          foreground: 'oklch(0.95 0 0)',
+          success: 'oklch(0.72 0.19 155)',
+          destructive: 'oklch(0.577 0.245 27.325)',
+        },
+        seo: {
+          title: 'FEOps Kit',
+          description: 'A reusable Next.js-based frontend engineering portfolio system',
+          ogImageUrl: null,
+        },
+        socialLinks: [
+          { label: 'GitHub', url: '' },
+          { label: 'LinkedIn', url: '' },
+        ],
+        contact: {
+          email: '',
+          location: 'Australia — Remote',
+        },
+        footer: {
+          copyrightName: 'Sarut Dumrongprechachan',
+          tagline: 'Designed as a system, not a page',
+          buildLabel: 'Build 2026.06 · All systems nominal',
+        },
       },
     },
   ]

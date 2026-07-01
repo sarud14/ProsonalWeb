@@ -109,8 +109,8 @@
   --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-ring: oklch(0.55 0.15 250);
 
-  /* Subtle page grid — design uses ~1.6% white; slightly stronger for real displays */
-  --grid-line: oklch(1 0 0 / 6%);
+  /* Subtle page grid — design ~1.6% white; 10% reads clearly on real displays */
+  --grid-line: oklch(1 0 0 / 10%);
 }
 
 @layer base {
@@ -125,15 +125,28 @@
     content: "";
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     pointer-events: none;
     background-image:
-      linear-gradient(var(--grid-line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-    background-size: 64px 64px;
+      repeating-linear-gradient(
+        0deg,
+        var(--grid-line) 0,
+        var(--grid-line) 1px,
+        transparent 1px,
+        transparent 64px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        var(--grid-line) 0,
+        var(--grid-line) 1px,
+        transparent 1px,
+        transparent 64px
+      );
   }
   body {
     @apply text-foreground;
+    position: relative;
+    z-index: 1;
     background: transparent;
   }
 }
