@@ -237,6 +237,12 @@ NEXTAUTH_SECRET=""             # generate with: openssl rand -base64 32
 NEXTAUTH_URL=""
 AUTH_GITHUB_ID=""              # GitHub OAuth app credentials
 AUTH_GITHUB_SECRET=""
+AUTH_GOOGLE_ID=""              # Optional
+AUTH_GOOGLE_SECRET=""          # Optional
+# Comma-separated admin allowlist (required in production hardening mode)
+AUTH_ADMIN_EMAIL_ALLOWLIST=""
+# Optional fallback for private GitHub emails (provider account IDs)
+AUTH_ADMIN_GITHUB_ID_ALLOWLIST=""
 CONTENT_SOURCE="mdx"           # "mdx" (default) or "db"
 BLOB_READ_WRITE_TOKEN=""       # Vercel Blob token (for media uploads)
 ```
@@ -297,6 +303,8 @@ Uploads are session-gated (admin login required). After upload, the client saves
 | `NEXTAUTH_URL` | Optional in dev | Override base app URL; if empty, derived as `APP_HOST:PORT` via `src/env.ts` |
 | `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | Only if using GitHub login | GitHub OAuth credentials |
 | `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | Only if using Google login | Google OAuth credentials |
+| `AUTH_ADMIN_EMAIL_ALLOWLIST` | Recommended in dev, required in production hardening mode | Comma-separated allowed admin emails across OAuth providers |
+| `AUTH_ADMIN_GITHUB_ID_ALLOWLIST` | Optional | Comma-separated GitHub numeric account IDs (fallback when email is private) |
 | `CONTENT_SOURCE` | No (defaults to `mdx`) | `mdx` or `db` |
 | `BLOB_READ_WRITE_TOKEN` | Only if using media uploads | Vercel Blob read/write token — store must be **Public** |
 
@@ -337,6 +345,8 @@ Uploads are session-gated (admin login required). After upload, the client saves
 | `NEXTAUTH_URL` | `https://your-domain.vercel.app` (no trailing slash) |
 | `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | GitHub OAuth app |
 | `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | Google OAuth client |
+| `AUTH_ADMIN_EMAIL_ALLOWLIST` | Allowed admin emails (comma-separated) |
+| `AUTH_ADMIN_GITHUB_ID_ALLOWLIST` | Optional GitHub numeric IDs fallback |
 | `CONTENT_SOURCE` | `db` |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob → Storage → **Public** store → read/write token |
 
@@ -348,6 +358,8 @@ Uploads are session-gated (admin login required). After upload, the client saves
 |---|---|
 | GitHub | `https://your-domain.vercel.app/api/auth/callback/github` |
 | Google | `https://your-domain.vercel.app/api/auth/callback/google` |
+
+> **Admin access control:** Production sign-in is allowlist-gated. Add your owner email to `AUTH_ADMIN_EMAIL_ALLOWLIST`. If your GitHub email is private, also add the numeric GitHub user ID to `AUTH_ADMIN_GITHUB_ID_ALLOWLIST`.
 
 6. Provision the production database (run locally against prod `DIRECT_URL`):
 
