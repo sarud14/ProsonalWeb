@@ -7,6 +7,9 @@ import Google from 'next-auth/providers/google'
 import { AUTH_PROVIDER } from '@/constants/auth'
 import {
   env,
+  hasAdminAllowlist,
+  isAllowedAdminEmail,
+  isAllowedGithubAccountId,
   isAuthConfigured,
   isGithubAuthConfigured,
   isGoogleAuthConfigured,
@@ -33,6 +36,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   secret: isAuthConfigured() ? env.nextAuthSecret : undefined,
   trustHost: true,
+  callbacks: {
+    async signIn({ user, account }) {
+      if (!account) return false
+
+      const enforceAllowlist = process.env.NODE_ENV === 'production' || hasAdminAllowlist()
+      if (!enforceAllowlist) return true
+
+      if (isAllowedAdminEmail(user.email)) return true
+
+      if (account.provider === 'github' && isAllowedGithubAccountId(account.providerAccountId)) {
+        return true
+      }
+
+      return false
+    },
+  },
   pages: {
     signIn: '/login',
   },
