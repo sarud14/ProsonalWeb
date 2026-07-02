@@ -1,5 +1,6 @@
 const DEFAULT_PORT = '3000'
 const DEFAULT_APP_HOST = 'http://localhost'
+const ENV_LIST_SEPARATOR = ','
 
 function resolvePort(): string {
   const raw = process.env.PORT?.trim()
@@ -33,6 +34,17 @@ const port = resolvePort()
 const appHost = resolveAppHost()
 const nextAuthUrl = resolveNextAuthUrl(port, appHost)
 
+function parseEnvList(value: string | undefined): readonly string[] {
+  if (!value) return []
+  return value
+    .split(ENV_LIST_SEPARATOR)
+    .map((item) => item.trim().toLowerCase())
+    .filter((item) => item.length > 0)
+}
+
+const adminEmailAllowlist = parseEnvList(process.env.AUTH_ADMIN_EMAIL_ALLOWLIST)
+const adminGithubIdAllowlist = parseEnvList(process.env.AUTH_ADMIN_GITHUB_ID_ALLOWLIST)
+
 export const env = {
   port,
   appHost,
@@ -44,6 +56,8 @@ export const env = {
   authGithubSecret: process.env.AUTH_GITHUB_SECRET ?? '',
   authGoogleId: process.env.AUTH_GOOGLE_ID ?? '',
   authGoogleSecret: process.env.AUTH_GOOGLE_SECRET ?? '',
+  adminEmailAllowlist,
+  adminGithubIdAllowlist,
   contentSource: (process.env.CONTENT_SOURCE ?? 'mdx') as 'mdx' | 'db',
   blobReadWriteToken: process.env.BLOB_READ_WRITE_TOKEN ?? '',
 } as const
@@ -60,4 +74,18 @@ export function isGithubAuthConfigured(): boolean {
 
 export function isGoogleAuthConfigured(): boolean {
   return env.authGoogleId.length > 0 && env.authGoogleSecret.length > 0
+}
+
+export function hasAdminAllowlist(): boolean {
+  return env.adminEmailAllowlist.length > 0 || env.adminGithubIdAllowlist.length > 0
+}
+
+export function isAllowedAdminEmail(email: string | null | undefined): boolean {
+  if (!email) return false
+  return env.adminEmailAllowlist.includes(email.trim().toLowerCase())
+}
+
+export function isAllowedGithubAccountId(accountId: string | undefined): boolean {
+  if (!accountId) return false
+  return env.adminGithubIdAllowlist.includes(accountId.trim().toLowerCase())
 }
