@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { NavBarLinkProps } from '@/types/nav-bar-link.types'
 
-export function NavBarLink({ href, label }: NavBarLinkProps): React.JSX.Element {
+export function NavBarLink({ href, label, className }: NavBarLinkProps): React.JSX.Element {
   const pathname = usePathname()
   const isActive = pathname === href || pathname.startsWith(`${href}/`)
 
@@ -17,7 +17,8 @@ export function NavBarLink({ href, label }: NavBarLinkProps): React.JSX.Element 
         'border px-3 py-2 font-mono text-[11px] tracking-[0.1em] uppercase transition-colors',
         isActive
           ? 'border-primary text-foreground'
-          : 'border-transparent text-muted-foreground hover:text-foreground'
+          : 'border-transparent text-muted-foreground hover:text-foreground',
+        className
       )}
     >
       {label}
