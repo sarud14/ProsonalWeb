@@ -25,9 +25,9 @@ export const ENGINEERING_LIST_COLUMNS: readonly DataTableColumn[] = [
   { key: 'sortOrder', label: 'Sort', align: 'right' },
 ] as const
 
-export const WORK_LIST_GRID = '2fr 100px 1.4fr 70px 60px 132px'
-export const JOURNAL_LIST_GRID = '2fr 100px 1fr 110px 60px 132px'
-export const ENGINEERING_LIST_GRID = '2fr 100px 1.3fr 120px 60px 132px'
+export const WORK_LIST_GRID = '2fr 100px 1.4fr 70px 60px 220px'
+export const JOURNAL_LIST_GRID = '2fr 100px 1fr 110px 60px 220px'
+export const ENGINEERING_LIST_GRID = '2fr 100px 1.3fr 120px 60px 220px'
 
 export const WORK_LIST_CONFIG: AdminContentListConfig = {
   section: 'work',

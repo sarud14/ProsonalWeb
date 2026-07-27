@@ -117,8 +117,8 @@ export function LandingHeroEditor({
   return (
     <div className="mb-8 flex flex-col gap-6 rounded-xl border border-border bg-card p-6">
       <div>
-        <h2 className="text-lg font-medium">Hero</h2>
-        <p className="mt-1 text-[13px] text-muted-foreground">
+        <h2 className="text-lg font-medium text-black">Hero</h2>
+        <p className="mt-1 text-[13px] text-black/70">
           Top-of-page headline, profile card, code snippet, and meta labels.
         </p>
       </div>

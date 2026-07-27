@@ -8,7 +8,7 @@ export function ChipList({ items }: ChipListProps): React.JSX.Element {
       {items.map((item) => (
         <span
           key={item}
-          className="rounded-full bg-muted px-2 py-[3px] text-[11px] text-muted-foreground"
+          className="rounded-full bg-primary/85 px-2 py-[3px] text-[11px] text-primary-foreground"
         >
           {item}
         </span>

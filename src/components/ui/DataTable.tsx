@@ -44,19 +44,19 @@ export function DataTable({
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
       <div
-        className="grid items-center border-b border-border bg-[oklch(0.13_0.008_255)] px-[22px] py-3"
+        className="grid items-center border-b border-primary/20 bg-primary/14 px-[22px] py-3"
         style={{ gridTemplateColumns: gridTemplate }}
       >
         {columns.map((col) => (
           <span
             key={col.key}
-            className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground"
+            className="font-mono text-[10px] uppercase tracking-[0.12em] text-primary/75"
             style={{ textAlign: col.align ?? 'left' }}
           >
             {col.label}
           </span>
         ))}
-        <span className="text-right font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+        <span className="text-right font-mono text-[10px] uppercase tracking-[0.12em] text-primary/75">
           Actions
         </span>
       </div>
@@ -100,9 +100,9 @@ export function DataTable({
               type="button"
               onClick={() => onEdit(row.id)}
               title="Edit"
-              className="flex size-[30px] cursor-pointer items-center justify-center rounded-[7px] border border-border bg-transparent text-xs text-muted-foreground"
+              className="flex h-[30px] cursor-pointer items-center rounded-[7px] bg-black px-2.5 font-mono text-[9.5px] uppercase tracking-[0.08em] text-white"
             >
-              ✎
+              Edit
             </button>
             <button
               type="button"
@@ -120,9 +120,9 @@ export function DataTable({
               type="button"
               onClick={() => onDelete(row.id)}
               title="Delete"
-              className="flex size-[30px] cursor-pointer items-center justify-center rounded-[7px] border border-border bg-transparent text-[13px] text-primary"
+              className="flex h-[30px] cursor-pointer items-center rounded-[7px] bg-destructive px-2.5 font-mono text-[9.5px] uppercase tracking-[0.08em] text-white"
             >
-              ×
+              Delete
             </button>
           </div>
         </div>

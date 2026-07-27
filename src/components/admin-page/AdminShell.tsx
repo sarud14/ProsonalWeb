@@ -57,7 +57,7 @@ export function AdminShell({
   }, [])
 
   return (
-    <div className="flex min-h-screen flex-col bg-background font-sans text-sm text-foreground">
+    <div className="admin-theme flex min-h-screen flex-col bg-background font-sans text-sm text-foreground">
       {layout === 'masthead' && (
         <MastheadNav activeKey={activeKey} unreadCount={unreadCount} user={user} />
       )}

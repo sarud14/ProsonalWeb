@@ -13,7 +13,7 @@ export function AdminFormField({
 }: AdminFormFieldProps): React.JSX.Element {
   return (
     <label className="flex flex-col gap-[7px]" style={{ gridColumn: span }}>
-      <span className="flex gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
+      <span className="flex gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-black/60">
         {label}
         {required && <span className="text-primary">*</span>}
       </span>
@@ -23,7 +23,7 @@ export function AdminFormField({
 }
 
 export const adminInputClassName =
-  'w-full rounded-lg border border-border bg-[oklch(0.13_0.008_255)] px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground'
+  'w-full rounded-lg border border-black/15 bg-white px-3 py-2.5 text-sm text-black outline-none placeholder:text-black/45'
 
 export const adminTextareaClassName =
-  'w-full rounded-lg border border-border bg-[oklch(0.13_0.008_255)] px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground'
+  'w-full rounded-lg border border-black/15 bg-white px-3 py-2.5 text-sm leading-relaxed text-black outline-none placeholder:text-black/45'

@@ -67,7 +67,7 @@ export function ImagePicker({
               />
               <Button
                 type="button"
-                variant="outline"
+                variant="default"
                 size="sm"
                 disabled={isUploading}
                 onClick={() => fileInputRef.current?.click()}
@@ -80,7 +80,7 @@ export function ImagePicker({
           {canPick && (
             <Button
               type="button"
-              variant="outline"
+              variant="default"
               size="sm"
               disabled={isUploading}
               onClick={onPickFromMedia}

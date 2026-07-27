@@ -20,7 +20,7 @@ export function InlineEditRow({
   const canDelete = referenceCount === 0
 
   return (
-    <div className="grid grid-cols-[1fr_90px_80px_44px] items-center border-b border-border/50 px-5 py-2">
+    <div className="grid grid-cols-[1fr_90px_80px_96px] items-center border-b border-border/50 px-5 py-2">
       <input
         defaultValue={label}
         onBlur={(e) => {
@@ -42,11 +42,13 @@ export function InlineEditRow({
         onClick={() => onDelete(id)}
         disabled={!canDelete}
         title={canDelete ? 'Delete' : `Cannot delete — used by ${referenceCount} work items`}
-        className={`ml-auto flex size-[30px] cursor-pointer items-center justify-center rounded-[7px] border border-border bg-transparent text-[13px] ${
-          canDelete ? 'text-primary' : 'cursor-not-allowed text-muted-foreground opacity-40'
+        className={`ml-auto flex h-[30px] cursor-pointer items-center rounded-[7px] px-2.5 font-mono text-[9.5px] uppercase tracking-[0.08em] ${
+          canDelete
+            ? 'bg-destructive text-white'
+            : 'cursor-not-allowed bg-destructive/50 text-white/80 opacity-40'
         }`}
       >
-        ×
+        Delete
       </button>
     </div>
   )

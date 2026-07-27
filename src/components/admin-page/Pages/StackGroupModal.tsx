@@ -59,7 +59,7 @@ export function StackGroupModal({
       role="presentation"
     >
       <div
-        className="max-h-[85vh] w-[90%] max-w-[560px] overflow-y-auto rounded-[14px] border border-border bg-card p-7"
+        className="max-h-[85vh] w-[90%] max-w-[560px] overflow-y-auto rounded-[14px] border border-border bg-card p-7 text-black"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="mb-5 text-[22px] font-medium">
@@ -76,7 +76,7 @@ export function StackGroupModal({
           </AdminFormField>
 
           <div className="flex flex-col gap-3">
-            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-black/60">
               Tools
             </div>
             {group.tools.map((tool, index) => (
@@ -105,7 +105,7 @@ export function StackGroupModal({
             <button
               type="button"
               onClick={addTool}
-              className="cursor-pointer self-start rounded-lg border border-border bg-secondary px-3 py-1.5 text-xs font-semibold"
+              className="cursor-pointer self-start rounded-lg border border-border bg-secondary px-3 py-1.5 text-xs font-semibold text-white"
             >
               + Add tool
             </button>
@@ -116,7 +116,7 @@ export function StackGroupModal({
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer rounded-lg border border-border bg-secondary px-[18px] py-2.5 text-[13px] font-semibold text-muted-foreground"
+            className="cursor-pointer rounded-lg border border-border bg-secondary px-[18px] py-2.5 text-[13px] font-semibold text-white"
           >
             Cancel
           </button>

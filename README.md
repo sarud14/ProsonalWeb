@@ -4,6 +4,19 @@ A reusable Next.js-based frontend engineering portfolio system with a full CMS. 
 
 ---
 
+## Project Status
+
+**Feature-complete.** Every layer described in this README is implemented and passing (`yarn type-check`, `yarn lint`, `yarn test`):
+
+- ✅ **Backend** — DAL, Server Actions, Zod validators, and API routes (media upload, resume PDF) for all content types
+- ✅ **Admin CMS UI** — every module has a working page: work, journal, engineering, resume, site/landing/focus/stack pages, media library, taxonomy, messages
+- ✅ **Auth & admin security** — NextAuth v5 (GitHub + Google), admin route gated at `(admin)/admin/layout.tsx`, and an **email/GitHub-ID allowlist enforced in production** so OAuth login alone isn't enough to reach `/admin`
+- ✅ **Public site wired to CMS** — hero, navbar brand, theme colors, and content all read from the DB when `CONTENT_SOURCE=db`
+
+**Remaining work is UI polish only** — no outstanding backend, data-layer, or security gaps. Known cosmetic items are tracked as ESLint warnings (unused destructured vars in a few admin page editors, one raw `<img>` instead of `next/image`) — see `yarn lint` output.
+
+---
+
 ## Stack
 
 | Layer | Tool | Version |
