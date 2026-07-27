@@ -111,14 +111,14 @@ export function TaxonomyPageView({ initialDomains }: TaxonomyPageViewProps): Rea
       </div>
 
       <div className="overflow-hidden rounded-xl border border-border bg-card">
-        <div className="grid grid-cols-[1fr_90px_80px_44px] items-center border-b border-border bg-[oklch(0.13_0.008_255)] px-5 py-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+        <div className="grid grid-cols-[1fr_90px_80px_96px] items-center border-b border-primary/20 bg-primary/14 px-5 py-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-primary/75">
             Label
           </span>
-          <span className="text-center font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+          <span className="text-center font-mono text-[10px] uppercase tracking-[0.12em] text-primary/75">
             Order
           </span>
-          <span className="text-center font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+          <span className="text-center font-mono text-[10px] uppercase tracking-[0.12em] text-primary/75">
             Used by
           </span>
           <span />

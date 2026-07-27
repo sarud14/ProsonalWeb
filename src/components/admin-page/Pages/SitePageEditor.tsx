@@ -327,7 +327,7 @@ export function SitePageEditor({
             <button
               type="button"
               onClick={() => setTheme(DEFAULT_SITE_THEME)}
-              className="cursor-pointer rounded-lg border border-border bg-secondary px-3 py-2 text-xs font-semibold text-foreground"
+              className="cursor-pointer rounded-lg border border-border bg-secondary px-3 py-2 text-xs font-semibold text-white"
             >
               Reset to defaults
             </button>

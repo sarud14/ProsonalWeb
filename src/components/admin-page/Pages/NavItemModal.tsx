@@ -40,7 +40,7 @@ export function NavItemModal({
       role="presentation"
     >
       <div
-        className="w-[90%] max-w-[480px] rounded-[14px] border border-border bg-card p-7"
+        className="w-[90%] max-w-[480px] rounded-[14px] border border-border bg-card p-7 text-black"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="mb-5 text-[22px] font-medium">
@@ -84,7 +84,7 @@ export function NavItemModal({
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer rounded-lg border border-border bg-secondary px-[18px] py-2.5 text-[13px] font-semibold text-muted-foreground"
+            className="cursor-pointer rounded-lg border border-border bg-secondary px-[18px] py-2.5 text-[13px] font-semibold text-white"
           >
             Cancel
           </button>

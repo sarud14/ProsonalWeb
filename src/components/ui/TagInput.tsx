@@ -37,7 +37,7 @@ export function TagInput({
 
   return (
     <div
-      className="flex min-h-[42px] flex-wrap items-center gap-1.5 rounded-lg border border-border bg-[oklch(0.13_0.008_255)] p-2"
+      className="flex min-h-[42px] flex-wrap items-center gap-1.5 rounded-lg border border-black/15 bg-white p-2"
       onClick={() => inputRef.current?.focus()}
     >
       {tags.map((tag) => (
@@ -59,7 +59,7 @@ export function TagInput({
         ref={inputRef}
         onKeyDown={handleKeyDown}
         placeholder={tags.length === 0 ? placeholder : ''}
-        className="min-w-[120px] flex-1 border-none bg-transparent p-1 text-[13px] text-foreground outline-none placeholder:text-muted-foreground"
+        className="min-w-[120px] flex-1 border-none bg-transparent p-1 text-[13px] text-black outline-none placeholder:text-black/45"
       />
     </div>
   )
