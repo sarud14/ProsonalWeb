@@ -1,5 +1,5 @@
-import { RESUME_PAGE_DATA } from '@/constants/resume-page-data'
 import { ResumeSavePdfButton } from '@/components/public-page/Resume/ResumeSavePdfButton'
+import type { ResumePageData } from '@/types/resume.types'
 
 function ResumeChipList({
   items,
@@ -20,7 +20,11 @@ function ResumeChipList({
   )
 }
 
-export function ResumePageView(): React.JSX.Element {
+export function ResumePageView({
+  data,
+}: {
+  readonly data: ResumePageData
+}): React.JSX.Element {
   const {
     name,
     role,
@@ -31,7 +35,7 @@ export function ResumePageView(): React.JSX.Element {
     coreTools,
     education,
     languages,
-  } = RESUME_PAGE_DATA
+  } = data
 
   return (
     <main
