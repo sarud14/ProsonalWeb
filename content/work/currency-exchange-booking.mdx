@@ -1,0 +1,20 @@
+---
+title: "Currency Exchange Booking"
+status: published
+listId: "01"
+role: "FE"
+tagline: "Booking flow with stock limits and multi-branch pickup scheduling."
+domains: ["Booking"]
+stack: ["Next.js", "TypeScript", "Tailwind"]
+metric: "Live"
+metricLabel: "MULTI-BRANCH"
+year: "2025"
+context: "A customer-facing booking flow for currency pickup across multiple branches, with stock that can sell out during peak windows."
+problem: "Availability and pickup slots drifted from real stock, so customers could complete a booking that the branch could not fulfil."
+constraints: "NDA-safe public write-up only; branch rules and stock accuracy had to stay server-authoritative."
+architecture: "Next.js App Router booking UI over REST APIs for stock, branch hours, and pickup scheduling."
+decisions: "Keep inventory checks on the server; the client only renders allowed slots and surfaces sold-out states early."
+impact: "Customers see accurate branch pickup options before confirming, reducing failed in-store fulfilment."
+---
+
+Public case study for a currency-exchange booking flow. Internal business rules stay out of this write-up.

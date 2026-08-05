@@ -1,0 +1,20 @@
+---
+title: "Multilingual CMS"
+status: published
+listId: "02"
+role: "FE"
+tagline: "Admin CMS with per-language validation and server-sorted tables."
+domains: ["CMS", "Multilingual"]
+stack: ["Next.js", "TypeScript", "Zod", "SWR"]
+metric: "TH / EN"
+metricLabel: "LOCALES"
+year: "2025"
+context: "Internal editors needed to manage TH / EN content from one admin surface without duplicating forms per language."
+problem: "Client-only validation and unsorted tables made multilingual publishing slow and easy to ship incomplete locale data."
+constraints: "Per-language fields had to validate independently; list views needed server-side pagination and sorting."
+architecture: "Next.js admin panels with React Hook Form, Zod schemas scoped per locale, and SWR over a shared fetcher layer."
+decisions: "Validate each language on its own schema; sort and paginate on the server so table state stays consistent."
+impact: "Editors can publish complete locale sets from one CMS without engineering writing one-off table pages."
+---
+
+Public case study for a multilingual admin CMS. Product-specific copy and internal IDs are omitted.
