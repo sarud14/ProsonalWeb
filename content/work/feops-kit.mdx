@@ -1,0 +1,20 @@
+---
+title: "FEOps Kit"
+status: published
+listId: "03"
+role: "FE"
+tagline: "This site — a content-driven portfolio system on Next.js and Prisma."
+domains: ["Platform", "Architecture"]
+stack: ["Next.js", "TypeScript", "Prisma", "PostgreSQL"]
+metric: "CMS"
+metricLabel: "DB-BACKED"
+year: "2026"
+context: "A personal portfolio that also had to function as a reusable frontend ops kit: public pages, admin CMS, and a typed content layer."
+problem: "Git-only MDX was fine for a static site, but draft/publish, resume editing, and media needed a database without rewriting every page."
+constraints: "Single admin session, Vercel serverless hosting, and a content abstraction that can still fall back to MDX."
+architecture: "Next.js App Router with Prisma over Postgres, DAL-backed server actions, and a source switch via CONTENT_SOURCE."
+decisions: "Pages never import a source implementation directly; admin writes go through Zod-validated actions and revalidate public paths."
+impact: "The live site is edited from /admin while the same codebase still seeds and exports content as MDX."
+---
+
+This site. The public write-up stays at the system level — no secrets, tokens, or private draft content.

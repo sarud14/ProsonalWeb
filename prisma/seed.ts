@@ -111,12 +111,35 @@ function toEngType(val: unknown): EngType {
 }
 
 // ---------------------------------------------------------------------------
+// 0. Wipe CMS content (keep auth, contact messages, and media assets)
+// ---------------------------------------------------------------------------
+
+async function wipeCmsContent(): Promise<void> {
+  console.log('Wiping existing CMS content (keeping auth, messages, media)...')
+
+  await prisma.resumeSelectedWork.deleteMany()
+  await prisma.resumeExperience.deleteMany()
+  await prisma.resumeEducation.deleteMany()
+  await prisma.resumeLanguage.deleteMany()
+  await prisma.resumeProfile.deleteMany()
+  await prisma.workCaseStudy.deleteMany()
+  await prisma.journalPost.deleteMany()
+  await prisma.engineeringNote.deleteMany()
+  await prisma.pageSection.deleteMany()
+  await prisma.domain.deleteMany()
+  await prisma.contentRevision.deleteMany()
+  await prisma.postReaction.deleteMany()
+
+  console.log('  ✓ CMS content wiped\n')
+}
+
+// ---------------------------------------------------------------------------
 // 1. Seed Domains (from WORK_DOMAIN_FILTERS, excluding "ALL")
 // ---------------------------------------------------------------------------
 
 const DOMAIN_LABELS = ['Booking', 'CMS', 'Architecture', 'Multilingual', 'Performance', 'Platform']
 
-async function seedDomains(): Promise<void> {
+async function seedDomains(): Promise<number> {
   console.log('Seeding domains...')
   for (let i = 0; i < DOMAIN_LABELS.length; i++) {
     await prisma.domain.upsert({
@@ -126,13 +149,14 @@ async function seedDomains(): Promise<void> {
     })
   }
   console.log(`  ✓ ${DOMAIN_LABELS.length} domains`)
+  return DOMAIN_LABELS.length
 }
 
 // ---------------------------------------------------------------------------
 // 2. Seed Work case studies
 // ---------------------------------------------------------------------------
 
-async function seedWork(): Promise<void> {
+async function seedWork(): Promise<number> {
   console.log('Seeding work case studies...')
   const files = await readMdxDir('work')
 
@@ -191,13 +215,14 @@ async function seedWork(): Promise<void> {
   }
 
   console.log(`  ✓ ${files.length} work case studies`)
+  return files.length
 }
 
 // ---------------------------------------------------------------------------
 // 3. Seed Journal posts
 // ---------------------------------------------------------------------------
 
-async function seedJournal(): Promise<void> {
+async function seedJournal(): Promise<number> {
   console.log('Seeding journal posts...')
   const files = await readMdxDir('journal')
 
@@ -235,13 +260,14 @@ async function seedJournal(): Promise<void> {
   }
 
   console.log(`  ✓ ${files.length} journal posts`)
+  return files.length
 }
 
 // ---------------------------------------------------------------------------
 // 4. Seed Engineering notes
 // ---------------------------------------------------------------------------
 
-async function seedEngineering(): Promise<void> {
+async function seedEngineering(): Promise<number> {
   console.log('Seeding engineering notes...')
   const files = await readMdxDir('engineering')
 
@@ -277,13 +303,17 @@ async function seedEngineering(): Promise<void> {
   }
 
   console.log(`  ✓ ${files.length} engineering notes`)
+  return files.length
 }
 
 // ---------------------------------------------------------------------------
 // 5. Seed PageSections (landing, focus, stack, site)
+//
+// Everything here describes the real setup. Anything not actually used in
+// practice belongs on /focus under NEXT or LATER, never in the stack list.
 // ---------------------------------------------------------------------------
 
-async function seedPageSections(): Promise<void> {
+async function seedPageSections(): Promise<number> {
   console.log('Seeding page sections...')
 
   const pages: Array<{ key: string; data: unknown }> = [
@@ -297,7 +327,7 @@ async function seedPageSections(): Promise<void> {
           titleLine2: 'digital products,',
           titleLine3: 'framed as systems.',
           body:
-            'Frontend engineer working in Next.js, TypeScript, and AI-assisted workflows. Focused on CMS platforms, booking systems, multilingual applications, and frontend architecture.',
+            'Frontend developer working in Next.js, TypeScript, and AI-assisted workflows. Focused on CMS platforms, booking flows, multilingual applications, and reusable frontend patterns.',
           bodyHighlights: ['Next.js', 'TypeScript'],
           primaryCtaLabel: 'View the work',
           primaryCtaHref: '/work',
@@ -305,19 +335,19 @@ async function seedPageSections(): Promise<void> {
           secondaryCtaHref: '#modules',
           metaItems: [
             { label: 'Focus', value: 'Frontend Platform Engineering' },
-            { label: 'Base', value: 'Australia — Remote' },
+            { label: 'Base', value: 'Bangkok, Thailand — Remote' },
             { label: 'Lang', value: 'EN / TH multilingual' },
           ],
           profileName: 'Sarut Dumrongprechachan',
-          profileSubtitle: 'FE-Eng · AU / Remote',
+          profileSubtitle: 'Frontend Developer · BKK / Remote',
           profileStatus: 'Open',
           profileImageUrl: null,
           profileImageAlt: '',
-          codeFilename: 'engineer.config.ts',
-          codeRole: 'Frontend Engineer',
+          codeFilename: 'developer.config.ts',
+          codeRole: 'Frontend Developer',
           codeStack: ['Next.js', 'TS', 'React'],
           codeDomains: ['cms', 'booking', 'i18n'],
-          codeFocus: 'platform-eng',
+          codeFocus: 'frontend-platform',
           codeStatus: 'available',
         },
         blocks: [
@@ -327,9 +357,9 @@ async function seedPageSections(): Promise<void> {
             order: 0,
             props: {
               items: [
-                { value: '06', label: 'Case Studies' },
+                { value: '04', label: 'Case Studies' },
                 { value: '04', label: 'Problem Domains' },
-                { value: '5y', label: 'Shipping Products' },
+                { value: '2025', label: 'Shipping Since' },
                 { value: '2', label: 'Languages — EN / TH' },
               ],
             },
@@ -340,7 +370,7 @@ async function seedPageSections(): Promise<void> {
             order: 1,
             props: {
               items: [
-                { num: '01', title: 'Work', desc: 'Case studies — architecture, decisions, and measured impact.', link: '/work', linkLabel: '6 ENTRIES', badge: 'LIVE' },
+                { num: '01', title: 'Work', desc: 'Case studies — architecture, decisions, and measured impact.', link: '/work', linkLabel: '4 ENTRIES', badge: 'LIVE' },
                 { num: '02', title: 'Engineering', desc: 'Architecture notes, decision logs, and performance write-ups.', link: '/engineering', linkLabel: 'Notes' },
                 { num: '03', title: 'Journal', desc: 'Working notes on building, learning, and shipping.', link: '/journal', linkLabel: 'Posts' },
                 { num: '04', title: 'Focus', desc: 'What I am learning and building right now — the roadmap.', link: '/focus', linkLabel: 'Roadmap' },
@@ -354,7 +384,7 @@ async function seedPageSections(): Promise<void> {
             enabled: true,
             order: 2,
             props: {
-              items: ['Next.js', 'TypeScript', 'React', 'Node.js', 'Tailwind', 'PostgreSQL', 'GraphQL', 'i18n', 'Playwright', 'AI-assisted'],
+              items: ['Next.js', 'TypeScript', 'React', 'Node.js', 'NestJS', 'Tailwind', 'Prisma', 'i18n', 'AI-assisted'],
             },
           },
         ],
@@ -363,42 +393,42 @@ async function seedPageSections(): Promise<void> {
     {
       key: 'focus',
       data: {
-        updatedLabel: 'UPDATED 2026 · 06',
+        updatedLabel: 'UPDATED 2026 · 08',
         topic: 'Frontend Platform Engineering',
-        intro: 'Currently going deep on Frontend Platform Engineering — the tooling, design systems, and infrastructure that let product teams ship faster with less friction.',
+        intro: 'Working toward frontend platform engineering — the shared patterns, tooling, and conventions that let a product team ship the same thing twice without rebuilding it.',
         roadmap: [
           {
             phase: 'NOW',
             tag: 'IN PROGRESS',
             items: [
-              { title: 'Platform engineering', note: 'Internal tooling and DX for product teams.', dot: 'active' },
-              { title: 'Design tokens at scale', note: 'Multi-brand theming from one source.', dot: 'active' },
-              { title: 'RSC mental models', note: 'Documenting patterns for the team.', dot: 'active' },
+              { title: 'App Router data flow', note: 'Where the server/client boundary actually belongs.', dot: 'active' },
+              { title: 'Reusable form patterns', note: 'Multilingual forms with per-language validation.', dot: 'active' },
+              { title: 'Design tokens', note: 'One theme source across projects.', dot: 'active' },
             ],
           },
           {
             phase: 'NEXT',
             tag: 'QUEUED',
             items: [
-              { title: 'Edge-first data patterns', note: 'Fetching and caching at the boundary.', dot: 'queued' },
+              { title: 'Payload CMS 3', note: 'Schema-driven content on Postgres.', dot: 'queued' },
               { title: 'Type-safe i18n routing', note: 'Locales the compiler can verify.', dot: 'queued' },
-              { title: 'Component testing', note: 'Playwright CT in the pipeline.', dot: 'queued' },
+              { title: 'Component testing', note: 'Vitest and Playwright in the pipeline.', dot: 'queued' },
             ],
           },
           {
             phase: 'LATER',
             tag: 'EXPLORING',
             items: [
-              { title: 'Rust for build tooling', note: 'Faster local and CI builds.', dot: 'exploring' },
+              { title: 'Turborepo', note: 'Shared packages across projects.', dot: 'exploring' },
               { title: 'Local-first sync', note: 'CRDTs and offline-capable UIs.', dot: 'exploring' },
             ],
           },
         ],
-        learning: ['RSC internals', 'Turborepo', 'Design tokens', 'Edge runtimes', 'Playwright CT', 'OpenTelemetry', 'Rust', 'CRDTs'],
+        learning: ['RSC internals', 'Payload CMS', 'NestJS', 'Design tokens', 'Playwright', 'Turborepo', 'Docker'],
         reading: [
           { idx: '01', title: 'Next.js RFCs & the App Router roadmap' },
           { idx: '02', title: 'WAI-ARIA Authoring Practices, end to end' },
-          { idx: '03', title: 'Papers on CRDTs and local-first software' },
+          { idx: '03', title: 'Prisma and Postgres schema design in practice' },
         ],
       },
     },
@@ -406,12 +436,12 @@ async function seedPageSections(): Promise<void> {
       key: 'stack',
       data: {
         groups: [
-          { label: 'EDITOR & SHELL', tools: [{ name: 'VS Code', note: 'vim mode' }, { name: 'Ghostty', note: 'terminal' }, { name: 'Zsh + Starship', note: 'shell' }, { name: 'Raycast', note: 'launcher' }] },
-          { label: 'LANGUAGES', tools: [{ name: 'TypeScript', note: 'daily' }, { name: 'JavaScript', note: 'daily' }, { name: 'SQL', note: 'postgres' }, { name: 'Go', note: 'tooling' }] },
-          { label: 'FRAMEWORK', tools: [{ name: 'Next.js', note: 'app router' }, { name: 'React', note: 'rsc' }, { name: 'Tailwind', note: 'styling' }, { name: 'Zod', note: 'schema' }] },
-          { label: 'DATA & INFRA', tools: [{ name: 'PostgreSQL', note: 'primary' }, { name: 'Redis', note: 'cache' }, { name: 'Vercel', note: 'edge / host' }, { name: 'GitHub Actions', note: 'ci' }] },
-          { label: 'DESIGN & QA', tools: [{ name: 'Figma', note: 'design' }, { name: 'Storybook', note: 'components' }, { name: 'Playwright', note: 'e2e' }, { name: 'Vitest', note: 'unit' }] },
-          { label: 'AI-ASSISTED', tools: [{ name: 'Claude', note: 'pair / design' }, { name: 'Copilot', note: 'inline' }, { name: 'Cursor', note: 'refactors' }] },
+          { label: 'EDITOR & SHELL', tools: [{ name: 'VS Code', note: 'daily' }, { name: 'Windows Terminal', note: 'shell' }, { name: 'Git Bash', note: 'unix tools' }, { name: 'Claude Code', note: 'agentic' }] },
+          { label: 'LANGUAGES', tools: [{ name: 'TypeScript', note: 'daily' }, { name: 'JavaScript', note: 'daily' }, { name: 'SQL', note: 'postgres' }, { name: 'Python', note: 'scripts' }] },
+          { label: 'FRAMEWORK', tools: [{ name: 'Next.js', note: 'app router' }, { name: 'React', note: 'rsc' }, { name: 'NestJS', note: 'api' }, { name: 'Tailwind', note: 'styling' }] },
+          { label: 'DATA & INFRA', tools: [{ name: 'PostgreSQL', note: 'primary' }, { name: 'Prisma', note: 'orm' }, { name: 'Vercel', note: 'host' }, { name: 'GitHub Actions', note: 'ci' }] },
+          { label: 'FORMS & STATE', tools: [{ name: 'React Hook Form', note: 'forms' }, { name: 'Zod', note: 'schema' }, { name: 'SWR', note: 'fetching' }, { name: 'Zustand', note: 'client state' }] },
+          { label: 'DESIGN & AI', tools: [{ name: 'Figma', note: 'design' }, { name: 'Claude', note: 'pair / design' }, { name: 'Copilot', note: 'inline' }, { name: 'Cursor', note: 'refactors' }] },
         ],
       },
     },
@@ -420,7 +450,7 @@ async function seedPageSections(): Promise<void> {
       data: {
         brand: {
           name: 'Sarut Dumrongprechachan',
-          role: 'Frontend Engineer',
+          role: 'Frontend Developer',
           isAvailable: true,
         },
         nav: [
@@ -443,18 +473,19 @@ async function seedPageSections(): Promise<void> {
           description: 'A reusable Next.js-based frontend engineering portfolio system',
           ogImageUrl: null,
         },
+        // LinkedIn is omitted on purpose — an empty link reads worse than none.
         socialLinks: [
-          { label: 'GitHub', url: '' },
-          { label: 'LinkedIn', url: '' },
+          { label: 'GitHub', url: 'https://github.com/sarud14' },
         ],
+        // Public page: email only. Phone and home address stay in the PDF.
         contact: {
-          email: '',
-          location: 'Australia — Remote',
+          email: 'ruj.working@gmail.com',
+          location: 'Bangkok, Thailand — Remote',
         },
         footer: {
           copyrightName: 'Sarut Dumrongprechachan',
           tagline: 'Designed as a system, not a page',
-          buildLabel: 'Build 2026.06 · All systems nominal',
+          buildLabel: 'Build 2026.08 · All systems nominal',
         },
       },
     },
@@ -469,93 +500,141 @@ async function seedPageSections(): Promise<void> {
   }
 
   console.log(`  ✓ ${pages.length} page sections (landing, focus, stack, site)`)
+  return pages.length
 }
 
 // ---------------------------------------------------------------------------
 // 6. Seed Resume (normalized tables)
+//
+// PRIVACY: this is a public site — phone number and home address are
+// intentionally omitted. Keep those in the PDF sent directly to employers.
 // ---------------------------------------------------------------------------
 
-async function seedResume(): Promise<void> {
+interface ResumeCounts {
+  experiences: number
+  education: number
+  languages: number
+  selectedWork: number
+}
+
+async function seedResume(): Promise<ResumeCounts> {
   console.log('Seeding resume...')
 
   const profileId = 'resume-profile-singleton'
 
+  const profileData = {
+    name: 'Sarut Dumrongprechachan',
+    role: 'FRONTEND DEVELOPER',
+    contactLine:
+      'ruj.working@gmail.com · github.com/sarud14 · Bangkok, Thailand — Open to Remote · EN / TH',
+    skills: [
+      'React',
+      'Next.js (App Router)',
+      'TypeScript',
+      'Tailwind CSS',
+      'REST API Integration',
+      'React Hook Form + Zod',
+      'State Management (Zustand / SWR)',
+      'Localization (i18n)',
+      'Responsive UI',
+      'UI/UX & Figma handoff',
+    ],
+    coreTools: [
+      'Next.js',
+      'React',
+      'TypeScript',
+      'Tailwind',
+      'Node.js',
+      'Prisma',
+      'Git / GitHub',
+      'Figma',
+    ],
+  }
+
   await prisma.resumeProfile.upsert({
     where: { id: profileId },
-    update: {
-      name: 'Sarut Dumrongprechachan',
-      role: 'FRONTEND ENGINEER · PLATFORM & PRODUCT',
-      contactLine: 'hello@sarut.dev · sarut.dev · Australia / Remote · EN / TH',
-      skills: [
-        'Frontend architecture', 'React / RSC', 'TypeScript', 'Performance',
-        'Design systems', 'i18n / localization', 'Accessibility', 'Mentoring',
-      ],
-      coreTools: [
-        'Next.js', 'Node.js', 'Tailwind', 'PostgreSQL',
-        'GraphQL', 'Playwright', 'Vercel', 'Figma',
-      ],
-    },
-    create: {
-      id: profileId,
-      name: 'Sarut Dumrongprechachan',
-      role: 'FRONTEND ENGINEER · PLATFORM & PRODUCT',
-      contactLine: 'hello@sarut.dev · sarut.dev · Australia / Remote · EN / TH',
-      skills: [
-        'Frontend architecture', 'React / RSC', 'TypeScript', 'Performance',
-        'Design systems', 'i18n / localization', 'Accessibility', 'Mentoring',
-      ],
-      coreTools: [
-        'Next.js', 'Node.js', 'Tailwind', 'PostgreSQL',
-        'GraphQL', 'Playwright', 'Vercel', 'Figma',
-      ],
-    },
+    update: profileData,
+    create: { id: profileId, ...profileData },
   })
 
-  // Experience — delete + recreate for idempotency on array data
+  // Experience — delete + recreate for idempotency on array data.
+  //
+  // The chef entry spans 2015—2023 because kitchen work was continuous
+  // through that period. Keeping it as one entry closes the timeline
+  // without needing a separate heading.
   await prisma.resumeExperience.deleteMany({ where: { profileId } })
   const experiences = [
     {
-      title: 'Lead Frontend Engineer',
-      org: 'Booking & travel platform · contract',
-      period: '2024 — 2025',
+      title: 'Frontend Developer',
+      org: 'Inter Vision Business Groups Co., Ltd. · Bangkok',
+      period: 'Oct 2025 — Present',
       bullets: [
-        'Led the rebuild of a four-market booking platform from per-locale forks into one headless, edge-routed system.',
-        'Introduced React Server Components and Server Actions, lifting conversion 38% and cutting P75 LCP by 63%.',
-        'Mentored three frontend engineers and set the architecture and review standards for the rebuild.',
+        'Build customer-facing web apps and internal CMS panels with Next.js App Router, TypeScript, and Tailwind CSS.',
+        'Integrate REST APIs across booking, exchange-rate, loyalty, and content modules, including presigned S3 uploads for media.',
+        'Implement multilingual (TH / EN) forms and pages with next-intl, React Hook Form, and Zod validation scoped per language.',
+        'Build data-heavy admin tables with server-side pagination and sorting, plus loading, empty, and error states.',
+        'Refactor manual fetch calls into a shared SWR fetcher layer to remove duplicated request logic and stale-cache bugs.',
+        'Debug and fix production issues across authentication, session handling, and file upload flows.',
       ],
       sortOrder: 0,
     },
     {
-      title: 'Frontend Engineer',
-      org: 'Headless CMS & publishing',
-      period: '2022 — 2024',
+      title: 'Chef',
+      org: 'Hospitality industry · Australia & Thailand',
+      period: '2015 — 2023',
       bullets: [
-        'Migrated an editorial team off a legacy monolith onto a headless CMS with an on-demand revalidation pipeline.',
-        'Cut build times 71% with cache-aware CI and a task graph across a growing monorepo.',
-        'Shipped a schema-driven form engine that removed engineering from most content changes.',
+        'Eight years of professional kitchen experience, including five years working in Australia.',
+        'Built the working English, time-pressure discipline, and team coordination now applied to shipping product.',
       ],
       sortOrder: 1,
-    },
-    {
-      title: 'Frontend Developer',
-      org: 'Multi-client product & agency work',
-      period: '2020 — 2022',
-      bullets: [
-        'Built multilingual, accessible interfaces across booking, CMS, and dashboard products.',
-        'Established the shared component patterns several later projects were forked from.',
-      ],
-      sortOrder: 2,
     },
   ]
   for (const exp of experiences) {
     await prisma.resumeExperience.create({ data: { profileId, ...exp } })
   }
 
-  // Education
+  // Education — reverse chronological.
+  //
+  // High school is included because the school carries weight when applying
+  // in Thailand. Drop that entry for an international / remote variant.
   await prisma.resumeEducation.deleteMany({ where: { profileId } })
   const education = [
-    { title: 'B.Sc. Computer Science', note: 'Studied & worked in Australia', period: '2016 — 2020', sortOrder: 0 },
-    { title: 'Ongoing', note: 'Frontend Platform Engineering', period: '2025 — now', sortOrder: 1 },
+    {
+      title: 'Next.js & NestJS',
+      note: 'DevNest',
+      period: 'Mar — May 2025',
+      sortOrder: 0,
+    },
+    {
+      title: 'Full-Stack Development & DevSecOps',
+      note: 'CodeCamp Thailand',
+      period: '2023 — 2024',
+      sortOrder: 1,
+    },
+    {
+      title: 'Grand Diplôme',
+      note: 'Le Cordon Bleu Australia',
+      period: '2015 — 2018',
+      sortOrder: 2,
+    },
+    {
+      title: 'B.A. Art & Design',
+      note: 'Rangsit University',
+      period: '2010 — 2014',
+      sortOrder: 3,
+    },
+    {
+      title: 'High School',
+      note: 'Assumption College',
+      period: '2005 — 2009',
+      sortOrder: 4,
+    },
+    {
+      title: 'Professional Development',
+      note: 'TypeScript, React patterns, frontend architecture, AI-assisted development',
+      period: 'Ongoing',
+      sortOrder: 5,
+    },
   ]
   for (const edu of education) {
     await prisma.resumeEducation.create({ data: { profileId, ...edu } })
@@ -571,14 +650,38 @@ async function seedResume(): Promise<void> {
     await prisma.resumeLanguage.create({ data: { profileId, ...lang } })
   }
 
-  // Selected Work — link to real WorkCaseStudy rows
+  // Selected Work — link to real WorkCaseStudy rows.
+  //
+  // First two: company work, generic names only, no internal business logic.
+  // Last two: solo personal projects — open repos, fully defensible.
+  // Bootcamp group projects are intentionally excluded.
+  //
+  // Requires a matching content/work/<slug>.mdx or the link is skipped.
   await prisma.resumeSelectedWork.deleteMany({ where: { profileId } })
   const selectedWork = [
-    { slug: 'atlas', noteOverride: null, sortOrder: 0 },
-    { slug: 'ledger', noteOverride: null, sortOrder: 1 },
-    { slug: 'prism', noteOverride: null, sortOrder: 2 },
-    { slug: 'beacon', noteOverride: null, sortOrder: 3 },
+    {
+      slug: 'currency-exchange-booking',
+      noteOverride: 'Booking flow with stock limits and multi-branch pickup scheduling.',
+      sortOrder: 0,
+    },
+    {
+      slug: 'multilingual-cms',
+      noteOverride: 'Admin CMS with per-language validation and server-sorted tables.',
+      sortOrder: 1,
+    },
+    {
+      slug: 'feops-kit',
+      noteOverride: 'This site — a content-driven portfolio system on Next.js and Prisma.',
+      sortOrder: 2,
+    },
+    {
+      slug: 'herbal-catalogue',
+      noteOverride: 'Trilingual product catalogue (TH / EN / ZH) on Payload CMS.',
+      sortOrder: 3,
+    },
   ]
+
+  let linkedWork = 0
   for (const sw of selectedWork) {
     const work = await prisma.workCaseStudy.findUnique({ where: { slug: sw.slug } })
     if (work) {
@@ -590,20 +693,46 @@ async function seedResume(): Promise<void> {
           sortOrder: sw.sortOrder,
         },
       })
+      linkedWork++
     } else {
       console.warn(`  ⚠ Work "${sw.slug}" not found — skipping selectedWork link`)
     }
   }
 
-  console.log('  ✓ resume profile + 3 experiences + 2 education + 2 languages + 4 selectedWork')
+  console.log(
+    `  ✓ resume profile + ${experiences.length} experiences + ${education.length} education + ` +
+      `${languages.length} languages + ${linkedWork}/${selectedWork.length} selectedWork`
+  )
+
+  return {
+    experiences: experiences.length,
+    education: education.length,
+    languages: languages.length,
+    selectedWork: linkedWork,
+  }
 }
 
 // ---------------------------------------------------------------------------
 // 7. Verify counts
+//
+// Expected values are derived from what was actually seeded rather than
+// hardcoded, so adding or removing an MDX file doesn't break the check.
+// This verifies the write reached the database, not that a magic number
+// still matches.
 // ---------------------------------------------------------------------------
 
-async function verifyCounts(): Promise<void> {
+interface SeedResult {
+  domains: number
+  work: number
+  journal: number
+  engineering: number
+  pageSections: number
+  resume: ResumeCounts
+}
+
+async function verifyCounts(seeded: SeedResult): Promise<void> {
   console.log('\nVerifying counts...')
+
   const counts = {
     domains: await prisma.domain.count(),
     work: await prisma.workCaseStudy.count(),
@@ -618,16 +747,16 @@ async function verifyCounts(): Promise<void> {
   }
 
   const expected = {
-    domains: 6,
-    work: 6,
-    journal: 6,
-    engineering: 9,
-    pageSections: 4,
+    domains: seeded.domains,
+    work: seeded.work,
+    journal: seeded.journal,
+    engineering: seeded.engineering,
+    pageSections: seeded.pageSections,
     resumeProfiles: 1,
-    resumeExperience: 3,
-    resumeEducation: 2,
-    resumeLanguages: 2,
-    resumeSelectedWork: 4,
+    resumeExperience: seeded.resume.experiences,
+    resumeEducation: seeded.resume.education,
+    resumeLanguages: seeded.resume.languages,
+    resumeSelectedWork: seeded.resume.selectedWork,
   }
 
   let allMatch = true
@@ -642,6 +771,8 @@ async function verifyCounts(): Promise<void> {
     console.log('\n✓ All counts match — seed complete.')
   } else {
     console.log('\n✗ Some counts do not match — check warnings above.')
+    console.log('  A mismatch on work/journal/engineering usually means stale rows')
+    console.log('  from a removed MDX file are still in the database.')
   }
 }
 
@@ -652,13 +783,16 @@ async function verifyCounts(): Promise<void> {
 async function main(): Promise<void> {
   console.log('Starting seed...\n')
 
-  await seedDomains()
-  await seedWork()
-  await seedJournal()
-  await seedEngineering()
-  await seedPageSections()
-  await seedResume()
-  await verifyCounts()
+  await wipeCmsContent()
+
+  const domains = await seedDomains()
+  const work = await seedWork()
+  const journal = await seedJournal()
+  const engineering = await seedEngineering()
+  const pageSections = await seedPageSections()
+  const resume = await seedResume()
+
+  await verifyCounts({ domains, work, journal, engineering, pageSections, resume })
 }
 
 main()

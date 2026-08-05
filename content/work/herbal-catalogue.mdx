@@ -1,0 +1,20 @@
+---
+title: "Herbal Catalogue"
+status: published
+listId: "04"
+role: "FE"
+tagline: "Trilingual product catalogue (TH / EN / ZH) on Payload CMS."
+domains: ["Multilingual", "CMS"]
+stack: ["Next.js", "TypeScript", "Payload CMS"]
+metric: "TH / EN / ZH"
+metricLabel: "LOCALES"
+year: "2025"
+context: "A product catalogue that had to present the same herbal SKUs in Thai, English, and Chinese without three separate sites."
+problem: "Locale-specific product fields drifted when content lived in duplicated templates instead of one schema-driven CMS."
+constraints: "Three locales, editorial ownership outside engineering, and a public storefront that only shows published entries."
+architecture: "Payload CMS on Postgres for product schema and locales, with a Next.js storefront reading published catalogue data."
+decisions: "One product collection with per-locale fields; the storefront never authors content, it only renders published records."
+impact: "Catalogue updates ship in all three languages from one admin workflow."
+---
+
+Public case study for a trilingual catalogue. Brand-sensitive product data is left out of this write-up.
