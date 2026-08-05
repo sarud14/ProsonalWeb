@@ -258,6 +258,7 @@ AUTH_ADMIN_EMAIL_ALLOWLIST=""
 AUTH_ADMIN_GITHUB_ID_ALLOWLIST=""
 CONTENT_SOURCE="mdx"           # "mdx" (default) or "db"
 BLOB_READ_WRITE_TOKEN=""       # Vercel Blob token (for media uploads)
+CRON_SECRET=""                 # production Vercel Cron auth for /api/cron/keep-alive
 ```
 
 **Never commit `.env`.** It's already in `.gitignore`.
@@ -320,6 +321,7 @@ Uploads are session-gated (admin login required). After upload, the client saves
 | `AUTH_ADMIN_GITHUB_ID_ALLOWLIST` | Optional | Comma-separated GitHub numeric account IDs (fallback when email is private) |
 | `CONTENT_SOURCE` | No (defaults to `mdx`) | `mdx` or `db` |
 | `BLOB_READ_WRITE_TOKEN` | Only if using media uploads | Vercel Blob read/write token — store must be **Public** |
+| `CRON_SECRET` | Production (Vercel Cron) | Bearer secret for `GET /api/cron/keep-alive` — generate with `openssl rand -base64 32` |
 
 ---
 
@@ -331,7 +333,7 @@ Uploads are session-gated (admin login required). After upload, the client saves
 | `yarn build` | Production build |
 | `yarn lint` | Run ESLint |
 | `yarn type-check` | Run `tsc --noEmit` |
-| `yarn test` | Run Vitest (11 files, 35 tests) |
+| `yarn test` | Run Vitest (12 files, 44 tests) |
 | `npx prisma generate` | Generate Prisma client types |
 | `npx prisma migrate dev` | Run database migrations |
 | `yarn prisma:migrate:deploy` | Apply migrations to production DB |
@@ -362,10 +364,13 @@ Uploads are session-gated (admin login required). After upload, the client saves
 | `AUTH_ADMIN_GITHUB_ID_ALLOWLIST` | Optional GitHub numeric IDs fallback |
 | `CONTENT_SOURCE` | `db` |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob → Storage → **Public** store → read/write token |
+| `CRON_SECRET` | `openssl rand -base64 32` — Vercel Cron sends `Authorization: Bearer <CRON_SECRET>` |
 
 4. **Blob store:** create a **Public** Blob store in Vercel Storage. Private stores reject client uploads.
 
-5. **OAuth callback URLs** (add every domain you deploy to):
+5. **Keep-alive cron:** `vercel.json` schedules `GET /api/cron/keep-alive` daily at 03:00 UTC (10:00 ICT). This runs a real `SELECT 1` against Postgres so a Supabase Free project is not auto-paused after 7 days of inactivity. Cron runs on **production only**. After deploy, confirm the job under Vercel → Project → Cron Jobs.
+
+6. **OAuth callback URLs** (add every domain you deploy to):
 
 | Provider | Callback |
 |---|---|
@@ -374,7 +379,7 @@ Uploads are session-gated (admin login required). After upload, the client saves
 
 > **Admin access control:** Production sign-in is allowlist-gated. Add your owner email to `AUTH_ADMIN_EMAIL_ALLOWLIST`. If your GitHub email is private, also add the numeric GitHub user ID to `AUTH_ADMIN_GITHUB_ID_ALLOWLIST`.
 
-6. Provision the production database (run locally against prod `DIRECT_URL`):
+7. Provision the production database (run locally against prod `DIRECT_URL`):
 
 ```bash
 yarn prisma:migrate:deploy
@@ -383,7 +388,7 @@ yarn prisma:seed
 
 > Migrations are local-only in this repo — apply per environment with `yarn prisma:migrate:deploy`, not via git.
 
-7. Deploy. After deploy, verify:
+8. Deploy. After deploy, verify:
 
 ```bash
 yarn smoke:web https://your-domain.vercel.app
@@ -446,6 +451,9 @@ Adjust the port if Next.js picks another (e.g. `3001`).
 
 **"Can't reach database server" / `ECONNREFUSED` on `/admin`**
 → Postgres is not reachable. Check `DATABASE_URL`, run `npx prisma migrate dev` and `npx prisma db seed`, and confirm Supabase project is running.
+
+**`/admin` 500 with `tenant/user postgres.<project-ref> not found`**
+→ Supabase Free auto-paused after ~7 days without DB activity. Restore the project in the Supabase Dashboard (data is preserved; no Vercel redeploy needed). Production keep-alive is `GET /api/cron/keep-alive` via Vercel Cron — set `CRON_SECRET` and confirm the job under Vercel → Cron Jobs.
 
 **`MissingSecret` from Auth.js on `/admin`**
 → Set `NEXTAUTH_SECRET` in `.env`. Ensure `NEXTAUTH_URL` matches the running port (or leave it empty and set `PORT` + `APP_HOST`).
