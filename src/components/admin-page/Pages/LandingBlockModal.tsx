@@ -51,13 +51,13 @@ export function LandingBlockModal({
       role="presentation"
     >
       <div
-        className="max-h-[85vh] w-[90%] max-w-[640px] overflow-y-auto rounded-[14px] border border-border bg-card p-7"
+        className="max-h-[85vh] w-[90%] max-w-[640px] overflow-y-auto rounded-[14px] border border-border bg-card p-7 text-black"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="mb-2 text-[22px] font-medium">
           {state.isNew ? 'Add' : 'Edit'} landing block
         </h3>
-        <p className="mb-5 text-sm text-muted-foreground">
+        <p className="mb-5 text-sm text-black/70">
           {state.isNew
             ? 'Choose a section type and fill in the fields below.'
             : `Editing “${typeLabel}” section.`}
@@ -82,7 +82,7 @@ export function LandingBlockModal({
             )}
           </AdminFormField>
 
-          <label className="flex items-center gap-2 text-base">
+          <label className="flex items-center gap-2 text-sm text-black">
             <input
               type="checkbox"
               checked={block.enabled}
@@ -104,7 +104,7 @@ export function LandingBlockModal({
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer rounded-lg border border-border bg-secondary px-[18px] py-2.5 text-[13px] font-semibold text-muted-foreground"
+            className="cursor-pointer rounded-lg border border-border bg-secondary px-[18px] py-2.5 text-[13px] font-semibold text-white"
           >
             Cancel
           </button>
@@ -113,7 +113,7 @@ export function LandingBlockModal({
             onClick={handleSave}
             className="cursor-pointer rounded-lg bg-primary px-[18px] py-2.5 text-[13px] font-bold text-primary-foreground"
           >
-            Save
+            Apply
           </button>
         </div>
       </div>
