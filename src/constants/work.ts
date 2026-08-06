@@ -1,7 +1,6 @@
-import type { WorkDomainFilter } from '@/types/work-list.types'
+export const WORK_FILTER_ALL = 'ALL' as const
 
-export const WORK_FILTER_ALL = 'ALL' as const satisfies WorkDomainFilter
-
+/** MDX / offline fallback domain chips — production reads Domain rows from the DB. */
 export const WORK_DOMAIN_FILTERS = [
   WORK_FILTER_ALL,
   'Booking',
@@ -9,4 +8,5 @@ export const WORK_DOMAIN_FILTERS = [
   'Architecture',
   'Multilingual',
   'Performance',
-] as const satisfies readonly WorkDomainFilter[]
+  'Platform',
+] as const

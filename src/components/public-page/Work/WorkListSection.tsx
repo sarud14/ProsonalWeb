@@ -3,29 +3,28 @@
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
-import { WORK_DOMAIN_FILTERS, WORK_FILTER_ALL } from '@/constants/work'
+import { WORK_FILTER_ALL } from '@/constants/work'
+import {
+  buildWorkDomainFilterOptions,
+  matchesWorkDomainFilter,
+} from '@/lib/content/work-domain-filters'
 import { cn } from '@/lib/utils'
-import type { WorkListSectionProps, WorkDomainFilter } from '@/types/work-list.types'
-import type { WorkCaseStudy } from '@/types/work.types'
-
-function matchesDomainFilter(
-  item: WorkCaseStudy,
-  filter: WorkDomainFilter
-): boolean {
-  if (filter === WORK_FILTER_ALL) return true
-  return item.domains.includes(filter)
-}
+import type { WorkListSectionProps } from '@/types/work-list.types'
 
 export function WorkListSection({
   items,
+  domainFilters,
 }: WorkListSectionProps): React.JSX.Element {
-  const [activeFilter, setActiveFilter] = useState<WorkDomainFilter>(
-    WORK_FILTER_ALL
+  const filters = useMemo(
+    () => buildWorkDomainFilterOptions(domainFilters),
+    [domainFilters],
   )
+  const [activeFilter, setActiveFilter] = useState<string>(WORK_FILTER_ALL)
 
   const shownItems = useMemo(
-    () => items.filter((item) => matchesDomainFilter(item, activeFilter)),
-    [activeFilter, items]
+    () =>
+      items.filter((item) => matchesWorkDomainFilter(item.domains, activeFilter)),
+    [activeFilter, items],
   )
 
   const countLabel = `SHOWING ${shownItems.length} OF ${items.length}`
@@ -34,7 +33,7 @@ export function WorkListSection({
     <>
       <section className="flex flex-wrap items-center justify-between gap-4 border-b border-border py-6">
         <div className="flex flex-wrap gap-2">
-          {WORK_DOMAIN_FILTERS.map((filter) => {
+          {filters.map((filter) => {
             const isActive = activeFilter === filter
 
             return (
@@ -46,7 +45,7 @@ export function WorkListSection({
                   'cursor-pointer border px-3.5 py-2 font-mono text-[11px] tracking-[0.08em] uppercase transition-[border-color,background,color] duration-150',
                   isActive
                     ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-white/10 bg-transparent text-muted-foreground hover:border-white/30'
+                    : 'border-white/10 bg-transparent text-muted-foreground hover:border-white/30',
                 )}
               >
                 {filter}
@@ -70,7 +69,7 @@ export function WorkListSection({
                 >
                   {label}
                 </span>
-              )
+              ),
             )}
             <span aria-hidden />
           </div>

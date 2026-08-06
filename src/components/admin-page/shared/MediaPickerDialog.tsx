@@ -39,15 +39,16 @@ export function MediaPickerDialog({
       role="presentation"
     >
       <div
-        className="max-h-[80vh] w-[90%] max-w-[720px] overflow-y-auto rounded-[14px] border border-border bg-card p-6"
+        className="max-h-[80vh] w-[90%] max-w-[720px] overflow-y-auto rounded-[14px] border border-border bg-card p-7 text-black"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-medium">Choose from media</h3>
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <h3 className="text-[22px] font-medium">Choose from media</h3>
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer border-none bg-transparent text-muted-foreground"
+            className="cursor-pointer rounded-lg border border-border bg-secondary px-3 py-1.5 text-[13px] font-semibold text-white"
+            aria-label="Close"
           >
             ×
           </button>
