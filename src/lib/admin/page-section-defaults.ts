@@ -2,6 +2,11 @@ import type { FocusPageData } from '@/types/focus.types'
 import type { LandingBlock, LandingPageData, SiteConfig } from '@/types/site.types'
 import type { StackPageData } from '@/types/stack.types'
 
+import {
+  CONTACT_DEFAULT_BODY,
+  CONTACT_DEFAULT_HEADLINE,
+  CONTACT_DEFAULT_SUCCESS_MESSAGE,
+} from '@/constants/contact'
 import { FOCUS_PAGE_DATA } from '@/constants/focus-page-data'
 import { LANDING_MODULES, LANDING_STATS, LANDING_TECH_STACK } from '@/constants/landing'
 import { DEFAULT_LANDING_HERO } from '@/lib/admin/landing-hero'
@@ -36,6 +41,16 @@ export const DEFAULT_LANDING_PAGE_DATA: LandingPageData = {
       order: 2,
       props: { items: [...LANDING_TECH_STACK] },
     },
+    {
+      type: 'contact',
+      enabled: true,
+      order: 3,
+      props: {
+        headline: CONTACT_DEFAULT_HEADLINE,
+        body: CONTACT_DEFAULT_BODY,
+        successMessage: CONTACT_DEFAULT_SUCCESS_MESSAGE,
+      },
+    },
   ],
 }
 
@@ -52,6 +67,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
     { key: 'focus', label: 'Focus', href: '/focus', enabled: true, order: 3 },
     { key: 'stack', label: 'Stack', href: '/stack', enabled: true, order: 4 },
     { key: 'resume', label: 'Résumé', href: '/resume', enabled: true, order: 5 },
+    { key: 'contact', label: 'Contact', href: '/contact', enabled: true, order: 6 },
   ],
   theme: DEFAULT_SITE_THEME,
   seo: DEFAULT_SITE_SEO,
@@ -76,6 +92,10 @@ export function getLandingBlockHeadline(block: LandingBlock): string {
       return Array.isArray(items) && typeof items[0] === 'string'
         ? `${items.slice(0, 2).join(', ')}…`
         : 'Tech stack'
+    case 'contact':
+      return typeof block.props.headline === 'string' && block.props.headline.length > 0
+        ? block.props.headline
+        : 'Contact'
     default:
       return block.type
   }
@@ -83,6 +103,7 @@ export function getLandingBlockHeadline(block: LandingBlock): string {
 
 export function getLandingBlockSubline(block: LandingBlock): string {
   if (!block.enabled) return 'Disabled'
+  if (block.type === 'contact') return 'Contact form'
   const count = Array.isArray(block.props.items) ? block.props.items.length : 0
   return `${count} item${count === 1 ? '' : 's'}`
 }

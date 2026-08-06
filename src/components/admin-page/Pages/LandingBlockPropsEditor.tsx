@@ -10,6 +10,7 @@ import {
   parseLandingModules,
   parseLandingStats,
   parseLandingTechStack,
+  parseLandingContact,
 } from '@/lib/admin/landing-block-props'
 import type {
   LandingModule,
@@ -267,6 +268,52 @@ function TechStackPropsEditor({
   )
 }
 
+function ContactPropsEditor({
+  props,
+  onChange,
+}: {
+  readonly props: Record<string, unknown>
+  readonly onChange: (props: Record<string, unknown>) => void
+}): React.JSX.Element {
+  const contact = parseLandingContact(props)
+
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-sm text-black/70">
+        Public contact form copy. Messages still go to Admin → Messages.
+      </p>
+      <AdminFormField label="Headline" required>
+        <input
+          type="text"
+          value={contact.headline}
+          onChange={(e) =>
+            onChange({ ...contact, headline: e.target.value })
+          }
+          className={adminInputClassName}
+        />
+      </AdminFormField>
+      <AdminFormField label="Body" required>
+        <textarea
+          value={contact.body}
+          onChange={(e) => onChange({ ...contact, body: e.target.value })}
+          className={adminTextareaClassName}
+          rows={3}
+        />
+      </AdminFormField>
+      <AdminFormField label="Success message" required>
+        <input
+          type="text"
+          value={contact.successMessage}
+          onChange={(e) =>
+            onChange({ ...contact, successMessage: e.target.value })
+          }
+          className={adminInputClassName}
+        />
+      </AdminFormField>
+    </div>
+  )
+}
+
 export function LandingBlockPropsEditor({
   type,
   props,
@@ -279,6 +326,8 @@ export function LandingBlockPropsEditor({
       return <ModulesPropsEditor props={props} onChange={onChange} />
     case 'techStack':
       return <TechStackPropsEditor props={props} onChange={onChange} />
+    case 'contact':
+      return <ContactPropsEditor props={props} onChange={onChange} />
     default:
       return (
         <p className="text-sm text-muted-foreground">

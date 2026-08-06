@@ -1,6 +1,8 @@
+import ContactSection from '@/components/public-page/Landing/ContactSection'
 import ExploreStackSection from '@/components/public-page/Landing/ExploreStackSection'
 import ModulesSection from '@/components/public-page/Landing/ModulesSection'
 import StatsSection from '@/components/public-page/Landing/StatsSection'
+import { parseLandingContact } from '@/lib/admin/landing-block-props'
 import {
   getLandingBlockItems,
   getVisibleLandingBlocks,
@@ -37,6 +39,17 @@ export async function LandingBlocks(): Promise<React.JSX.Element> {
                 items={getLandingBlockItems<string>(block)}
               />
             )
+          case 'contact': {
+            const contact = parseLandingContact(block.props)
+            return (
+              <ContactSection
+                key={key}
+                headline={contact.headline}
+                body={contact.body}
+                successMessage={contact.successMessage}
+              />
+            )
+          }
           default:
             return null
         }

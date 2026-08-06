@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import {
   getSiteContact,
   getSiteFooter,
@@ -13,7 +15,6 @@ export async function Footer(): Promise<React.JSX.Element> {
   const year = new Date().getFullYear()
   const email = contact.email.trim()
   const location = contact.location.trim()
-  const hasContactRow = email.length > 0 || location.length > 0 || socialLinks.length > 0
 
   return (
     <footer className="border-t border-border">
@@ -28,39 +29,43 @@ export async function Footer(): Promise<React.JSX.Element> {
         </span>
       </div>
 
-      {hasContactRow ? (
-        <div className="border-t border-white/[0.06]">
-          <div className="mx-auto flex max-w-[1240px] flex-col gap-3 px-7 py-3.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-muted-foreground">
-              {email.length > 0 ? (
-                <a
-                  href={`mailto:${email}`}
-                  className="text-secondary-foreground no-underline transition-colors hover:text-foreground"
-                >
-                  {email}
-                </a>
-              ) : null}
-              {location.length > 0 ? <span>{location}</span> : null}
-            </div>
-
-            {socialLinks.length > 0 ? (
-              <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] tracking-[0.06em] uppercase">
-                {socialLinks.map((link) => (
-                  <a
-                    key={`${link.label}-${link.url}`}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground no-underline transition-colors hover:text-foreground"
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </div>
+      <div className="border-t border-white/[0.06]">
+        <div className="mx-auto flex max-w-[1240px] flex-col gap-3 px-7 py-3.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-muted-foreground">
+            <Link
+              href="/contact"
+              className="text-secondary-foreground no-underline transition-colors hover:text-foreground"
+            >
+              Contact
+            </Link>
+            {email.length > 0 ? (
+              <a
+                href={`mailto:${email}`}
+                className="text-secondary-foreground no-underline transition-colors hover:text-foreground"
+              >
+                {email}
+              </a>
             ) : null}
+            {location.length > 0 ? <span>{location}</span> : null}
           </div>
+
+          {socialLinks.length > 0 ? (
+            <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] tracking-[0.06em] uppercase">
+              {socialLinks.map((link) => (
+                <a
+                  key={`${link.label}-${link.url}`}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground no-underline transition-colors hover:text-foreground"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          ) : null}
         </div>
-      ) : null}
+      </div>
     </footer>
   )
 }

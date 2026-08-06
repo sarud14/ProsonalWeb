@@ -13,6 +13,15 @@ export const LANDING_BLOCK_TYPES = [
   { value: 'stats', label: 'Stats', defaultProps: { items: [] } },
   { value: 'modules', label: 'Modules', defaultProps: { items: [] } },
   { value: 'techStack', label: 'Tech stack', defaultProps: { items: [] } },
+  {
+    value: 'contact',
+    label: 'Contact',
+    defaultProps: {
+      headline: 'Get in touch',
+      body: 'Send a note about a project, collaboration, or question. I read every message.',
+      successMessage: 'Thanks — your message was sent.',
+    },
+  },
 ] as const
 
 export function createLandingBlockId(): string {
