@@ -17,6 +17,12 @@ export interface LandingFocusItem {
   readonly value: string
 }
 
+export interface LandingContactProps {
+  readonly headline: string
+  readonly body: string
+  readonly successMessage: string
+}
+
 export interface LandingHeroData {
   readonly eyebrowLabel: string
   readonly eyebrowVersion: string

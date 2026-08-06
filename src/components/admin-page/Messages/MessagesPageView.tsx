@@ -149,7 +149,7 @@ export function MessagesPageView({
                       <button
                         type="button"
                         onClick={() => void handleMarkRead(message.id)}
-                        className="cursor-pointer rounded-lg border border-border bg-secondary px-3 py-1.5 text-xs font-semibold"
+                        className="cursor-pointer rounded-lg border border-border bg-secondary px-3 py-1.5 text-xs font-semibold text-white"
                       >
                         Mark read
                       </button>
@@ -158,7 +158,7 @@ export function MessagesPageView({
                       <button
                         type="button"
                         onClick={() => void handleArchive(message.id)}
-                        className="cursor-pointer rounded-lg border border-border bg-secondary px-3 py-1.5 text-xs font-semibold"
+                        className="cursor-pointer rounded-lg border border-border bg-secondary px-3 py-1.5 text-xs font-semibold text-white"
                       >
                         Archive
                       </button>

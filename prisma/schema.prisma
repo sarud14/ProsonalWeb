@@ -286,13 +286,18 @@ model MediaAsset {
 // ---------------------------------------------------------------------------
 
 model ContactMessage {
-  id        String   @id @default(cuid())
-  name      String
-  email     String
-  message   String   @db.Text
-  read      Boolean  @default(false)
-  archived  Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  name         String
+  email        String
+  message      String   @db.Text
+  sourceIpHash String?
+  read         Boolean  @default(false)
+  archived     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([sourceIpHash, createdAt])
+  @@index([email, createdAt])
+  @@index([createdAt])
 }
 
 model PostReaction {

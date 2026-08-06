@@ -1,9 +1,15 @@
 import type {
+  LandingContactProps,
   LandingFocusItem,
   LandingModule,
   LandingStat,
 } from '@/types/landing.types'
 
+import {
+  CONTACT_DEFAULT_BODY,
+  CONTACT_DEFAULT_HEADLINE,
+  CONTACT_DEFAULT_SUCCESS_MESSAGE,
+} from '@/constants/contact'
 import { LANDING_BLOCK_TYPES } from '@/constants/admin-pages'
 
 export type LandingBlockType = (typeof LANDING_BLOCK_TYPES)[number]['value']
@@ -18,6 +24,12 @@ const EMPTY_MODULE: LandingModule = {
   linkLabel: '',
 }
 
+const DEFAULT_CONTACT_PROPS: LandingContactProps = {
+  headline: CONTACT_DEFAULT_HEADLINE,
+  body: CONTACT_DEFAULT_BODY,
+  successMessage: CONTACT_DEFAULT_SUCCESS_MESSAGE,
+}
+
 export function getDefaultLandingBlockProps(
   type: LandingBlockType
 ): Record<string, unknown> {
@@ -28,6 +40,8 @@ export function getDefaultLandingBlockProps(
       return { items: [{ ...EMPTY_MODULE }] }
     case 'techStack':
       return { items: [] as string[] }
+    case 'contact':
+      return { ...DEFAULT_CONTACT_PROPS }
     default:
       return { items: [] }
   }
@@ -69,6 +83,26 @@ export function parseLandingTechStack(props: Record<string, unknown>): string[] 
   const raw = props.items
   if (!Array.isArray(raw)) return []
   return raw.filter((item): item is string => typeof item === 'string')
+}
+
+export function parseLandingContact(
+  props: Record<string, unknown>
+): LandingContactProps {
+  return {
+    headline:
+      typeof props.headline === 'string' && props.headline.trim().length > 0
+        ? props.headline
+        : DEFAULT_CONTACT_PROPS.headline,
+    body:
+      typeof props.body === 'string' && props.body.trim().length > 0
+        ? props.body
+        : DEFAULT_CONTACT_PROPS.body,
+    successMessage:
+      typeof props.successMessage === 'string' &&
+      props.successMessage.trim().length > 0
+        ? props.successMessage
+        : DEFAULT_CONTACT_PROPS.successMessage,
+  }
 }
 
 export function parseLandingFocusItems(props: Record<string, unknown>): LandingFocusItem[] {

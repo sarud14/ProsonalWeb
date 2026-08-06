@@ -26,7 +26,36 @@ export const contactData = {
     return prisma.contactMessage.findUnique({ where: { id } })
   },
 
-  async create(data: { name: string; email: string; message: string }) {
+  async countRecent(since: Date): Promise<number> {
+    return prisma.contactMessage.count({
+      where: { createdAt: { gte: since } },
+    })
+  },
+
+  async countRecentByEmail(email: string, since: Date): Promise<number> {
+    return prisma.contactMessage.count({
+      where: {
+        email: { equals: email, mode: 'insensitive' },
+        createdAt: { gte: since },
+      },
+    })
+  },
+
+  async countRecentByIpHash(sourceIpHash: string, since: Date): Promise<number> {
+    return prisma.contactMessage.count({
+      where: {
+        sourceIpHash,
+        createdAt: { gte: since },
+      },
+    })
+  },
+
+  async create(data: {
+    name: string
+    email: string
+    message: string
+    sourceIpHash?: string | null
+  }) {
     return prisma.contactMessage.create({ data })
   },
 
