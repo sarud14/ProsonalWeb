@@ -33,7 +33,7 @@ function ListActions({
     <button
       type="button"
       onClick={onAdd}
-      className="cursor-pointer self-start rounded-lg border border-border bg-secondary px-3 py-2 text-xs font-semibold text-foreground"
+      className="cursor-pointer self-start rounded-lg border border-border bg-secondary px-3 py-2 text-xs font-semibold text-white"
     >
       {addLabel}
     </button>
