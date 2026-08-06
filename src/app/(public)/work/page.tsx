@@ -2,6 +2,7 @@ import { Container } from '@/components/ui/Container'
 import { PageRouteHeader } from '@/components/ui/PageRouteHeader'
 import { WorkListSection } from '@/components/public-page/Work/WorkListSection'
 import { getContentSource } from '@/lib/content/source'
+import { resolveWorkDomainLabels } from '@/lib/content/work-domains'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -10,10 +11,13 @@ export const metadata: Metadata = {
 
 export default async function WorkPage(): Promise<React.JSX.Element> {
   const content = await getContentSource()
-  const workList = await content.getAllWork()
+  const [workList, domainLabels] = await Promise.all([
+    content.getAllWork(),
+    resolveWorkDomainLabels(),
+  ])
 
   const sortedWorkList = [...workList].sort((a, b) =>
-    a.listId.localeCompare(b.listId)
+    a.listId.localeCompare(b.listId),
   )
 
   const trailingLabel = `${String(sortedWorkList.length).padStart(2, '0')} CASE STUDIES`
@@ -26,7 +30,7 @@ export default async function WorkPage(): Promise<React.JSX.Element> {
         title="Selected work"
         description="Case studies abstracted to be NDA-safe — described in architecture, decisions, and measured impact rather than client logos. Filter by problem domain."
       />
-      <WorkListSection items={sortedWorkList} />
+      <WorkListSection items={sortedWorkList} domainFilters={domainLabels} />
     </Container>
   )
 }

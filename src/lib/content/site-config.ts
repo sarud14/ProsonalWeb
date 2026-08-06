@@ -47,6 +47,11 @@ export async function getSiteSocialLinks(): Promise<readonly SiteSocialLink[]> {
   return site.socialLinks.filter((link) => link.url.trim().length > 0)
 }
 
+export async function getSiteContact(): Promise<SiteContactSettings> {
+  const site = await resolveSiteConfig()
+  return site.contact
+}
+
 export async function getNavItems(): Promise<readonly NavItem[]> {
   const site = await resolveSiteConfig()
   return getVisibleNavItems(site.nav)

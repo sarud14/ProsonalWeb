@@ -1,13 +1,20 @@
 import type { Metadata } from 'next'
 
+import { EngineeringTypePageView } from '@/components/public-page/Engineering/EngineeringTypePageView'
+import { loadEngineeringTypePage } from '@/lib/content/engineering-type-page'
+
 export const metadata: Metadata = {
   title: 'Performance — Engineering — FEOps Kit',
 }
 
-export default function PerformancePage(): React.JSX.Element {
+export default async function PerformancePage(): Promise<React.JSX.Element> {
+  const page = await loadEngineeringTypePage('performance')
+
   return (
-    <main>
-      <h1>Performance</h1>
-    </main>
+    <EngineeringTypePageView
+      pathSegment={page.pathSegment}
+      noteType={page.noteType}
+      notes={page.notes}
+    />
   )
 }
