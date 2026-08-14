@@ -1,5 +1,2 @@
-export const CRON_KEEP_ALIVE_PATH = '/api/cron/keep-alive'
+export const CRON_KEEP_ALIVE_PATH = '/api/health'
 export const CRON_KEEP_ALIVE_SCHEDULE = '0 3 * * *'
-export const CRON_BEARER_PREFIX = 'Bearer '
-export const CRON_UNAUTHORIZED_BODY = 'Unauthorized'
-export const CRON_NOT_CONFIGURED_ERROR = 'Cron is not configured'

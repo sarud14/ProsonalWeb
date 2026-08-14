@@ -258,7 +258,6 @@ AUTH_ADMIN_EMAIL_ALLOWLIST=""
 AUTH_ADMIN_GITHUB_ID_ALLOWLIST=""
 CONTENT_SOURCE="mdx"           # "mdx" (default) or "db"
 BLOB_READ_WRITE_TOKEN=""       # Vercel Blob token (for media uploads)
-CRON_SECRET=""                 # production Vercel Cron auth for /api/cron/keep-alive
 ```
 
 **Never commit `.env`.** It's already in `.gitignore`.
@@ -321,7 +320,6 @@ Uploads are session-gated (admin login required). After upload, the client saves
 | `AUTH_ADMIN_GITHUB_ID_ALLOWLIST` | Optional | Comma-separated GitHub numeric account IDs (fallback when email is private) |
 | `CONTENT_SOURCE` | No (defaults to `mdx`) | `mdx` or `db` |
 | `BLOB_READ_WRITE_TOKEN` | Only if using media uploads | Vercel Blob read/write token — store must be **Public** |
-| `CRON_SECRET` | Production (Vercel Cron) | Bearer secret for `GET /api/cron/keep-alive` — generate with `openssl rand -base64 32` |
 
 ---
 
@@ -364,11 +362,14 @@ Uploads are session-gated (admin login required). After upload, the client saves
 | `AUTH_ADMIN_GITHUB_ID_ALLOWLIST` | Optional GitHub numeric IDs fallback |
 | `CONTENT_SOURCE` | `db` |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob → Storage → **Public** store → read/write token |
-| `CRON_SECRET` | `openssl rand -base64 32` — Vercel Cron sends `Authorization: Bearer <CRON_SECRET>` |
 
 4. **Blob store:** create a **Public** Blob store in Vercel Storage. Private stores reject client uploads.
 
-5. **Keep-alive cron:** `vercel.json` schedules `GET /api/cron/keep-alive` daily at 03:00 UTC (10:00 ICT). This runs a real `SELECT 1` against Postgres so a Supabase Free project is not auto-paused after 7 days of inactivity. Cron runs on **production only**. After deploy, confirm the job under Vercel → Project → Cron Jobs.
+5. **Keep-alive (Supabase Free):** no extra Vercel env vars. After this commit is on **production `main`**, Vercel reads `vercel.json` and pings `GET /api/health` once per day at 03:00 UTC (`SELECT 1`). Hobby cron is production-only and once per day. Confirm **Vercel → Cron Jobs** lists `/api/health`.
+
+   Optional backup: GitHub Actions `.github/workflows/keep-alive.yml` every 2 days. Set repo **variable** `KEEP_ALIVE_URL` (not a Vercel env) to the production origin, then **Actions → Keep-alive → Run workflow** once.
+
+   A paused project cannot be woken by these pings — Restore in the Supabase Dashboard first.
 
 6. **OAuth callback URLs** (add every domain you deploy to):
 
@@ -453,7 +454,7 @@ Adjust the port if Next.js picks another (e.g. `3001`).
 → Postgres is not reachable. Check `DATABASE_URL`, run `npx prisma migrate dev` and `npx prisma db seed`, and confirm Supabase project is running.
 
 **`/admin` 500 with `tenant/user postgres.<project-ref> not found`**
-→ Supabase Free auto-paused after ~7 days without DB activity. Restore the project in the Supabase Dashboard (data is preserved; no Vercel redeploy needed). Production keep-alive is `GET /api/cron/keep-alive` via Vercel Cron — set `CRON_SECRET` and confirm the job under Vercel → Cron Jobs.
+→ Supabase Free auto-paused after ~7 days without a successful DB ping. **Restore in the Supabase Dashboard first** (cron cannot wake a paused project). After Restore, confirm Vercel Cron Jobs shows `/api/health` **200**. Optionally set GitHub variable `KEEP_ALIVE_URL` and run **Keep-alive**. Do not add `CRON_SECRET` — keep-alive does not use it.
 
 **`MissingSecret` from Auth.js on `/admin`**
 → Set `NEXTAUTH_SECRET` in `.env`. Ensure `NEXTAUTH_URL` matches the running port (or leave it empty and set `PORT` + `APP_HOST`).
