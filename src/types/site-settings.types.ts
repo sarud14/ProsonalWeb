@@ -2,6 +2,7 @@ export interface SiteSeoSettings {
   readonly title: string
   readonly description: string
   readonly ogImageUrl: string | null
+  readonly faviconUrl: string | null
 }
 
 export interface SiteSocialLink {

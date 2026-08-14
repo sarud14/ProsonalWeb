@@ -111,8 +111,9 @@ export function SitePageEditor({
   const [footer, setFooter] = useState<SiteFooterSettings>(initialData.footer)
   const [theme, setTheme] = useState<SiteThemeSettings>(initialData.theme)
   const [modal, setModal] = useState<NavItemModalState | null>(null)
-  const [ogMediaOpen, setOgMediaOpen] = useState(false)
+  const [mediaPicker, setMediaPicker] = useState<'og' | 'favicon' | null>(null)
   const [isOgUploading, setIsOgUploading] = useState(false)
+  const [isFaviconUploading, setIsFaviconUploading] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
@@ -220,6 +221,36 @@ export function SitePageEditor({
       }
 
       setSeo((current) => ({ ...current, ogImageUrl: asset.url }))
+    },
+    [media]
+  )
+
+  const handleFaviconUpload = useCallback(
+    async (file: File) => {
+      setIsFaviconUploading(true)
+      const result = await uploadMediaFile(file, 'site')
+      setIsFaviconUploading(false)
+
+      if (!result.success) {
+        setToast(result.error)
+        return
+      }
+
+      setSeo((current) => ({ ...current, faviconUrl: result.url }))
+      router.refresh()
+    },
+    [router]
+  )
+
+  const handleFaviconSelect = useCallback(
+    (mediaId: string) => {
+      const asset = media.find((item) => item.id === mediaId)
+      if (!asset) {
+        setToast('Selected media could not be found.')
+        return
+      }
+
+      setSeo((current) => ({ ...current, faviconUrl: asset.url }))
     },
     [media]
   )
@@ -392,8 +423,19 @@ export function SitePageEditor({
               uploadEnabled={uploadEnabled}
               isUploading={isOgUploading}
               onUpload={handleOgImageUpload}
-              onPickFromMedia={() => setOgMediaOpen(true)}
+              onPickFromMedia={() => setMediaPicker('og')}
               onRemove={() => setSeo((current) => ({ ...current, ogImageUrl: null }))}
+            />
+          </AdminFormField>
+          <AdminFormField label="Favicon (optional)">
+            <ImagePicker
+              imageUrl={seo.faviconUrl}
+              altText="Favicon"
+              uploadEnabled={uploadEnabled}
+              isUploading={isFaviconUploading}
+              onUpload={handleFaviconUpload}
+              onPickFromMedia={() => setMediaPicker('favicon')}
+              onRemove={() => setSeo((current) => ({ ...current, faviconUrl: null }))}
             />
           </AdminFormField>
         </FormSection>
@@ -512,10 +554,16 @@ export function SitePageEditor({
       )}
 
       <MediaPickerDialog
-        open={ogMediaOpen}
+        open={mediaPicker !== null}
         media={media}
-        onSelect={handleOgImageSelect}
-        onClose={() => setOgMediaOpen(false)}
+        onSelect={(id) => {
+          if (mediaPicker === 'favicon') {
+            handleFaviconSelect(id)
+          } else {
+            handleOgImageSelect(id)
+          }
+        }}
+        onClose={() => setMediaPicker(null)}
       />
 
       <Toast message={toast ?? ''} open={toast !== null} onClose={() => setToast(null)} />

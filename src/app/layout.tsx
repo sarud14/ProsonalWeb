@@ -30,6 +30,13 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s — ${seo.title}`,
     },
     description: seo.description,
+    icons: seo.faviconUrl
+      ? {
+          icon: [{ url: seo.faviconUrl }],
+          shortcut: seo.faviconUrl,
+          apple: seo.faviconUrl,
+        }
+      : undefined,
     openGraph: seo.ogImageUrl
       ? {
           title: seo.title,

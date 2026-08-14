@@ -4,7 +4,7 @@ import { FocusPageView } from '@/components/public-page/Focus/FocusPageView'
 import { resolveFocusPageData } from '@/lib/content/page-sections'
 
 export const metadata: Metadata = {
-  title: 'Focus — FEOps Kit',
+  title: 'Focus',
 }
 
 export default async function FocusPage(): Promise<React.JSX.Element> {

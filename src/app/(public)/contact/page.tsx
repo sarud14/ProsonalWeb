@@ -4,7 +4,7 @@ import { ContactPageView } from '@/components/public-page/Contact/ContactPageVie
 import { getSiteContact } from '@/lib/content/site-config'
 
 export const metadata: Metadata = {
-  title: 'Contact — FEOps Kit',
+  title: 'Contact',
 }
 
 export default async function ContactPage(): Promise<React.JSX.Element> {

@@ -6,7 +6,7 @@ import { PageRouteHeader } from '@/components/ui/PageRouteHeader'
 import { getContentSource } from '@/lib/content/source'
 
 export const metadata: Metadata = {
-  title: 'Journal — FEOps Kit',
+  title: 'Journal',
 }
 
 export default async function JournalPage(): Promise<React.JSX.Element> {

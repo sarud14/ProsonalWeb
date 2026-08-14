@@ -9,6 +9,7 @@ export const DEFAULT_SITE_SEO: SiteSeoSettings = {
   title: 'FEOps Kit',
   description: 'A reusable Next.js-based frontend engineering portfolio system',
   ogImageUrl: null,
+  faviconUrl: null,
 }
 
 export const DEFAULT_SITE_CONTACT: SiteContactSettings = {
@@ -41,6 +42,10 @@ export function parseSiteSeo(value: unknown): SiteSeoSettings {
     ogImageUrl:
       typeof value.ogImageUrl === 'string' && value.ogImageUrl.length > 0
         ? value.ogImageUrl
+        : null,
+    faviconUrl:
+      typeof value.faviconUrl === 'string' && value.faviconUrl.length > 0
+        ? value.faviconUrl
         : null,
   }
 }
