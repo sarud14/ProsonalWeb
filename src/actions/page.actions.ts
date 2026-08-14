@@ -6,6 +6,7 @@ import { pageData } from '@/lib/data/page.data'
 import { createRevision, requireAdminSession } from '@/lib/actions/helpers'
 import type { ActionResult } from '@/types/action.types'
 import { PUBLIC_REVALIDATE_PATHS } from '@/constants/public-routes'
+import { SITE_FAVICON_PATH, SITE_ICON_API_PATH } from '@/constants/site-favicon'
 import { updatePageSchema } from '@/validators/page-action.schema'
 
 const PAGE_KEY_TO_PATH: Record<string, readonly string[]> = {
@@ -36,6 +37,8 @@ export async function updatePage(
   for (const p of paths) revalidatePath(p)
   if (key === 'site') {
     revalidatePath('/', 'layout')
+    revalidatePath(SITE_FAVICON_PATH)
+    revalidatePath(SITE_ICON_API_PATH)
   }
 
   return { success: true, data: { key } }
