@@ -9,6 +9,7 @@ export interface LandingModule {
   readonly desc: string
   readonly link: string
   readonly linkLabel: string
+  readonly enabled: boolean
   readonly badge?: string
 }
 

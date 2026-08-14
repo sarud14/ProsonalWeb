@@ -148,6 +148,18 @@ function ModulesPropsEditor({
               </button>
             )}
           </div>
+          <label className="mb-3 flex items-center gap-2 text-sm text-black">
+            <input
+              type="checkbox"
+              checked={item.enabled}
+              onChange={(e) => {
+                const next = [...items]
+                next[index] = { ...item, enabled: e.target.checked }
+                updateItems(next)
+              }}
+            />
+            Show on landing page
+          </label>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <AdminFormField label="Number">
               <input
@@ -234,6 +246,7 @@ function ModulesPropsEditor({
               desc: '',
               link: '/',
               linkLabel: '',
+              enabled: true,
             },
           ])
         }

@@ -2,12 +2,16 @@ import ContactSection from '@/components/public-page/Landing/ContactSection'
 import ExploreStackSection from '@/components/public-page/Landing/ExploreStackSection'
 import ModulesSection from '@/components/public-page/Landing/ModulesSection'
 import StatsSection from '@/components/public-page/Landing/StatsSection'
-import { parseLandingContact } from '@/lib/admin/landing-block-props'
+import {
+  parseLandingContact,
+  parseLandingModules,
+  visibleLandingModules,
+} from '@/lib/admin/landing-block-props'
 import {
   getLandingBlockItems,
   getVisibleLandingBlocks,
 } from '@/lib/content/landing-page'
-import type { LandingModule, LandingStat } from '@/types/landing.types'
+import type { LandingStat } from '@/types/landing.types'
 
 export async function LandingBlocks(): Promise<React.JSX.Element> {
   const blocks = await getVisibleLandingBlocks()
@@ -29,7 +33,7 @@ export async function LandingBlocks(): Promise<React.JSX.Element> {
             return (
               <ModulesSection
                 key={key}
-                items={getLandingBlockItems<LandingModule>(block)}
+                items={visibleLandingModules(parseLandingModules(block.props))}
               />
             )
           case 'techStack':

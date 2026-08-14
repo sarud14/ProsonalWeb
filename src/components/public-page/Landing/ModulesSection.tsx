@@ -18,7 +18,11 @@ interface ModulesSectionProps {
 
 export default function ModulesSection({
   items = LANDING_MODULES,
-}: ModulesSectionProps): React.JSX.Element {
+}: ModulesSectionProps): React.JSX.Element | null {
+  if (items.length === 0) return null
+
+  const visibleCount = String(items.length).padStart(2, '0')
+
   return (
     <section id="modules" className="pt-20 pb-10">
       <Container className="max-w-[1240px] px-7">
@@ -26,7 +30,7 @@ export default function ModulesSection({
           <SectionHeader
             number="02"
             title="System modules"
-            trailing="Entry points — 06"
+            trailing={`Entry points — ${visibleCount}`}
           />
         </LandingReveal>
         <div className="grid grid-cols-1 border border-white/[0.09] md:grid-cols-2 lg:grid-cols-3">
