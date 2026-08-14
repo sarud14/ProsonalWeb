@@ -7,6 +7,7 @@ import { Poppins, Geist_Mono } from 'next/font/google'
 
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import { buildThemeCssVars, shouldApplyCustomTheme } from '@/lib/admin/site-theme'
+import { buildSiteFaviconHref } from '@/lib/content/resolve-site-favicon'
 import { getSiteSeo, getSiteTheme } from '@/lib/content/site-config'
 import { AppProvider } from '@/providers/AppProvider'
 
@@ -30,13 +31,11 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s — ${seo.title}`,
     },
     description: seo.description,
-    icons: seo.faviconUrl
-      ? {
-          icon: [{ url: seo.faviconUrl }],
-          shortcut: seo.faviconUrl,
-          apple: seo.faviconUrl,
-        }
-      : undefined,
+    icons: {
+      icon: [{ url: buildSiteFaviconHref(seo.faviconUrl) }],
+      shortcut: buildSiteFaviconHref(seo.faviconUrl),
+      apple: buildSiteFaviconHref(seo.faviconUrl),
+    },
     openGraph: seo.ogImageUrl
       ? {
           title: seo.title,
