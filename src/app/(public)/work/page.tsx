@@ -6,7 +6,7 @@ import { resolveWorkDomainLabels } from '@/lib/content/work-domains'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Work — FEOps Kit',
+  title: 'Work',
 }
 
 export default async function WorkPage(): Promise<React.JSX.Element> {

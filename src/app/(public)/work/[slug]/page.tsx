@@ -13,7 +13,7 @@ export async function generateMetadata({
   const work = await content.getWorkBySlug(slug)
 
   return {
-    title: work ? `${work.title} — Work — FEOps Kit` : `${slug} — Work — FEOps Kit`,
+    title: work ? `${work.title} — Work` : `${slug} — Work`,
   }
 }
 

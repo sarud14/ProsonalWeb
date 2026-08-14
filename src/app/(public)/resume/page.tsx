@@ -6,7 +6,7 @@ import { getResumeData } from '@/lib/resume/get-resume-data'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Resume — FEOps Kit',
+  title: 'Resume',
 }
 
 export default async function ResumePage(): Promise<React.JSX.Element> {

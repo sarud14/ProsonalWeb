@@ -7,6 +7,18 @@ describe('parseSiteSeo', () => {
     const seo = parseSiteSeo({})
     expect(seo.title).toBe('FEOps Kit')
     expect(seo.description.length).toBeGreaterThan(0)
+    expect(seo.ogImageUrl).toBeNull()
+    expect(seo.faviconUrl).toBeNull()
+  })
+
+  it('reads faviconUrl from stored JSON', () => {
+    const seo = parseSiteSeo({
+      title: 'Sarut',
+      description: 'Portfolio',
+      faviconUrl: 'https://example.com/icon.png',
+    })
+
+    expect(seo.faviconUrl).toBe('https://example.com/icon.png')
   })
 })
 

@@ -4,7 +4,7 @@ import { EngineeringTypePageView } from '@/components/public-page/Engineering/En
 import { loadEngineeringTypePage } from '@/lib/content/engineering-type-page'
 
 export const metadata: Metadata = {
-  title: 'Performance — Engineering — FEOps Kit',
+  title: 'Performance — Engineering',
 }
 
 export default async function PerformancePage(): Promise<React.JSX.Element> {

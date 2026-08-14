@@ -5,13 +5,14 @@ import { revalidatePath } from 'next/cache'
 import { pageData } from '@/lib/data/page.data'
 import { createRevision, requireAdminSession } from '@/lib/actions/helpers'
 import type { ActionResult } from '@/types/action.types'
+import { PUBLIC_REVALIDATE_PATHS } from '@/constants/public-routes'
 import { updatePageSchema } from '@/validators/page-action.schema'
 
-const PAGE_KEY_TO_PATH: Record<string, string[]> = {
+const PAGE_KEY_TO_PATH: Record<string, readonly string[]> = {
   landing: ['/'],
   focus: ['/focus'],
   stack: ['/stack'],
-  site: ['/', '/work', '/engineering', '/journal', '/focus', '/stack', '/resume'],
+  site: PUBLIC_REVALIDATE_PATHS,
 }
 
 export async function updatePage(
@@ -33,6 +34,9 @@ export async function updatePage(
 
   const paths = PAGE_KEY_TO_PATH[key] ?? ['/']
   for (const p of paths) revalidatePath(p)
+  if (key === 'site') {
+    revalidatePath('/', 'layout')
+  }
 
   return { success: true, data: { key } }
 }

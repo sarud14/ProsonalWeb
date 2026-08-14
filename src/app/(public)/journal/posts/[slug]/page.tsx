@@ -13,7 +13,7 @@ export async function generateMetadata({
   const post = await content.getJournalPostBySlug(slug)
 
   return {
-    title: post ? `${post.title} — Journal — FEOps Kit` : `${slug} — Journal — FEOps Kit`,
+    title: post ? `${post.title} — Journal` : `${slug} — Journal`,
   }
 }
 
