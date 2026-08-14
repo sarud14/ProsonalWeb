@@ -60,7 +60,6 @@ export const env = {
   adminGithubIdAllowlist,
   contentSource: (process.env.CONTENT_SOURCE ?? 'mdx') as 'mdx' | 'db',
   blobReadWriteToken: process.env.BLOB_READ_WRITE_TOKEN ?? '',
-  cronSecret: process.env.CRON_SECRET ?? '',
 } as const
 
 export function isAuthConfigured(): boolean {

@@ -1,0 +1,24 @@
+name: Keep-alive
+
+on:
+  schedule:
+    # Every 2 days — backup if Vercel Hobby cron misses or 401s
+    - cron: '0 12 */2 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping production database via /api/health
+        env:
+          KEEP_ALIVE_URL: ${{ vars.KEEP_ALIVE_URL }}
+        run: |
+          if [ -z "$KEEP_ALIVE_URL" ]; then
+            echo "Set GitHub repo variable KEEP_ALIVE_URL to the production origin (e.g. https://your-app.vercel.app)."
+            exit 1
+          fi
+          curl -fsS --max-time 30 "${KEEP_ALIVE_URL%/}/api/health"
