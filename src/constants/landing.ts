@@ -19,6 +19,7 @@ export const LANDING_MODULES: readonly LandingModule[] = [
     link: '/work',
     linkLabel: '6 ENTRIES',
     badge: 'LIVE',
+    enabled: true,
   },
   {
     num: '02',
@@ -26,6 +27,7 @@ export const LANDING_MODULES: readonly LandingModule[] = [
     desc: 'Architecture notes, decision logs, and performance write-ups.',
     link: '/engineering',
     linkLabel: 'Notes',
+    enabled: true,
   },
   {
     num: '03',
@@ -33,6 +35,7 @@ export const LANDING_MODULES: readonly LandingModule[] = [
     desc: 'Working notes on building, learning, and shipping.',
     link: '/journal',
     linkLabel: 'Posts',
+    enabled: true,
   },
   {
     num: '04',
@@ -40,6 +43,7 @@ export const LANDING_MODULES: readonly LandingModule[] = [
     desc: 'What I am learning and building right now — the roadmap.',
     link: '/focus',
     linkLabel: 'Roadmap',
+    enabled: true,
   },
   {
     num: '05',
@@ -47,6 +51,7 @@ export const LANDING_MODULES: readonly LandingModule[] = [
     desc: 'Tools, workflow, and the setup behind the work.',
     link: '/stack',
     linkLabel: 'Tooling',
+    enabled: true,
   },
   {
     num: '06',
@@ -54,6 +59,7 @@ export const LANDING_MODULES: readonly LandingModule[] = [
     desc: 'Experience and capabilities — print and PDF ready.',
     link: '/resume',
     linkLabel: 'CV / PDF',
+    enabled: true,
   },
 ]
 

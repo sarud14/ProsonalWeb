@@ -22,6 +22,7 @@ const EMPTY_MODULE: LandingModule = {
   desc: '',
   link: '/',
   linkLabel: '',
+  enabled: true,
 }
 
 const DEFAULT_CONTACT_PROPS: LandingContactProps = {
@@ -76,7 +77,14 @@ export function parseLandingModules(props: Record<string, unknown>): LandingModu
       link: typeof item.link === 'string' ? item.link : '',
       linkLabel: typeof item.linkLabel === 'string' ? item.linkLabel : '',
       badge: typeof item.badge === 'string' && item.badge.length > 0 ? item.badge : undefined,
+      enabled: item.enabled !== false,
     }))
+}
+
+export function visibleLandingModules(
+  items: readonly LandingModule[]
+): LandingModule[] {
+  return items.filter((item) => item.enabled)
 }
 
 export function parseLandingTechStack(props: Record<string, unknown>): string[] {
