@@ -94,3 +94,50 @@ jobs:
 
       - name: End-to-end tests
         run: yarn test:e2e
+
+  notify:
+    needs: [check, e2e]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          CHECK_RESULT: ${{ needs.check.result }}
+          E2E_RESULT: ${{ needs.e2e.result }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "DISCORD_WEBHOOK_URL secret is not set; skipping notification."
+            exit 0
+          fi
+
+          if [ "$CHECK_RESULT" = "success" ] && [ "$E2E_RESULT" = "success" ]; then
+            STATUS="✅ CI passed"
+            COLOR=3066993
+          else
+            STATUS="❌ CI failed"
+            COLOR=15158332
+          fi
+
+          BRANCH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          curl -sf --max-time 30 -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "username": "sarut-portfolio CI",
+              "embeds": [{
+                "title": "'"$STATUS"'",
+                "color": '"$COLOR"',
+                "url": "'"$RUN_URL"'",
+                "fields": [
+                  { "name": "Repository", "value": "'"$GITHUB_REPOSITORY"'", "inline": true },
+                  { "name": "Branch", "value": "'"$BRANCH"'", "inline": true },
+                  { "name": "Commit", "value": "'"$SHORT_SHA"'", "inline": false },
+                  { "name": "check job", "value": "'"$CHECK_RESULT"'", "inline": true },
+                  { "name": "e2e job", "value": "'"$E2E_RESULT"'", "inline": true }
+                ]
+              }]
+            }'
