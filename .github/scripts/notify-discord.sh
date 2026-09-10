@@ -6,12 +6,11 @@ if [ -z "${DISCORD_WEBHOOK_URL:-}" ]; then
   exit 0
 fi
 
-python3 - <<'PY'
+# Discord/Cloudflare returns 403 for Python-urllib's default User-Agent.
+payload="$(python3 - <<'PY'
 import json
 import os
-import urllib.request
 
-webhook = os.environ["DISCORD_WEBHOOK_URL"]
 title = os.environ["NOTIFY_TITLE"]
 color = int(os.environ["NOTIFY_COLOR"])
 branch = os.environ.get("GITHUB_HEAD_REF") or os.environ.get("GITHUB_REF_NAME", "")
@@ -35,17 +34,27 @@ for key, label, inline in (
     if value:
         fields.append({"name": label, "value": value, "inline": inline})
 
-payload = {
+print(json.dumps({
     "username": "sarut-portfolio CI",
     "embeds": [{"title": title, "color": color, "url": run_url, "fields": fields}],
-}
-
-request = urllib.request.Request(
-    webhook,
-    data=json.dumps(payload).encode(),
-    headers={"Content-Type": "application/json"},
-    method="POST",
-)
-with urllib.request.urlopen(request, timeout=30) as response:
-    response.read()
+}))
 PY
+)"
+
+tmp="$(mktemp)"
+http_code="$(
+  curl -sS --max-time 30 -o "$tmp" -w "%{http_code}" -X POST "$DISCORD_WEBHOOK_URL" \
+    -H "Content-Type: application/json" \
+    -H "User-Agent: sarut-portfolio-ci" \
+    -d "$payload"
+)"
+body="$(cat "$tmp")"
+rm -f "$tmp"
+
+if [ "$http_code" != "204" ] && [ "$http_code" != "200" ]; then
+  echo "Discord webhook failed with HTTP $http_code" >&2
+  if [ -n "$body" ]; then
+    echo "$body" >&2
+  fi
+  exit 1
+fi
