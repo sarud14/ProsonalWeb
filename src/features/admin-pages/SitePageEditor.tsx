@@ -13,16 +13,22 @@ import {
 } from '@/components/admin/AdminFormField'
 import { FormSection, ImagePicker, ReorderableList, SectionHeading, Toast, cn } from '@/components/ui'
 import { getSiteAvailabilityDisplay } from '@/constants/site-availability'
+import { moveItemByClientId, omitClientIds } from '@/lib/admin/client-list'
 import { getInitialsFromName } from '@/lib/format/get-initials-from-name'
 import { uploadMediaFile } from '@/lib/media/client-upload'
-import type { NavItemModalState, SitePageEditorProps } from '@/types/admin-pages.types'
-import type { NavItem, SiteConfig } from '@/types/site.types'
+import { findMediaOption } from '@/lib/admin/map-media-options'
+import type {
+  ClientNavItem,
+  ClientSocialLink,
+  NavItemModalState,
+  SitePageEditorProps,
+} from '@/types/admin-pages.types'
+import type { SiteConfig } from '@/types/site.types'
 import type { SiteBrand } from '@/types/site-brand.types'
 import type {
   SiteContactSettings,
   SiteFooterSettings,
   SiteSeoSettings,
-  SiteSocialLink,
   SiteThemeSettings,
 } from '@/types/site-settings.types'
 import {
@@ -33,31 +39,7 @@ import {
   toThemePickerHex,
 } from '@/lib/admin/site-theme'
 
-interface ClientNavItem extends NavItem {
-  readonly clientId: string
-}
-
-interface ClientSocialLink extends SiteSocialLink {
-  readonly clientId: string
-}
-
-function normalizeNavOrders(items: readonly NavItem[]): NavItem[] {
-  return items.map((item, index) => ({ ...item, order: index }))
-}
-
-function toClientNav(nav: readonly NavItem[]): ClientNavItem[] {
-  return normalizeNavOrders(nav).map((item) => ({
-    ...item,
-    clientId: item.key,
-  }))
-}
-
-function toClientSocial(links: readonly SiteSocialLink[]): ClientSocialLink[] {
-  return links.map((link, index) => ({
-    ...link,
-    clientId: `social-${link.label}-${index}`,
-  }))
-}
+import { toClientNav, toClientSocial, toPersistableNav, toPersistableSocial } from './query/sitePageQuery'
 
 function ThemeColorField({
   label,
@@ -156,9 +138,9 @@ export function SitePageEditor({
   const handleSave = useCallback(() => {
     const config: SiteConfig = {
       brand,
-      nav: normalizeNavOrders(nav.map(({ clientId: _id, ...item }) => item)),
+      nav: toPersistableNav(nav),
       seo,
-      socialLinks: socialLinks.map(({ clientId: _id, ...link }) => link),
+      socialLinks: toPersistableSocial(socialLinks),
       contact,
       footer,
       theme: parseSiteTheme(theme),
@@ -167,27 +149,15 @@ export function SitePageEditor({
   }, [brand, contact, footer, nav, persist, seo, socialLinks, theme])
 
   const handleNavMove = useCallback((id: string, direction: 'up' | 'down') => {
-    const index = nav.findIndex((item) => item.clientId === id)
-    if (index < 0) return
-
-    const swapIndex = direction === 'up' ? index - 1 : index + 1
-    if (swapIndex < 0 || swapIndex >= nav.length) return
-
-    const next = [...nav]
-    ;[next[index], next[swapIndex]] = [next[swapIndex], next[index]]
-    setNav(toClientNav(next.map(({ clientId: _id, ...item }) => item)))
+    const swapped = moveItemByClientId(nav, id, direction)
+    if (!swapped) return
+    setNav(toClientNav(omitClientIds(swapped)))
   }, [nav])
 
   const handleSocialMove = useCallback((id: string, direction: 'up' | 'down') => {
-    const index = socialLinks.findIndex((link) => link.clientId === id)
-    if (index < 0) return
-
-    const swapIndex = direction === 'up' ? index - 1 : index + 1
-    if (swapIndex < 0 || swapIndex >= socialLinks.length) return
-
-    const next = [...socialLinks]
-    ;[next[index], next[swapIndex]] = [next[swapIndex], next[index]]
-    setSocialLinks(toClientSocial(next.map(({ clientId: _id, ...link }) => link)))
+    const swapped = moveItemByClientId(socialLinks, id, direction)
+    if (!swapped) return
+    setSocialLinks(toClientSocial(omitClientIds(swapped)))
   }, [socialLinks])
 
   const handleOgImageUpload = useCallback(
@@ -209,7 +179,7 @@ export function SitePageEditor({
 
   const handleOgImageSelect = useCallback(
     (mediaId: string) => {
-      const asset = media.find((item) => item.id === mediaId)
+      const asset = findMediaOption(media, mediaId)
       if (!asset) {
         setToast('Selected media could not be found.')
         return
@@ -239,7 +209,7 @@ export function SitePageEditor({
 
   const handleFaviconSelect = useCallback(
     (mediaId: string) => {
-      const asset = media.find((item) => item.id === mediaId)
+      const asset = findMediaOption(media, mediaId)
       if (!asset) {
         setToast('Selected media could not be found.')
         return
@@ -254,20 +224,20 @@ export function SitePageEditor({
     (item: NavItemModalState['item']) => {
       if (modal?.isNew) {
         const next = toClientNav([
-          ...nav.map(({ clientId: _id, ...entry }) => entry),
+          ...omitClientIds(nav),
           { ...item, order: nav.length },
         ])
         setNav(next)
       } else if (modal?.itemKey) {
         setNav((current) =>
           toClientNav(
-            current
-              .map((entry) =>
+            omitClientIds(
+              current.map((entry) =>
                 entry.clientId === modal.itemKey
                   ? { ...entry, ...item, key: entry.key }
                   : entry
               )
-              .map(({ clientId: _id, ...entry }) => entry)
+            )
           )
         )
       }

@@ -42,14 +42,16 @@ src/
 │   └── layout.tsx             # root layout, fonts
 ├── actions/                   # Server Actions — CMS mutations + public contact/reactions
 ├── features/                  # domain UI — app routes compose these
-│   ├── landing/               # public home blocks + landing-registry
-│   ├── work/ | journal/ | engineering/ | focus/ | stack/ | resume/ | contact/
+│   ├── landing/               # UI at root; query/ (codeTypingQuery); tests/
+│   ├── work/                  # UI at root; query/ (workQuery); tests/
+│   ├── contact/               # UI at root; query/ (contactQuery); tests/
+│   ├── journal/ | engineering/ | focus/ | stack/ | resume/
 │   ├── admin-shell/           # CMS chrome (AdminShell, nav, breadcrumb)
 │   ├── admin-dashboard/ | admin-login/ | admin-work/ | admin-journal/
 │   ├── admin-engineering/ | admin-resume/ | admin-pages/ | admin-media/
 │   └── admin-taxonomy/ | admin-messages/
 ├── components/
-│   ├── ui/                    # design system (flat folder today)
+│   ├── ui/                    # design system (flat folder today); tests/ + tokens/tests/
 │   └── admin/                 # shared CMS widgets used by 2+ admin features
 ├── lib/
 │   ├── content/               # content switch + site-config (no component registry)
@@ -57,7 +59,7 @@ src/
 │   ├── db/                    # Prisma client singleton
 │   ├── auth/                  # NextAuth config + session helpers
 │   ├── actions/               # requireAdminSession, createRevision
-│   ├── admin/                 # CMS helpers (theme, landing hero, mappers)
+│   ├── admin/                 # CMS helpers (theme, landing hero, mappers, client-list)
 │   ├── contact/               # anti-abuse / honeypot helpers
 │   ├── format/                # pure formatters
 │   ├── landing/               # landing helpers
@@ -66,7 +68,8 @@ src/
 ├── providers/                 # AppProvider
 ├── types/                     # all TypeScript types (`shared/` for cross-domain)
 ├── constants/
-├── validators/                # Zod schemas + colocated *.test.ts
+│   └── tests/
+├── validators/                # Zod schemas; tests in validators/tests/
 └── env.ts
 
 content/                       # Git-MDX — outside src/ by design
@@ -84,13 +87,17 @@ docs/
 └── DESIGN_SYSTEM.md
 
 e2e/                           # Playwright specs (public routes + CMS publish)
+
+requirement/                   # local-only planning (gitignored)
+design/                        # local-only mockups (gitignored)
 ```
 
 **Deviations from the AGENTS.md default folder structure:**
 
-- `src/features/` — **present.** Public domains are unprefixed (`landing`, `work`, …). Admin CMS screens use an `admin-*` prefix so they do not sit in the same folder as the public page for that domain (different routes, different chrome). `app/` stays thin: fetch + compose.
+- `src/features/` — **present.** Public domains are unprefixed (`landing`, `work`, …). Admin CMS screens use an `admin-*` prefix so they do not sit in the same folder as the public page for that domain (different routes, different chrome). `app/` stays thin: fetch + compose. Inside a feature: **UI at the root**, **`query/`** for pure modules + hooks, **`tests/`** for every `*.test.ts(x)`. Do not mix tests or query files into the screen listing.
 - `src/components/admin/` — extra vs default. Shared CMS widgets (`AdminFormField`, `ContentListClient`, `MediaGrid`, `MediaPickerDialog`) used by two or more admin features. Not the design system: they may import Server Actions. Do not add public-site UI here.
-- `src/components/ui/` — **barrel + tokens present.** Components still sit in a flat folder (no `core/` groups). No `ui/types.ts` yet — prop types live in `src/types/` or inline. See [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md).
+- `src/components/ui/` — **barrel + tokens present.** Components still sit in a flat folder (no `core/` groups). Tests live in `ui/tests/`; token CSS tests in `ui/tokens/tests/`. No `ui/types.ts` yet — prop types live in `src/types/` or inline. See [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md).
+- `docs/` — committed inspectable docs only (`ARCHITECTURE.md`, `DESIGN_SYSTEM.md`). Do not add reference `.md` next to source. Local planning: `requirement/`. Skills: `.claude/skills/`.
 - `e2e/` — Playwright. Public-route spec always runs; CMS publish spec needs `CONTENT_SOURCE=db` + `DATABASE_URL` (CI e2e job provides Postgres).
 - Extra vs default: `src/providers/`, `src/components/admin/`, `src/lib/{admin,auth,content,data,db,media,resume,landing,contact,format,actions}/`, repo-root `content/`, `prisma/`, `scripts/`.
 - `src/lib/utils.ts` re-exports `cn` from `components/ui/helpers.ts` so the shadcn CLI keeps working. Application code imports `cn` from `@/components/ui`.
@@ -155,9 +162,10 @@ Not fixtures — live MDX and/or Postgres.
 - **Contract:** `src/types/content.types.ts` (`getAllWork` / `getWorkBySlug`, journal, engineering).
 - **Also env-switched (not only `ContentSource`):** `site-config.ts` (brand/SEO/theme/footer/nav), `page-sections.ts` (landing/focus/stack JSON).
 - **Landing blocks:** `src/features/landing/landing-registry.ts` maps block `type` → presentational section. `LandingBlocks` still switches on type so the home page can inject `ContactForm` from `features/contact` (features must not import each other).
+- **Feature query modules:** filter / payload / list-mapping logic lives in `query/<feature>Query.ts` (no React). A thin `query/use<Feature>Query.ts` is the only React binding. Screens at the feature root import from `./query/…`. Shared list helpers used by more than one admin editor (`omitClientIds`, `moveItemByClientId`, `findMediaOption`) live in `src/lib/admin/`. Tests for those modules live in the same feature's `tests/` folder.
 - **Writes:** Server Actions → DAL. Production must not write MDX on Vercel — draft/publish is DB-backed when `CONTENT_SOURCE=db`.
 - **DAL:** `src/lib/data/*.data.ts` (see AGENTS.md Project-Specific Overrides for the file → entity table).
-- **Presentation derivations** (filters, path helpers, initials) are pure functions under `src/lib/` or `src/constants/`, colocated with unit tests — never duplicated inline in a screen.
+- Presentation values derived from data are **pure helpers** in `src/lib/` or `src/constants/`, with tests in that module's `tests/` folder — never duplicated inline in a screen.
 
 ---
 
@@ -216,9 +224,10 @@ No `middleware.ts` at the repo root — the admin gate is the `(admin)/admin` la
 
 ## Testing
 
-- **Unit:** colocated `*.test.ts` next to source. Vitest node env.
-- **Component:** colocated `*.test.tsx`, jsdom + Testing Library. Current set: `Button`, `StatusBadge`, `ConfirmDialog`, `Toast`, `PageRouteHeader`, `FormActions`, `LoadingScreen`, `TagInput`, `NavBar`, `LoginPanel`. Remaining feature screens are still a gap.
-- **E2E:** Playwright in `e2e/`. `e2e/public-content.spec.ts` covers `/`, `/work`, `/login`. `e2e/cms-publish-work.spec.ts` is the critical flow (login page → `/admin/work/new` → Publish → public `/work/[slug]`). That spec skips unless `CONTENT_SOURCE=db` and `DATABASE_URL` are set; it also skips if `/admin` redirects to OAuth login.
+- **Unit:** `src/**/tests/*.test.ts`. Vitest node env. Feature query modules (`work/query/workQuery`, `admin-messages/query/messagesQuery`, `landing/query/codeTypingQuery`, `*FormQuery`, `admin-pages/query/{site,landing,stack}PageQuery`, `contact/query/contactQuery`) and shared admin list helpers (`client-list`, `map-media-options`) are covered here.
+- **Hook:** `src/**/tests/use*Query.test.tsx` (jsdom). Proves the hook binds React state to the pure module — it does not re-test filter/payload math. Current: `useWorkQuery`, `useMessagesQuery`, `useCodeTypingQuery`.
+- **Component:** `src/**/tests/*.test.tsx`, jsdom + Testing Library. Current set: `Button`, `StatusBadge`, `ConfirmDialog`, `Toast`, `PageRouteHeader`, `FormActions`, `LoadingScreen`, `TagInput`, `NavBar`, `LoginPanel`. Remaining feature screens are still a gap.
+- **E2E:** Playwright in `e2e/`. `e2e/public-content.spec.ts` covers `/`, `/work`, `/login`. `e2e/cms-publish-work.spec.ts` is the critical flow (login page → `/admin/work/new` → Publish → public `/work/[slug]`). That spec skips unless `CONTENT_SOURCE=db` and `DATABASE_URL` are set; it also skips if `/admin` redirects to OAuth login. Required work-form fields are filled via `getByRole('textbox', { name: '<Label> *', exact: true })` so "Metric" does not also match "Metric label".
 - Config: `vitest.config.ts` uses two projects — unit (`*.test.ts`, node) and component (`*.test.tsx`, jsdom). Playwright: `playwright.config.ts`, run `yarn test:e2e`.
 - Run: `yarn` · `yarn test` · `yarn test:e2e` · `yarn build` · `yarn lint` · `yarn type-check`
 - CI: `.github/workflows/ci.yml` `check` job (lint/type-check/unit/build) then `e2e` job (Postgres, `prisma db push`, Playwright Chromium). Admin stays ungated in that job because `NEXTAUTH_SECRET` is unset.
@@ -245,7 +254,8 @@ Full conformance to any accessibility standard cannot be claimed from automated 
 
 ## Known gaps / substitutions / tech debt
 
-- **`src/features/` exists** — remaining gap is colocated `*.test.tsx` per remaining screen (RTL is installed; add tests as those screens are touched).
+- **`src/features/` exists** with `query/` + `tests/` splits on work, messages, landing typing, CMS content forms, site/landing/stack page editors, and contact submit. Remaining screens without a query module: journal/engineering public lists, focus page editor, landing hero meta list, resume forms, media library, taxonomy, dashboard.
+- **`tests/*.test.tsx` per remaining screen** is still a gap (RTL is installed; add tests as those screens are touched).
 - **No UI `core/` grouping / `ui/types.ts`** — barrel and token files exist; components remain flat. See DESIGN_SYSTEM.md Status.
 - **`cn()` lives in `src/components/ui/helpers.ts`** — `src/lib/utils.ts` is a shadcn CLI re-export only.
 - **`Footer` fetches CMS data** — a `ui/` component importing `lib/content`. Exported from `@/components/ui/server` so the client barrel stays client-safe. Should become a presentational footer fed by the layout (then it can join `index.ts`).

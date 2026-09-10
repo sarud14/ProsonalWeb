@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { expect, test } from 'vitest'
 
-import { PageRouteHeader } from './PageRouteHeader'
+import { PageRouteHeader } from '../PageRouteHeader'
 
 test('renders the route title as a heading', () => {
   render(

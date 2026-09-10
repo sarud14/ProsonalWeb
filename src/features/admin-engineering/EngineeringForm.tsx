@@ -17,7 +17,10 @@ import { MediaPickerDialog } from '@/components/admin/MediaPickerDialog'
 import { ENGINEERING_TYPE_OPTIONS } from '@/constants/admin-content-list'
 import { FormActions, FormSection, ImagePicker, StatusBadge, Toast } from '@/components/ui'
 import { getPublicPreviewPath } from '@/lib/admin/content-form-mappers'
+import { findMediaOption } from '@/lib/admin/map-media-options'
 import type { AdminMediaOption, EngineeringFormState } from '@/types/admin-content.types'
+
+import { buildEngineeringMutationPayload } from './query/engineeringFormQuery'
 
 interface EngineeringFormProps {
   readonly initialValues: EngineeringFormState
@@ -38,7 +41,7 @@ export function EngineeringForm({
 
   const isEditing = values.id !== undefined
   const coverImage = useMemo(
-    () => media.find((asset) => asset.id === values.coverImageId),
+    () => findMediaOption(media, values.coverImageId),
     [media, values.coverImageId]
   )
 
@@ -53,17 +56,7 @@ export function EngineeringForm({
     async (publish: boolean) => {
       setIsSubmitting(true)
 
-      const payload = {
-        slug: values.slug,
-        title: values.title,
-        type: values.type,
-        summary: values.summary,
-        noteDate: values.noteDate,
-        readTime: values.readTime,
-        body: values.body,
-        sortOrder: values.sortOrder,
-        coverImageId: values.coverImageId,
-      }
+      const payload = buildEngineeringMutationPayload(values)
 
       const result = values.id
         ? await updateEngineering({ id: values.id, ...payload })

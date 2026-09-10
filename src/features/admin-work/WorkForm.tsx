@@ -12,7 +12,10 @@ import {
 import { MediaPickerDialog } from '@/components/admin/MediaPickerDialog'
 import { FormActions, FormSection, ImagePicker, StatusBadge, TagInput, Toast } from '@/components/ui'
 import { getPublicPreviewPath } from '@/lib/admin/content-form-mappers'
+import { findMediaOption } from '@/lib/admin/map-media-options'
 import type { AdminMediaOption, WorkFormState } from '@/types/admin-content.types'
+
+import { buildWorkMutationPayload } from './query/workFormQuery'
 
 interface WorkFormProps {
   readonly initialValues: WorkFormState
@@ -33,7 +36,7 @@ export function WorkForm({
 
   const isEditing = values.id !== undefined
   const coverImage = useMemo(
-    () => media.find((asset) => asset.id === values.coverImageId),
+    () => findMediaOption(media, values.coverImageId),
     [media, values.coverImageId]
   )
 
@@ -48,26 +51,7 @@ export function WorkForm({
     async (publish: boolean) => {
       setIsSubmitting(true)
 
-      const payload = {
-        slug: values.slug,
-        title: values.title,
-        role: values.role,
-        tagline: values.tagline,
-        metric: values.metric,
-        metricLabel: values.metricLabel,
-        year: values.year,
-        stack: [...values.stack],
-        domains: [...values.domains],
-        context: values.context,
-        problem: values.problem,
-        constraints: values.constraints,
-        architecture: values.architecture,
-        decisions: values.decisions,
-        impact: values.impact,
-        body: values.body,
-        sortOrder: values.sortOrder,
-        coverImageId: values.coverImageId,
-      }
+      const payload = buildWorkMutationPayload(values)
 
       const result = values.id
         ? await updateWork({ id: values.id, ...payload })

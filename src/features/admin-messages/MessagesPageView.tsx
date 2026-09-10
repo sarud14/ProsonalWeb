@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import {
   archiveContact,
@@ -9,15 +9,18 @@ import {
   markContactRead,
 } from '@/actions/contact.actions'
 import { ConfirmDialog, SectionHeading, Toast, cn } from '@/components/ui'
-import { ADMIN_MESSAGE_FILTERS, type AdminMessageFilterKey } from '@/constants/admin-messages'
+import { ADMIN_MESSAGE_FILTERS } from '@/constants/admin-messages'
 import { formatMessageDate } from '@/lib/admin/contact-message-mappers'
 import type { MessagesPageViewProps } from '@/types/admin-messages.types'
+
+import { messagePreview } from './query/messagesQuery'
+import { useMessagesQuery } from './query/useMessagesQuery'
 
 export function MessagesPageView({
   initialMessages,
 }: MessagesPageViewProps): React.JSX.Element {
   const router = useRouter()
-  const [filter, setFilter] = useState<AdminMessageFilterKey>('all')
+  const { filter, setFilter, filteredMessages } = useMessagesQuery(initialMessages)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
@@ -25,17 +28,6 @@ export function MessagesPageView({
   const showError = useCallback((message: string) => {
     setToast(message)
   }, [])
-
-  const filteredMessages = useMemo(() => {
-    switch (filter) {
-      case 'unread':
-        return initialMessages.filter((message) => !message.read && !message.archived)
-      case 'archived':
-        return initialMessages.filter((message) => message.archived)
-      default:
-        return initialMessages.filter((message) => !message.archived)
-    }
-  }, [filter, initialMessages])
 
   const handleMarkRead = useCallback(
     async (id: string) => {
@@ -105,10 +97,7 @@ export function MessagesPageView({
         ) : (
           filteredMessages.map((message) => {
             const isExpanded = expandedId === message.id
-            const preview =
-              message.message.length > 120
-                ? `${message.message.slice(0, 120)}…`
-                : message.message
+            const preview = messagePreview(message.message)
 
             return (
               <div

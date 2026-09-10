@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { DashboardView } from '@/features/admin-dashboard/DashboardView'
-import { auth } from '@/lib/auth/session'
+import { getOptionalAdminSession } from '@/lib/auth/session'
 import { dashboardData } from '@/lib/data/dashboard.data'
 
 export const metadata: Metadata = {
@@ -9,7 +9,10 @@ export const metadata: Metadata = {
 }
 
 export default async function AdminDashboardPage(): Promise<React.JSX.Element> {
-  const [data, session] = await Promise.all([dashboardData.getData(), auth()])
+  const [data, session] = await Promise.all([
+    dashboardData.getData(),
+    getOptionalAdminSession(),
+  ])
 
   const rawName = session?.user?.name?.trim()
   const userName = rawName?.split(/\s+/)[0] ?? 'there'

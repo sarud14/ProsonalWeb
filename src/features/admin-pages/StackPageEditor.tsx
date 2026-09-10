@@ -6,19 +6,15 @@ import { useCallback, useMemo, useState } from 'react'
 import { updatePage } from '@/actions/page.actions'
 import { StackGroupModal } from '@/features/admin-pages/StackGroupModal'
 import { ReorderableList, SectionHeading, Toast } from '@/components/ui'
-import type { StackGroupModalState, StackPageEditorProps } from '@/types/admin-pages.types'
+import { moveItemByClientId, omitClientIds } from '@/lib/admin/client-list'
+import type {
+  ClientStackGroup,
+  StackGroupModalState,
+  StackPageEditorProps,
+} from '@/types/admin-pages.types'
 import type { StackGroup } from '@/types/stack.types'
 
-interface ClientStackGroup extends StackGroup {
-  readonly clientId: string
-}
-
-function toClientGroups(groups: readonly StackGroup[]): ClientStackGroup[] {
-  return groups.map((group, index) => ({
-    ...group,
-    clientId: `group-${group.label}-${index}`,
-  }))
-}
+import { toClientGroups, toPersistableGroups } from './query/stackPageQuery'
 
 export function StackPageEditor({ initialData }: StackPageEditorProps): React.JSX.Element {
   const router = useRouter()
@@ -44,7 +40,7 @@ export function StackPageEditor({ initialData }: StackPageEditorProps): React.JS
     async (nextGroups: readonly ClientStackGroup[]) => {
       setIsSaving(true)
       const payload = {
-        groups: nextGroups.map(({ clientId: _id, ...group }) => group),
+        groups: toPersistableGroups(nextGroups),
       }
       const result = await updatePage({ key: 'stack', data: payload })
       setIsSaving(false)
@@ -61,15 +57,10 @@ export function StackPageEditor({ initialData }: StackPageEditorProps): React.JS
 
   const handleMove = useCallback(
     (id: string, direction: 'up' | 'down') => {
-      const index = groups.findIndex((group) => group.clientId === id)
-      if (index < 0) return
+      const swapped = moveItemByClientId(groups, id, direction)
+      if (!swapped) return
 
-      const swapIndex = direction === 'up' ? index - 1 : index + 1
-      if (swapIndex < 0 || swapIndex >= groups.length) return
-
-      const next = [...groups]
-      ;[next[index], next[swapIndex]] = [next[swapIndex], next[index]]
-      const normalized = toClientGroups(next.map(({ clientId: _id, ...group }) => group))
+      const normalized = toClientGroups(omitClientIds(swapped))
       setGroups(normalized)
       void persist(normalized)
     },
@@ -79,13 +70,15 @@ export function StackPageEditor({ initialData }: StackPageEditorProps): React.JS
   const handleSaveGroup = useCallback(
     (group: StackGroup) => {
       const next = modal?.isNew
-        ? toClientGroups([...groups.map(({ clientId: _id, ...item }) => item), group])
+        ? toClientGroups([...omitClientIds(groups), group])
         : toClientGroups(
-            groups.map((item) =>
-              modal?.groupId && item.clientId === modal.groupId
-                ? { ...item, ...group }
-                : item
-            ).map(({ clientId: _id, ...item }) => item)
+            omitClientIds(
+              groups.map((item) =>
+                modal?.groupId && item.clientId === modal.groupId
+                  ? { ...item, ...group }
+                  : item
+              )
+            )
           )
 
       setGroups(next)
@@ -110,7 +103,7 @@ export function StackPageEditor({ initialData }: StackPageEditorProps): React.JS
         onMoveDown={(id) => handleMove(id, 'down')}
         onRemove={(id) => {
           const next = toClientGroups(
-            groups.filter((group) => group.clientId !== id).map(({ clientId: _id, ...group }) => group)
+            omitClientIds(groups.filter((group) => group.clientId !== id))
           )
           setGroups(next)
           void persist(next)

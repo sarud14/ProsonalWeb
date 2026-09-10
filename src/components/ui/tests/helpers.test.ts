@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import { cn } from './helpers'
+import { cn } from '../helpers'
 
 test('cn merges tailwind classes and drops conflicts', () => {
   expect(cn('px-2', 'px-4', 'text-foreground')).toBe('px-4 text-foreground')

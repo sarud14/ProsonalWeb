@@ -10,20 +10,24 @@ async function fillRequiredWorkFields(
   slug: string,
   title: string
 ): Promise<void> {
-  await page.getByLabel('Slug').fill(slug)
-  await page.getByLabel('Title').fill(title)
-  await page.getByLabel('Role').fill('FE')
-  await page.getByLabel('Tagline').fill('E2E published case study.')
-  await page.getByLabel('Metric').fill('1')
-  await page.getByLabel('Metric label').fill('TEST')
+  const field = (label: string) =>
+    page.getByRole('textbox', { name: `${label} *`, exact: true })
+
+  await field('Slug').fill(slug)
+  await field('Title').fill(title)
+  await field('Role').fill('FE')
+  await field('Tagline').fill('E2E published case study.')
+  // exact: true — getByLabel('Metric') also matches "Metric label *"
+  await field('Metric').fill('1')
+  await field('Metric label').fill('TEST')
   await page.getByPlaceholder('Add stack item…').fill('Playwright')
   await page.getByPlaceholder('Add stack item…').press('Enter')
-  await page.getByLabel('Context').fill('Critical CMS publish path.')
-  await page.getByLabel('Problem').fill('Public pages must reflect a published draft.')
-  await page.getByLabel('Constraints').fill('Single admin session.')
-  await page.getByLabel('Architecture').fill('Server Actions write through the DAL.')
-  await page.getByLabel('Decisions').fill('E2E covers login-or-ungated admin then publish.')
-  await page.getByLabel('Impact').fill('The public work page shows the new title.')
+  await field('Context').fill('Critical CMS publish path.')
+  await field('Problem').fill('Public pages must reflect a published draft.')
+  await field('Constraints').fill('Single admin session.')
+  await field('Architecture').fill('Server Actions write through the DAL.')
+  await field('Decisions').fill('E2E covers login-or-ungated admin then publish.')
+  await field('Impact').fill('The public work page shows the new title.')
 }
 
 test('login then publish work appears on the public case-study page', async ({ page }) => {

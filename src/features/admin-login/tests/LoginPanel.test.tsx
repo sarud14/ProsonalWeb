@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { expect, test, vi } from 'vitest'
 
-import { LoginPanel } from './LoginPanel'
+import { LoginPanel } from '../LoginPanel'
 
 vi.mock('@/actions/auth.actions', () => ({
   signInWithGitHubAction: vi.fn(),

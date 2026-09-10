@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vi } from 'vitest'
 
-import { ConfirmDialog } from './ConfirmDialog'
+import { ConfirmDialog } from '../ConfirmDialog'
 
 test('renders nothing when closed', () => {
   render(

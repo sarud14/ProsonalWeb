@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { expect, test, vi } from 'vitest'
 
-import { Toast } from './Toast'
+import { Toast } from '../Toast'
 
 test('renders nothing when closed', () => {
   render(<Toast message="Saved" open={false} onClose={vi.fn()} />)

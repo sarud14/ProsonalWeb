@@ -9,6 +9,8 @@ import {
 } from '@/constants/contact'
 import type { ContactFormProps } from '@/types/contact.types'
 
+import { buildContactSubmitInput } from './query/contactQuery'
+
 const fieldClassName =
   'w-full border border-border bg-transparent px-3 py-2.5 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary'
 
@@ -31,12 +33,9 @@ export function ContactForm({
     setError(null)
 
     startTransition(async () => {
-      const result = await submitContact({
-        name,
-        email,
-        message,
-        [CONTACT_HONEYPOT_FIELD]: website,
-      })
+      const result = await submitContact(
+        buildContactSubmitInput({ name, email, message, website })
+      )
 
       if (!result.success) {
         setError(result.error)

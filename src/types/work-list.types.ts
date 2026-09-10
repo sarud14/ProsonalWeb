@@ -6,3 +6,14 @@ export interface WorkListSectionProps {
 }
 
 export type WorkDomainFilter = string
+
+export interface WorkListQueryResult {
+  readonly filters: readonly string[]
+  readonly shownItems: readonly WorkCaseStudy[]
+  readonly countLabel: string
+}
+
+export interface WorkListHookResult extends WorkListQueryResult {
+  readonly activeFilter: string
+  readonly setActiveFilter: (filter: string) => void
+}

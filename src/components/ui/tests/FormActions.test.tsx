@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { expect, test, vi } from 'vitest'
 
-import { FormActions } from './FormActions'
+import { FormActions } from '../FormActions'
 
 test('exposes publish, draft, and cancel actions', () => {
   render(

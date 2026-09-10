@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { expect, test } from 'vitest'
 
-const TOKENS_DIR = path.join(__dirname)
+const TOKENS_DIR = path.join(__dirname, '..')
 
 function readTokenFile(name: string): string {
   return readFileSync(path.join(TOKENS_DIR, name), 'utf8')

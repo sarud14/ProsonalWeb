@@ -1,14 +1,13 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import { Card } from '@/components/ui'
 import { buildEngineerCodeLines } from '@/lib/landing/engineer-code-lines'
 import type { CodeLine } from '@/types/code-typing.types'
 import type { LandingHeroData } from '@/types/landing.types'
 
-const CHAR_DELAY = 30
-const LINE_DELAY = 200
+import { useCodeTypingQuery } from './query/useCodeTypingQuery'
 
 interface CodeTypingBlockProps {
   readonly config: Pick<
@@ -17,33 +16,9 @@ interface CodeTypingBlockProps {
   >
 }
 
-function flattenLines(lines: readonly CodeLine[]): string {
-  return lines.map((line) => line.map((token) => token.text).join('')).join('\n')
-}
-
 export function CodeTypingBlock({ config }: CodeTypingBlockProps): React.JSX.Element {
   const codeLines = useMemo(() => buildEngineerCodeLines(config), [config])
-  const fullText = useMemo(() => flattenLines(codeLines), [codeLines])
-  const [charCount, setCharCount] = useState(0)
-  const isDone = charCount >= fullText.length
-
-  useEffect(() => {
-    if (isDone) return
-
-    const currentChar = fullText[charCount]
-    const delay = currentChar === '\n' ? LINE_DELAY : CHAR_DELAY
-
-    const timer = setTimeout(() => {
-      setCharCount((prev) => prev + 1)
-    }, delay)
-
-    return (): void => {
-      clearTimeout(timer)
-    }
-  }, [charCount, fullText, isDone])
-
-  const visibleText = fullText.slice(0, charCount)
-  const visibleLines = visibleText.split('\n')
+  const { visibleLines, isDone } = useCodeTypingQuery(codeLines)
 
   return (
     <Card className="overflow-hidden rounded-none p-0">
