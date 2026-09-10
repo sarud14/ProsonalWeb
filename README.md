@@ -393,7 +393,16 @@ Uploads are session-gated (admin login required). After upload, the client saves
 
 > **Admin access control:** Production sign-in is allowlist-gated. Add your owner email to `AUTH_ADMIN_EMAIL_ALLOWLIST`. If your GitHub email is private, also add the numeric GitHub user ID to `AUTH_ADMIN_GITHUB_ID_ALLOWLIST`.
 
-7. Provision the production database (run locally against prod `DIRECT_URL`):
+7. **GitHub Actions is the deployer.** `vercel.json` sets `git.deploymentEnabled: false`, so pushing to GitHub no longer auto-deploys. After tests pass, CI runs `Vercel-Production` (`vercel deploy --prebuilt --prod` on `main`, preview otherwise). Add these **GitHub Actions secrets** before the workflow lands on `main`, or production will stop updating:
+
+| Secret | Where to get it |
+|---|---|
+| `DISCORD_WEBHOOK_URL` | Discord channel → Integrations → Webhooks |
+| `VERCEL_TOKEN` | [vercel.com/account/tokens](https://vercel.com/account/tokens) |
+| `VERCEL_ORG_ID` | `.vercel/project.json` → `orgId` after `npx vercel link`, or Vercel → Project → Settings → General |
+| `VERCEL_PROJECT_ID` | same file → `projectId` |
+
+8. Provision the production database (run locally against prod `DIRECT_URL`):
 
 ```bash
 yarn prisma:migrate:deploy
@@ -402,7 +411,7 @@ yarn prisma:seed
 
 > Migrations are local-only in this repo — apply per environment with `yarn prisma:migrate:deploy`, not via git.
 
-8. Deploy. After deploy, verify:
+9. Deploy. After tests pass, GitHub Actions runs `Vercel-Production`. After deploy, verify:
 
 ```bash
 yarn smoke:web https://your-domain.vercel.app

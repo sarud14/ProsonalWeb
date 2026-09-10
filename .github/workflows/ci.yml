@@ -10,7 +10,22 @@ permissions:
   contents: read
 
 jobs:
+  notify-start:
+    name: First-Notify-Discord
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NOTIFY_TITLE: 🚀 CI started
+          NOTIFY_COLOR: "3447003"
+        run: bash .github/scripts/notify-discord.sh
+
   check:
+    name: Run-Node-Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -44,6 +59,7 @@ jobs:
         run: yarn build
 
   e2e:
+    name: E2E-Tests
     needs: check
     runs-on: ubuntu-latest
 
@@ -95,49 +111,101 @@ jobs:
       - name: End-to-end tests
         run: yarn test:e2e
 
-  notify:
+  notify-ready:
+    name: Deploy-Notify-Discord
     needs: [check, e2e]
-    if: always()
+    if: success()
     runs-on: ubuntu-latest
-
     steps:
-      - name: Send Discord notification
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           CHECK_RESULT: ${{ needs.check.result }}
           E2E_RESULT: ${{ needs.e2e.result }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref }}
         run: |
-          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
-            echo "DISCORD_WEBHOOK_URL secret is not set; skipping notification."
-            exit 0
-          fi
-
-          if [ "$CHECK_RESULT" = "success" ] && [ "$E2E_RESULT" = "success" ]; then
-            STATUS="✅ CI passed"
-            COLOR=3066993
+          if [ "$EVENT_NAME" = "push" ] && [ "$REF_NAME" = "refs/heads/main" ]; then
+            export NOTIFY_TITLE="📦 Tests passed — Vercel production deploy"
           else
-            STATUS="❌ CI failed"
-            COLOR=15158332
+            export NOTIFY_TITLE="📦 Tests passed — Vercel preview deploy"
+          fi
+          export NOTIFY_COLOR="5793266"
+          bash .github/scripts/notify-discord.sh
+
+  vercel-production:
+    name: Vercel-Production
+    needs: notify-ready
+    if: success()
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "Missing VERCEL_TOKEN, VERCEL_ORG_ID, or VERCEL_PROJECT_ID GitHub secrets."
+            echo "Add them under Settings → Secrets and variables → Actions before this job can deploy."
+            exit 1
           fi
 
-          BRANCH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
-          SHORT_SHA="${GITHUB_SHA:0:7}"
-          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          npm install --global vercel@59.15.1
 
-          curl -sf --max-time 30 -X POST "$DISCORD_WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "username": "sarut-portfolio CI",
-              "embeds": [{
-                "title": "'"$STATUS"'",
-                "color": '"$COLOR"',
-                "url": "'"$RUN_URL"'",
-                "fields": [
-                  { "name": "Repository", "value": "'"$GITHUB_REPOSITORY"'", "inline": true },
-                  { "name": "Branch", "value": "'"$BRANCH"'", "inline": true },
-                  { "name": "Commit", "value": "'"$SHORT_SHA"'", "inline": false },
-                  { "name": "check job", "value": "'"$CHECK_RESULT"'", "inline": true },
-                  { "name": "e2e job", "value": "'"$E2E_RESULT"'", "inline": true }
-                ]
-              }]
-            }'
+          if [ "${GITHUB_EVENT_NAME}" = "push" ] && [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+            vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+            vercel build --prod --token="$VERCEL_TOKEN"
+            URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tee /dev/stderr | tail -n 1)
+          else
+            vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
+            vercel build --token="$VERCEL_TOKEN"
+            URL=$(vercel deploy --prebuilt --token="$VERCEL_TOKEN" | tee /dev/stderr | tail -n 1)
+          fi
+
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Deployed to $URL"
+
+  notify-done:
+    name: Second-Notify-Discord
+    needs: [check, e2e, notify-ready, vercel-production]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          CHECK_RESULT: ${{ needs.check.result }}
+          E2E_RESULT: ${{ needs.e2e.result }}
+          VERCEL_RESULT: ${{ needs.vercel-production.result }}
+          DEPLOY_URL: ${{ needs.vercel-production.outputs.url }}
+        run: |
+          if [ "$CHECK_RESULT" = "success" ] && [ "$E2E_RESULT" = "success" ] && [ "$VERCEL_RESULT" = "success" ]; then
+            export NOTIFY_TITLE="✅ CI passed"
+            export NOTIFY_COLOR="3066993"
+          elif [ "$VERCEL_RESULT" = "failure" ]; then
+            export NOTIFY_TITLE="❌ Vercel deploy failed"
+            export NOTIFY_COLOR="15158332"
+          else
+            export NOTIFY_TITLE="❌ CI failed"
+            export NOTIFY_COLOR="15158332"
+          fi
+          bash .github/scripts/notify-discord.sh
