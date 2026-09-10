@@ -34,7 +34,9 @@ src/components/ui/
   index.ts          client-safe barrel — components, cn, DataTable types
   server.ts         server-only barrel — Footer (keeps `server-only` off the client graph)
   helpers.ts        cn() — className merge (clsx + tailwind-merge)
-  helpers.test.ts
+  tests/            all design-system tests (not mixed with components)
+    helpers.test.ts
+    Button.test.tsx … NavBar.test.tsx
   tokens/
     colors.css      :root palette + @theme color bridges + .admin-theme
     typography.css  @theme font bridges
@@ -42,7 +44,8 @@ src/components/ui/
     spacing.css     --grid-size
     elevation.css   empty — promote repeated shadows here
     motion.css      landing motion tokens + keyframes
-    tokens.test.ts
+    tests/
+      tokens.test.ts
   Badge.tsx … Toast.tsx, dropdown-menu.tsx   still flat (grouping later)
 ```
 
@@ -424,7 +427,7 @@ The design system carries these guarantees; do not regress them:
 2. Add/extend its prop interface in `src/types/<name>.types.ts` — not inline in a new file. (Existing inline props are debt; don't add more.)
 3. Export it from `index.ts` (keep related exports grouped) unless it is an async Server Component that fetches or imports `server-only` — those go on `server.ts`. Consumers import from `@/components/ui` or `@/components/ui/server`, never a component file.
 4. Style with token utility classes (`bg-card`, `text-muted-foreground`, `border-border`). Add a token in `src/components/ui/tokens/` first if a value is missing — never hardcode (see AGENTS.md's Design Tokens rule). If the colour is CMS-overridable, update `site-theme.ts` in the same PR.
-5. Add a colocated `*.test.tsx` asserting semantics and any `data-*`/ARIA contract (Vitest jsdom + Testing Library).
+5. Add `tests/<Component>.test.tsx` asserting semantics and any `data-*`/ARIA contract (Vitest jsdom + Testing Library). Do not drop the test file next to the component.
 6. There is no gallery/playground route. Preview on the public or admin screen that uses the component.
 7. Update this file's component reference (and token table if tokens changed) in the same PR.
 8. Run `yarn test`, `yarn build`, `yarn lint` before declaring done.

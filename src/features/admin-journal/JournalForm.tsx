@@ -12,7 +12,10 @@ import {
 import { MediaPickerDialog } from '@/components/admin/MediaPickerDialog'
 import { FormActions, FormSection, ImagePicker, StatusBadge, Toast } from '@/components/ui'
 import { getPublicPreviewPath } from '@/lib/admin/content-form-mappers'
+import { findMediaOption } from '@/lib/admin/map-media-options'
 import type { AdminMediaOption, JournalFormState } from '@/types/admin-content.types'
+
+import { buildJournalMutationPayload } from './query/journalFormQuery'
 
 interface JournalFormProps {
   readonly initialValues: JournalFormState
@@ -33,7 +36,7 @@ export function JournalForm({
 
   const isEditing = values.id !== undefined
   const coverImage = useMemo(
-    () => media.find((asset) => asset.id === values.coverImageId),
+    () => findMediaOption(media, values.coverImageId),
     [media, values.coverImageId]
   )
 
@@ -48,17 +51,7 @@ export function JournalForm({
     async (publish: boolean) => {
       setIsSubmitting(true)
 
-      const payload = {
-        slug: values.slug,
-        title: values.title,
-        excerpt: values.excerpt,
-        body: values.body,
-        tag: values.tag,
-        readTime: values.readTime,
-        pull: values.pull || null,
-        sortOrder: values.sortOrder,
-        coverImageId: values.coverImageId,
-      }
+      const payload = buildJournalMutationPayload(values)
 
       const result = values.id
         ? await updateJournal({ id: values.id, ...payload })

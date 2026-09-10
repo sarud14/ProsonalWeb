@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { expect, test } from 'vitest'
 
-import { StatusBadge } from './StatusBadge'
+import { StatusBadge } from '../StatusBadge'
 
 test('exposes published status for assistive tests', () => {
   render(<StatusBadge status="PUBLISHED" />)

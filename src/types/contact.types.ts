@@ -9,4 +9,18 @@ export interface ContactPageViewProps {
   readonly location: string
 }
 
+export interface ContactSubmitFields {
+  readonly name: string
+  readonly email: string
+  readonly message: string
+  readonly website: string
+}
+
+export interface ContactSubmitInput {
+  readonly name: string
+  readonly email: string
+  readonly message: string
+  readonly website: string
+}
+
 export type { LandingContactProps }

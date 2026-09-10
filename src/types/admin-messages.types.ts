@@ -17,3 +17,9 @@ export interface MessagesPageViewProps {
 export interface MessagesFilterState {
   readonly filter: AdminMessageFilterKey
 }
+
+export interface MessagesQueryResult {
+  readonly filter: AdminMessageFilterKey
+  readonly setFilter: (filter: AdminMessageFilterKey) => void
+  readonly filteredMessages: readonly AdminMessageItem[]
+}

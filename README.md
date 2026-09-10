@@ -82,7 +82,8 @@ src/
 │   ├── contact.actions.ts     # public submit + admin read/archive/delete
 │   └── reaction.actions.ts    # public add + get reactions
 ├── features/                  # domain screens — app routes compose these
-│   ├── landing/ | work/ | journal/ | engineering/ | focus/ | stack/ | resume/ | contact/
+│   ├── landing/               # UI at root; query/; tests/
+│   ├── work/ | journal/ | engineering/ | focus/ | stack/ | resume/ | contact/
 │   └── admin-shell/ | admin-dashboard/ | admin-* (CMS modules)
 ├── components/
 │   ├── ui/                    # shared UI (Button, Card, Badge, NavBar, Footer, ImagePicker, etc.)
@@ -126,6 +127,14 @@ content/                       # Git-MDX source — deliberately OUTSIDE src/
 ├── work/*.mdx
 ├── journal/*.mdx
 └── engineering/*.mdx
+
+docs/                          # committed inspectable docs — not mixed with source
+├── ARCHITECTURE.md            # folder layout, layering, route table
+└── DESIGN_SYSTEM.md           # tokens + UI inventory
+
+e2e/                           # Playwright — critical flows only
+├── public-content.spec.ts
+└── cms-publish-work.spec.ts
 ```
 
 ### Key design decisions
@@ -507,7 +516,7 @@ To change the grid itself or base typography, edit `globals.css` and shared UI i
 
 ### Components
 
-Shared UI lives in `src/components/ui/` — restyle `Card`, `Badge`, `Button`, `NavBar`, `Footer`, `ImagePicker`, `Skeleton` etc. to change the look across the entire site. Page-specific screens live in `src/features/<domain>/` (e.g. `landing/`, `work/`, `journal/`). Shared CMS widgets live in `src/components/admin/`.
+Shared UI lives in `src/components/ui/` — restyle `Card`, `Badge`, `Button`, `NavBar`, `Footer`, `ImagePicker`, `Skeleton` etc. to change the look across the entire site. Page-specific screens live in `src/features/<domain>/` (UI at the feature root; `query/` for logic; `tests/` for that feature's tests). Shared CMS widgets live in `src/components/admin/`. Inspectable docs live in `docs/` only.
 
 ### Backup
 

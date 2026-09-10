@@ -8,6 +8,8 @@ import { buildWorkCaseMeta } from '@/lib/work-case-detail'
 import { cn } from '@/components/ui'
 import type { WorkCaseStudy } from '@/types/work.types'
 
+import { articleReadProgressPercent } from './query/workQuery'
+
 interface WorkCaseHeroProps {
   readonly work: WorkCaseStudy
 }
@@ -105,9 +107,9 @@ export function WorkCaseContentsRail({
       if (!article) return
 
       const rect = article.getBoundingClientRect()
-      const total = article.scrollHeight - window.innerHeight
-      const scrolled = Math.min(Math.max(-rect.top, 0), total)
-      setProgress(total > 0 ? (scrolled / total) * 100 : 0)
+      setProgress(
+        articleReadProgressPercent(rect.top, article.scrollHeight, window.innerHeight)
+      )
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })

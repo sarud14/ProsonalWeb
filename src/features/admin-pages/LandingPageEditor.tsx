@@ -7,11 +7,8 @@ import { updatePage } from '@/actions/page.actions'
 import { LandingBlockModal } from '@/features/admin-pages/LandingBlockModal'
 import { LandingHeroEditor } from '@/features/admin-pages/LandingHeroEditor'
 import { ReorderableList, SectionHeading, Toast } from '@/components/ui'
-import {
-  assignLandingBlockOrders,
-  LANDING_BLOCK_TYPES,
-  normalizeLandingBlockOrders,
-} from '@/constants/admin-pages'
+import { LANDING_BLOCK_TYPES } from '@/constants/admin-pages'
+import { moveItemByClientId, omitClientIds } from '@/lib/admin/client-list'
 import {
   getDefaultLandingBlockProps,
 } from '@/lib/admin/landing-block-props'
@@ -19,20 +16,15 @@ import {
   getLandingBlockHeadline,
   getLandingBlockSubline,
 } from '@/lib/admin/page-section-defaults'
-import type { LandingBlockModalState, LandingPageEditorProps } from '@/types/admin-pages.types'
+import type {
+  ClientLandingBlock,
+  LandingBlockModalState,
+  LandingPageEditorProps,
+} from '@/types/admin-pages.types'
 import type { LandingBlock } from '@/types/site.types'
 import type { LandingHeroData } from '@/types/landing.types'
 
-interface ClientLandingBlock extends LandingBlock {
-  readonly clientId: string
-}
-
-function toClientBlocks(blocks: readonly LandingBlock[]): ClientLandingBlock[] {
-  return normalizeLandingBlockOrders(blocks).map((block, index) => ({
-    ...block,
-    clientId: `${block.type}-${block.order}-${index}`,
-  }))
-}
+import { toClientBlocks, toPersistableBlocks } from './query/landingPageQuery'
 
 export function LandingPageEditor({
   initialData,
@@ -68,9 +60,7 @@ export function LandingPageEditor({
       setIsSaving(true)
       const payload = {
         hero: nextHero,
-        blocks: assignLandingBlockOrders(
-          nextBlocks.map(({ clientId: _id, ...block }) => block)
-        ),
+        blocks: toPersistableBlocks(nextBlocks),
       }
       const result = await updatePage({ key: 'landing', data: payload })
       setIsSaving(false)
@@ -102,17 +92,10 @@ export function LandingPageEditor({
 
   const handleMove = useCallback(
     (id: string, direction: 'up' | 'down') => {
-      const index = blocks.findIndex((block) => block.clientId === id)
-      if (index < 0) return
+      const swapped = moveItemByClientId(blocks, id, direction)
+      if (!swapped) return
 
-      const swapIndex = direction === 'up' ? index - 1 : index + 1
-      if (swapIndex < 0 || swapIndex >= blocks.length) return
-
-      const next = [...blocks]
-      ;[next[index], next[swapIndex]] = [next[swapIndex], next[index]]
-      const normalized = toClientBlocks(
-        assignLandingBlockOrders(next.map(({ clientId: _id, ...block }) => block))
-      )
+      const normalized = toClientBlocks(toPersistableBlocks(swapped))
       setBlocks(normalized)
       void persistBlocks(normalized)
     },
@@ -122,9 +105,7 @@ export function LandingPageEditor({
   const handleRemove = useCallback(
     (id: string) => {
       const next = toClientBlocks(
-        blocks
-          .filter((block) => block.clientId !== id)
-          .map(({ clientId: _id, ...block }) => block)
+        omitClientIds(blocks.filter((block) => block.clientId !== id))
       )
       setBlocks(next)
       void persistBlocks(next)
@@ -151,15 +132,15 @@ export function LandingPageEditor({
     (block: LandingBlock) => {
       const next = modal?.isNew
         ? toClientBlocks([
-            ...blocks.map(({ clientId: _id, ...item }) => item),
+            ...omitClientIds(blocks),
             { ...block, order: blocks.length },
           ])
         : toClientBlocks(
-            blocks
-              .map((item) =>
+            omitClientIds(
+              blocks.map((item) =>
                 modal?.clientId && item.clientId === modal.clientId ? { ...item, ...block } : item
               )
-              .map(({ clientId: _id, ...item }) => item)
+            )
           )
 
       setBlocks(next)

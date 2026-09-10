@@ -1,6 +1,7 @@
 import type { AdminMediaOption } from '@/types/admin-content.types'
 import type { FocusPageData } from '@/types/focus.types'
 import type { LandingBlock, LandingPageData, NavItem, SiteConfig } from '@/types/site.types'
+import type { SiteSocialLink } from '@/types/site-settings.types'
 import type { StackGroup, StackPageData } from '@/types/stack.types'
 
 export interface LandingPageEditorProps {
@@ -21,6 +22,22 @@ export interface SitePageEditorProps {
   readonly initialData: SiteConfig
   readonly media: readonly AdminMediaOption[]
   readonly uploadEnabled: boolean
+}
+
+export interface ClientNavItem extends NavItem {
+  readonly clientId: string
+}
+
+export interface ClientSocialLink extends SiteSocialLink {
+  readonly clientId: string
+}
+
+export interface ClientLandingBlock extends LandingBlock {
+  readonly clientId: string
+}
+
+export interface ClientStackGroup extends StackGroup {
+  readonly clientId: string
 }
 
 export interface LandingBlockModalState {

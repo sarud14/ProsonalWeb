@@ -1,33 +1,18 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
 
-import { WORK_FILTER_ALL } from '@/constants/work'
-import {
-  buildWorkDomainFilterOptions,
-  matchesWorkDomainFilter,
-} from '@/lib/content/work-domain-filters'
 import { cn } from '@/components/ui'
 import type { WorkListSectionProps } from '@/types/work-list.types'
+
+import { useWorkQuery } from './query/useWorkQuery'
 
 export function WorkListSection({
   items,
   domainFilters,
 }: WorkListSectionProps): React.JSX.Element {
-  const filters = useMemo(
-    () => buildWorkDomainFilterOptions(domainFilters),
-    [domainFilters],
-  )
-  const [activeFilter, setActiveFilter] = useState<string>(WORK_FILTER_ALL)
-
-  const shownItems = useMemo(
-    () =>
-      items.filter((item) => matchesWorkDomainFilter(item.domains, activeFilter)),
-    [activeFilter, items],
-  )
-
-  const countLabel = `SHOWING ${shownItems.length} OF ${items.length}`
+  const { filters, shownItems, countLabel, activeFilter, setActiveFilter } =
+    useWorkQuery(items, domainFilters)
 
   return (
     <>

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vi } from 'vitest'
 
-import { NavBar } from './NavBar'
+import { NavBar } from '../NavBar'
 
 vi.mock('next/navigation', () => ({
   usePathname: (): string => '/',

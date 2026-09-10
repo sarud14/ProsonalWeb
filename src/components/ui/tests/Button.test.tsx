@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { expect, test } from 'vitest'
 
-import { Button } from './Button'
+import { Button } from '../Button'
 
 test('renders a button with the design-system slot hook', () => {
   render(<Button>Save draft</Button>)

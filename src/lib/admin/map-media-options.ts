@@ -13,3 +13,11 @@ export function mapMediaOptions(
     alt: asset.alt,
   }))
 }
+
+export function findMediaOption(
+  media: readonly AdminMediaOption[],
+  id: string | null
+): AdminMediaOption | undefined {
+  if (!id) return undefined
+  return media.find((asset) => asset.id === id)
+}

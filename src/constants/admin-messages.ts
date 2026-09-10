@@ -5,3 +5,5 @@ export const ADMIN_MESSAGE_FILTERS = [
 ] as const
 
 export type AdminMessageFilterKey = (typeof ADMIN_MESSAGE_FILTERS)[number]['key']
+
+export const MESSAGE_PREVIEW_MAX_LENGTH = 120
