@@ -230,7 +230,7 @@ No `middleware.ts` at the repo root — the admin gate is the `(admin)/admin` la
 - **E2E:** Playwright in `e2e/`. `e2e/public-content.spec.ts` covers `/`, `/work`, `/login`. `e2e/cms-publish-work.spec.ts` is the critical flow (login page → `/admin/work/new` → Publish → public `/work/[slug]`). That spec skips unless `CONTENT_SOURCE=db` and `DATABASE_URL` are set; it also skips if `/admin` redirects to OAuth login. Required work-form fields are filled via `getByRole('textbox', { name: '<Label> *', exact: true })` so "Metric" does not also match "Metric label".
 - Config: `vitest.config.ts` uses two projects — unit (`*.test.ts`, node) and component (`*.test.tsx`, jsdom). Playwright: `playwright.config.ts`, run `yarn test:e2e`.
 - Run: `yarn` · `yarn test` · `yarn test:e2e` · `yarn build` · `yarn lint` · `yarn type-check`
-- CI: `.github/workflows/ci.yml` `check` job (lint/type-check/unit/build) then `e2e` job (Postgres, `prisma db push`, Playwright Chromium). Admin stays ungated in that job because `NEXTAUTH_SECRET` is unset.
+- CI: `.github/workflows/ci.yml` `check` job (lint/type-check/unit/build) then `e2e` job (Postgres, `prisma db push`, Playwright Chromium). Admin stays ungated in that job because `NEXTAUTH_SECRET` is unset. A `notify` job always runs after both and posts pass/fail to Discord via the `DISCORD_WEBHOOK_URL` repo secret (skips if the secret is unset).
 
 ---
 
