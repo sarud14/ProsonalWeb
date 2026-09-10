@@ -13,6 +13,7 @@ jobs:
   notify-start:
     name: First-Notify-Discord
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,8 +21,11 @@ jobs:
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          NOTIFY_TITLE: 🚀 CI started
+          NOTIFY_STAGE: start
+          NOTIFY_TITLE: CI started
           NOTIFY_COLOR: "3447003"
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          COMMIT_MESSAGE: ${{ github.event.pull_request.title || github.event.head_commit.message }}
         run: bash .github/scripts/notify-discord.sh
 
   check:
@@ -115,6 +119,7 @@ jobs:
     name: Deploy-Notify-Discord
     needs: [check, e2e]
     if: success()
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -123,23 +128,26 @@ jobs:
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NOTIFY_STAGE: ready
+          NOTIFY_COLOR: "5793266"
           CHECK_RESULT: ${{ needs.check.result }}
           E2E_RESULT: ${{ needs.e2e.result }}
-          EVENT_NAME: ${{ github.event_name }}
-          REF_NAME: ${{ github.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          COMMIT_MESSAGE: ${{ github.event.pull_request.title || github.event.head_commit.message }}
         run: |
-          if [ "$EVENT_NAME" = "push" ] && [ "$REF_NAME" = "refs/heads/main" ]; then
-            export NOTIFY_TITLE="📦 Tests passed — Vercel production deploy"
+          if [ "${GITHUB_EVENT_NAME}" = "push" ] && [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+            export NOTIFY_TITLE="Tests passed — deploying production"
+            export DEPLOY_ENV="Production"
           else
-            export NOTIFY_TITLE="📦 Tests passed — Vercel preview deploy"
+            export NOTIFY_TITLE="Tests passed — deploying preview"
+            export DEPLOY_ENV="Preview"
           fi
-          export NOTIFY_COLOR="5793266"
           bash .github/scripts/notify-discord.sh
 
   vercel-production:
     name: Vercel-Production
-    needs: notify-ready
-    if: success()
+    needs: [check, e2e, notify-ready]
+    if: ${{ always() && needs.check.result == 'success' && needs.e2e.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -185,6 +193,7 @@ jobs:
     name: Second-Notify-Discord
     needs: [check, e2e, notify-ready, vercel-production]
     if: always()
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -193,19 +202,26 @@ jobs:
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NOTIFY_STAGE: done
           CHECK_RESULT: ${{ needs.check.result }}
           E2E_RESULT: ${{ needs.e2e.result }}
           VERCEL_RESULT: ${{ needs.vercel-production.result }}
           DEPLOY_URL: ${{ needs.vercel-production.outputs.url }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          COMMIT_MESSAGE: ${{ github.event.pull_request.title || github.event.head_commit.message }}
         run: |
           if [ "$CHECK_RESULT" = "success" ] && [ "$E2E_RESULT" = "success" ] && [ "$VERCEL_RESULT" = "success" ]; then
-            export NOTIFY_TITLE="✅ CI passed"
+            if [ "${GITHUB_EVENT_NAME}" = "push" ] && [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+              export NOTIFY_TITLE="Production is live"
+            else
+              export NOTIFY_TITLE="Preview is ready"
+            fi
             export NOTIFY_COLOR="3066993"
           elif [ "$VERCEL_RESULT" = "failure" ]; then
-            export NOTIFY_TITLE="❌ Vercel deploy failed"
+            export NOTIFY_TITLE="Vercel deploy failed"
             export NOTIFY_COLOR="15158332"
           else
-            export NOTIFY_TITLE="❌ CI failed"
+            export NOTIFY_TITLE="CI failed"
             export NOTIFY_COLOR="15158332"
           fi
           bash .github/scripts/notify-discord.sh
