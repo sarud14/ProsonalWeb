@@ -1,0 +1,8 @@
+/* Next.js font CSS variables are set on <html> in src/app/layout.tsx
+   (--font-sans, --font-geist-mono). This file only maps them into Tailwind. */
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+}

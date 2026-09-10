@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { ResumePageView } from '@/components/admin-page/Resume/ResumePageView'
+import { ResumePageView } from '@/features/admin-resume/ResumePageView'
 import { mapResumePageData } from '@/lib/admin/resume-form-mappers'
 import { resumeData } from '@/lib/data/resume.data'
 import { workData } from '@/lib/data/work.data'

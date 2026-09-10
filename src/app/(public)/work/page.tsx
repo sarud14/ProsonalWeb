@@ -1,6 +1,5 @@
-import { Container } from '@/components/ui/Container'
-import { PageRouteHeader } from '@/components/ui/PageRouteHeader'
-import { WorkListSection } from '@/components/public-page/Work/WorkListSection'
+import { Container, PageRouteHeader } from '@/components/ui'
+import { WorkListSection } from '@/features/work/WorkListSection'
 import { getContentSource } from '@/lib/content/source'
 import { resolveWorkDomainLabels } from '@/lib/content/work-domains'
 import type { Metadata } from 'next'

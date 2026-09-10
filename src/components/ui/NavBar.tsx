@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 
 import { getSiteAvailabilityDisplay } from '@/constants/site-availability'
-import { NavBarLink } from '@/components/ui/NavBarLink'
+import { NavBarLink } from './NavBarLink'
 import { getInitialsFromName } from '@/lib/format/get-initials-from-name'
-import { cn } from '@/lib/utils'
+import { cn } from './helpers'
 import type { NavBarProps } from '@/types/nav-bar.types'
 
 export function NavBar({ items, brand, className }: NavBarProps): React.JSX.Element {

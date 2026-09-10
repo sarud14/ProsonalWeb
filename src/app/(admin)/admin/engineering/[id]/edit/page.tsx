@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { EngineeringForm } from '@/components/admin-page/Engineering/EngineeringForm'
+import { EngineeringForm } from '@/features/admin-engineering/EngineeringForm'
 import { ENGINEERING_LIST_CONFIG } from '@/constants/admin-content-list'
 import { engineeringRecordToFormState } from '@/lib/admin/content-form-mappers'
 import { mapMediaOptions } from '@/lib/admin/map-media-options'

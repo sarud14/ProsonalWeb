@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { ResumePageView } from '@/components/public-page/Resume/ResumePageView'
+import { ResumePageView } from '@/features/resume/ResumePageView'
 import { getResumeData } from '@/lib/resume/get-resume-data'
 
 export const dynamic = 'force-dynamic'

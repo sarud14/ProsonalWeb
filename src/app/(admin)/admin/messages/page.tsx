@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { MessagesPageView } from '@/components/admin-page/Messages/MessagesPageView'
+import { MessagesPageView } from '@/features/admin-messages/MessagesPageView'
 import { mapContactMessages } from '@/lib/admin/contact-message-mappers'
 import { contactData } from '@/lib/data/contact.data'
 

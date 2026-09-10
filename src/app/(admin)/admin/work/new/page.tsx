@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { WorkForm } from '@/components/admin-page/Work/WorkForm'
+import { WorkForm } from '@/features/admin-work/WorkForm'
 import { WORK_LIST_CONFIG } from '@/constants/admin-content-list'
 import { emptyWorkFormState } from '@/lib/admin/content-form-mappers'
 import { mapMediaOptions } from '@/lib/admin/map-media-options'

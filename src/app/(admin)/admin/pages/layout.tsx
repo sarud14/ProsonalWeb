@@ -1,4 +1,4 @@
-import { PagesTabNav } from '@/components/admin-page/Pages/PagesTabNav'
+import { PagesTabNav } from '@/features/admin-pages/PagesTabNav'
 
 export default function AdminPagesLayout({
   children,

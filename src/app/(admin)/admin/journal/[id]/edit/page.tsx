@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { JournalForm } from '@/components/admin-page/Journal/JournalForm'
+import { JournalForm } from '@/features/admin-journal/JournalForm'
 import { JOURNAL_LIST_CONFIG } from '@/constants/admin-content-list'
 import { journalRecordToFormState } from '@/lib/admin/content-form-mappers'
 import { mapMediaOptions } from '@/lib/admin/map-media-options'

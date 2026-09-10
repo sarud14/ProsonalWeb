@@ -1,4 +1,4 @@
-import type { DataTableColumn } from '@/components/ui/DataTable'
+import { type DataTableColumn } from '@/components/ui'
 import type { AdminContentListConfig } from '@/types/admin-content.types'
 
 export const WORK_LIST_COLUMNS: readonly DataTableColumn[] = [

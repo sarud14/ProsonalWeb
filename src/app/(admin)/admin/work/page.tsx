@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { ContentListClient } from '@/components/admin-page/shared/ContentListClient'
+import { ContentListClient } from '@/components/admin/ContentListClient'
 import {
   WORK_LIST_COLUMNS,
   WORK_LIST_CONFIG,

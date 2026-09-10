@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from './helpers'
 import type { SectionHeaderProps } from '@/types/section-header.types'
 
 export function SectionHeader({

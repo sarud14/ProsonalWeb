@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { LoginPanel } from '@/components/admin-page/Login/LoginPanel'
+import { LoginPanel } from '@/features/admin-login/LoginPanel'
 import { isGithubAuthConfigured, isGoogleAuthConfigured } from '@/env'
 
 export const metadata: Metadata = {

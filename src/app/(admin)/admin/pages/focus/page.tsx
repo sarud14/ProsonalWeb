@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { FocusPageEditor } from '@/components/admin-page/Pages/FocusPageEditor'
+import { FocusPageEditor } from '@/features/admin-pages/FocusPageEditor'
 import { loadFocusPageData } from '@/lib/admin/load-page-section'
 
 export const metadata: Metadata = {

@@ -59,6 +59,8 @@ Edit/add `.mdx` files under `/content/work`, `/content/journal`, `/content/engin
 
 ## 2. Project Structure
 
+Folder layout, layering, and the real route table: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Design tokens and the shared UI inventory: [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md). Update those files in the same change whenever the tree, tokens, or a shared component changes.
+
 ```
 src/
 ├── app/
@@ -79,17 +81,18 @@ src/
 │   ├── taxonomy.actions.ts    # domain CRUD (blocks delete if used)
 │   ├── contact.actions.ts     # public submit + admin read/archive/delete
 │   └── reaction.actions.ts    # public add + get reactions
+├── features/                  # domain screens — app routes compose these
+│   ├── landing/ | work/ | journal/ | engineering/ | focus/ | stack/ | resume/ | contact/
+│   └── admin-shell/ | admin-dashboard/ | admin-* (CMS modules)
 ├── components/
 │   ├── ui/                    # shared UI (Button, Card, Badge, NavBar, Footer, ImagePicker, etc.)
-│   ├── public-page/           # page-specific components, grouped by domain
-│   └── admin-page/            # admin CMS UI (dashboard, CRUD, pages, media, etc.)
+│   └── admin/                 # CMS widgets shared across admin features
 ├── lib/
 │   ├── content/               # content abstraction layer
 │   │   ├── source.ts          # interface — pages import this, never the implementations
 │   │   ├── mdx-source.ts      # Git-MDX implementation (default)
 │   │   ├── db-source.ts       # DB implementation (via DAL)
-│   │   ├── site-config.ts     # navbar items from data (Phase 3 seam)
-│   │   └── landing-registry.ts # landing block type → component map (Phase 3 seam)
+│   │   └── site-config.ts     # navbar items from data (Phase 3 seam)
 │   ├── data/                  # DAL — all Prisma queries centralized here
 │   │   ├── work.data.ts       # WorkCaseStudy + Domain relations
 │   │   ├── journal.data.ts    # JournalPost
@@ -331,7 +334,8 @@ Uploads are session-gated (admin login required). After upload, the client saves
 | `yarn build` | Production build |
 | `yarn lint` | Run ESLint |
 | `yarn type-check` | Run `tsc --noEmit` |
-| `yarn test` | Run Vitest (12 files, 44 tests) |
+| `yarn test` | Run Vitest unit + component tests |
+| `yarn test:e2e` | Run Playwright (`e2e/`; CMS publish spec needs `CONTENT_SOURCE=db` + Postgres) |
 | `npx prisma generate` | Generate Prisma client types |
 | `npx prisma migrate dev` | Run database migrations |
 | `yarn prisma:migrate:deploy` | Apply migrations to production DB |
@@ -503,7 +507,7 @@ To change the grid itself or base typography, edit `globals.css` and shared UI i
 
 ### Components
 
-Shared UI lives in `src/components/ui/` — restyle `Card`, `Badge`, `Button`, `NavBar`, `Footer`, `ImagePicker`, `Skeleton` etc. to change the look across the entire site. Page-specific components live in `src/components/public-page/<Domain>/` (e.g. `Landing/`, `Work/`, `Journal/`) — edit these to change the layout of individual sections.
+Shared UI lives in `src/components/ui/` — restyle `Card`, `Badge`, `Button`, `NavBar`, `Footer`, `ImagePicker`, `Skeleton` etc. to change the look across the entire site. Page-specific screens live in `src/features/<domain>/` (e.g. `landing/`, `work/`, `journal/`). Shared CMS widgets live in `src/components/admin/`.
 
 ### Backup
 

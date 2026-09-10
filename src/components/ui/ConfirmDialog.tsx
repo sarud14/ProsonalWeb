@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useId } from 'react'
 
 interface ConfirmDialogProps {
   readonly open: boolean
@@ -19,6 +19,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps): React.JSX.Element | null {
+  const titleId = useId()
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onCancel()
@@ -40,10 +41,15 @@ export function ConfirmDialog({
       onClick={onCancel}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
         className="w-[90%] max-w-[400px] rounded-[14px] border border-border bg-card p-7 text-black shadow-[0_24px_60px_rgba(0,0,0,0.25)] animate-in zoom-in-[0.97] duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="mb-2 text-[22px] font-medium">{title}</h3>
+        <h3 id={titleId} className="mb-2 text-[22px] font-medium">
+          {title}
+        </h3>
         <p className="mb-[22px] text-sm leading-relaxed text-black/70">
           {body}
         </p>

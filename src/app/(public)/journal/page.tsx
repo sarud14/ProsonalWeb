@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 
-import { JournalPostList } from '@/components/public-page/Journal/JournalPostList'
-import { Container } from '@/components/ui/Container'
-import { PageRouteHeader } from '@/components/ui/PageRouteHeader'
+import { JournalPostList } from '@/features/journal/JournalPostList'
+import { Container, PageRouteHeader } from '@/components/ui'
 import { getContentSource } from '@/lib/content/source'
 
 export const metadata: Metadata = {

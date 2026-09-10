@@ -1,4 +1,4 @@
-import { AdminShell } from '@/components/admin-page/AdminShell'
+import { AdminShell } from '@/features/admin-shell/AdminShell'
 import { mapAdminSessionUser } from '@/lib/auth/map-admin-session-user'
 import { auth, requireAdminSession } from '@/lib/auth/session'
 import { contactData } from '@/lib/data/contact.data'

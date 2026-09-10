@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { DashboardView } from '@/components/admin-page/Dashboard/DashboardView'
+import { DashboardView } from '@/features/admin-dashboard/DashboardView'
 import { auth } from '@/lib/auth/session'
 import { dashboardData } from '@/lib/data/dashboard.data'
 

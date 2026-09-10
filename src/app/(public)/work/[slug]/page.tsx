@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { WorkCaseDetailView } from '@/components/public-page/Work/WorkCaseDetailView'
+import { WorkCaseDetailView } from '@/features/work/WorkCaseDetailView'
 import { getContentSource } from '@/lib/content/source'
 import type { WorkDetailPageProps } from '@/types/work-page.types'
 

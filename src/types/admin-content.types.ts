@@ -1,4 +1,4 @@
-import type { DataTableRow } from '@/components/ui/DataTable'
+import { type DataTableRow } from '@/components/ui'
 
 export type AdminContentSection = 'work' | 'journal' | 'engineering'
 

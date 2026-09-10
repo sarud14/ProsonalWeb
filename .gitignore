@@ -56,3 +56,9 @@ project-starter-kit/
 
 # DB export backup output
 export/
+
+# Playwright
+/playwright-report/
+/test-results/
+/blob-report/
+/playwright/.cache/

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { StackPageEditor } from '@/components/admin-page/Pages/StackPageEditor'
+import { StackPageEditor } from '@/features/admin-pages/StackPageEditor'
 import { loadStackPageData } from '@/lib/admin/load-page-section'
 
 export const metadata: Metadata = {
