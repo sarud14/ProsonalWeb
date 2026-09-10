@@ -1,6 +1,6 @@
 import { AdminShell } from '@/features/admin-shell/AdminShell'
 import { mapAdminSessionUser } from '@/lib/auth/map-admin-session-user'
-import { auth, requireAdminSession } from '@/lib/auth/session'
+import { getOptionalAdminSession, requireAdminSession } from '@/lib/auth/session'
 import { contactData } from '@/lib/data/contact.data'
 
 export const dynamic = 'force-dynamic'
@@ -14,7 +14,7 @@ export default async function AdminPanelLayout({
 
   const [unreadCount, session] = await Promise.all([
     contactData.countUnread(),
-    auth(),
+    getOptionalAdminSession(),
   ])
 
   const user = mapAdminSessionUser(session)
