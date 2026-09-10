@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { EngineeringTypePageView } from '@/components/public-page/Engineering/EngineeringTypePageView'
+import { EngineeringTypePageView } from '@/features/engineering/EngineeringTypePageView'
 import { loadEngineeringTypePage } from '@/lib/content/engineering-type-page'
 
 export const metadata: Metadata = {

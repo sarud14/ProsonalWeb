@@ -1,4 +1,4 @@
-import type { DataTableRow } from '@/components/ui/DataTable'
+import { type DataTableRow } from '@/components/ui'
 import { ENGINEERING_TYPE_LABELS } from '@/constants/admin-content-list'
 import { formatAdminDate } from '@/lib/admin/format-admin-date'
 

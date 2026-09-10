@@ -5,7 +5,7 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { Poppins, Geist_Mono } from 'next/font/google'
 
-import { LoadingScreen } from '@/components/ui/LoadingScreen'
+import { LoadingScreen } from '@/components/ui'
 import { buildThemeCssVars, shouldApplyCustomTheme } from '@/lib/admin/site-theme'
 import { buildSiteFaviconHref } from '@/lib/content/resolve-site-favicon'
 import { getSiteSeo, getSiteTheme } from '@/lib/content/site-config'

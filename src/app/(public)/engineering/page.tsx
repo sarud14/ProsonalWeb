@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 
-import { EngineeringListSection } from '@/components/public-page/Engineering/EngineeringListSection'
-import { Container } from '@/components/ui/Container'
-import { PageRouteHeader } from '@/components/ui/PageRouteHeader'
+import { EngineeringListSection } from '@/features/engineering/EngineeringListSection'
+import { Container, PageRouteHeader } from '@/components/ui'
 import { getContentSource } from '@/lib/content/source'
 
 export const metadata: Metadata = {

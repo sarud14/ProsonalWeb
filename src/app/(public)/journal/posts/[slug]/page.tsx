@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { JournalPostDetailView } from '@/components/public-page/Journal/JournalPostDetailView'
+import { JournalPostDetailView } from '@/features/journal/JournalPostDetailView'
 import { getContentSource } from '@/lib/content/source'
 import type { JournalPostPageProps } from '@/types/journal-page.types'
 

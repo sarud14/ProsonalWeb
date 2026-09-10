@@ -1,5 +1,5 @@
-import { NavBar } from '@/components/ui/NavBar'
-import { Footer } from '@/components/ui/Footer'
+import { NavBar } from '@/components/ui'
+import { Footer } from '@/components/ui/server'
 import { getNavItems, getSiteBrand } from '@/lib/content/site-config'
 
 export default async function PublicLayout({

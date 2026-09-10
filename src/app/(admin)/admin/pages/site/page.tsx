@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { SitePageEditor } from '@/components/admin-page/Pages/SitePageEditor'
+import { SitePageEditor } from '@/features/admin-pages/SitePageEditor'
 import { loadSiteConfig } from '@/lib/admin/load-page-section'
 import { mapMediaOptions } from '@/lib/admin/map-media-options'
 import { mediaData } from '@/lib/data/media.data'

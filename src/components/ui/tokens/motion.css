@@ -1,0 +1,110 @@
+:root {
+  --landing-motion-delay: 0ms;
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-duration-fade-up: 1.1s;
+  --motion-duration-fade-in: 0.95s;
+  --motion-duration-fade-right: 1.15s;
+  --motion-duration-line-grow: 1.2s;
+}
+
+@layer components {
+  @keyframes landing-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes landing-fade-in {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes landing-fade-right {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes landing-line-grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .landing-motion-fade-up:not(.landing-motion-run) {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  .landing-motion-fade-in:not(.landing-motion-run) {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+
+  .landing-motion-fade-right:not(.landing-motion-run) {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  .landing-motion-line-grow:not(.landing-motion-run) {
+    transform: scaleX(0);
+  }
+
+  .landing-motion-line-grow {
+    transform-origin: left center;
+  }
+
+  .landing-motion-fade-up.landing-motion-run {
+    animation: landing-fade-up var(--motion-duration-fade-up) var(--motion-ease-out)
+      both;
+    animation-delay: var(--landing-motion-delay, 0ms);
+  }
+
+  .landing-motion-fade-in.landing-motion-run {
+    animation: landing-fade-in var(--motion-duration-fade-in) var(--motion-ease-out)
+      both;
+    animation-delay: var(--landing-motion-delay, 0ms);
+  }
+
+  .landing-motion-fade-right.landing-motion-run {
+    animation: landing-fade-right var(--motion-duration-fade-right)
+      var(--motion-ease-out) both;
+    animation-delay: var(--landing-motion-delay, 0ms);
+  }
+
+  .landing-motion-line-grow.landing-motion-run {
+    animation: landing-line-grow var(--motion-duration-line-grow)
+      var(--motion-ease-out) both;
+    animation-delay: var(--landing-motion-delay, 0ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .landing-motion-fade-up,
+    .landing-motion-fade-in,
+    .landing-motion-fade-right,
+    .landing-motion-line-grow {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+  }
+}

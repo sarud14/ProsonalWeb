@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from './helpers'
 import type { ContainerProps } from '@/types/container.types'
 
 export function Container({

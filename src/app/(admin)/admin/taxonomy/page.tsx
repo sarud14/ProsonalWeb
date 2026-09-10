@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { TaxonomyPageView } from '@/components/admin-page/Taxonomy/TaxonomyPageView'
+import { TaxonomyPageView } from '@/features/admin-taxonomy/TaxonomyPageView'
 import { mapDomainItems } from '@/lib/admin/taxonomy-mappers'
 import { taxonomyData } from '@/lib/data/taxonomy.data'
 

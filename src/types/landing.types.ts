@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 export interface LandingStat {
   readonly value: string
   readonly label: string
@@ -22,6 +24,22 @@ export interface LandingContactProps {
   readonly headline: string
   readonly body: string
   readonly successMessage: string
+}
+
+export interface LandingContactSectionProps {
+  readonly headline?: string
+  readonly body?: string
+  readonly form: ReactNode
+}
+
+export interface LandingContactFormRenderProps {
+  readonly successMessage: string
+}
+
+export interface LandingBlocksProps {
+  readonly renderContactForm: (
+    props: LandingContactFormRenderProps
+  ) => ReactNode
 }
 
 export interface LandingHeroData {

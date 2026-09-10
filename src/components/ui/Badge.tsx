@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority'
 
-import { cn } from '@/lib/utils'
+import { cn } from './helpers'
 import type { BadgeProps } from '@/types/badge.types'
 
 export const badgeVariants = cva(

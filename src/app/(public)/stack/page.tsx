@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { StackPageView } from '@/components/public-page/Stack/StackPageView'
+import { StackPageView } from '@/features/stack/StackPageView'
 import { resolveStackPageData } from '@/lib/content/page-sections'
 
 export const metadata: Metadata = {

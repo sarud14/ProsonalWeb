@@ -1,5 +1,4 @@
-import { Container } from '@/components/ui/Container'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { Container, Skeleton } from '@/components/ui'
 
 export default function JournalPostLoading(): React.JSX.Element {
   return (

@@ -1,5 +1,6 @@
-import HeroSection from '@/components/public-page/Landing/HeroSection'
-import { LandingBlocks } from '@/components/public-page/Landing/LandingBlocks'
+import { ContactForm } from '@/features/contact/ContactForm'
+import HeroSection from '@/features/landing/HeroSection'
+import { LandingBlocks } from '@/features/landing/LandingBlocks'
 import { getLandingHeroData } from '@/lib/content/landing-page'
 import { getSiteSeo } from '@/lib/content/site-config'
 import type { Metadata } from 'next'
@@ -20,7 +21,11 @@ export default async function HomePage(): Promise<React.JSX.Element> {
   return (
     <>
       <HeroSection hero={hero} />
-      <LandingBlocks />
+      <LandingBlocks
+        renderContactForm={({ successMessage }) => (
+          <ContactForm successMessage={successMessage} />
+        )}
+      />
     </>
   )
 }

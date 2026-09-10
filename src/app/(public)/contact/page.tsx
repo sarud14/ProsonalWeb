@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { ContactPageView } from '@/components/public-page/Contact/ContactPageView'
+import { ContactPageView } from '@/features/contact/ContactPageView'
 import { getSiteContact } from '@/lib/content/site-config'
 
 export const metadata: Metadata = {

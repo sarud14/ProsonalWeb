@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from './helpers'
 import type { PageRouteHeaderProps } from '@/types/page-route-header.types'
 
 export function PageRouteHeader({

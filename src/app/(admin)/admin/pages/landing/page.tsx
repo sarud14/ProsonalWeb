@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { LandingPageEditor } from '@/components/admin-page/Pages/LandingPageEditor'
+import { LandingPageEditor } from '@/features/admin-pages/LandingPageEditor'
 import { loadLandingPageData } from '@/lib/admin/load-page-section'
 import { mapMediaOptions } from '@/lib/admin/map-media-options'
 import { mediaData } from '@/lib/data/media.data'

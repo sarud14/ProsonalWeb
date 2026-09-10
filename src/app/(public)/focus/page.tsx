@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { FocusPageView } from '@/components/public-page/Focus/FocusPageView'
+import { FocusPageView } from '@/features/focus/FocusPageView'
 import { resolveFocusPageData } from '@/lib/content/page-sections'
 
 export const metadata: Metadata = {

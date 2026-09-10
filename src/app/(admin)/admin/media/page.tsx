@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { MediaLibraryView } from '@/components/admin-page/Media/MediaLibraryView'
+import { MediaLibraryView } from '@/features/admin-media/MediaLibraryView'
 import { mapMediaLibraryItems } from '@/lib/admin/media-mappers'
 import { mediaData } from '@/lib/data/media.data'
 import { isBlobConfigured } from '@/lib/media/upload'

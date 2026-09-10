@@ -25,11 +25,12 @@
   },
   "include": [
     "next-env.d.ts",
+    "vitest-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "prisma"]
+  "exclude": ["node_modules", "prisma", "e2e"]
 }

@@ -2,8 +2,8 @@
 
 import type { ReactNode } from 'react'
 
-import { StatusBadge } from '@/components/ui/StatusBadge'
-import { ChipList } from '@/components/ui/ChipList'
+import { ChipList } from './ChipList'
+import { StatusBadge } from './StatusBadge'
 
 export interface DataTableColumn {
   readonly key: string

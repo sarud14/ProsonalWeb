@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import { useRef } from 'react'
 
-import { Button } from '@/components/ui/Button'
-import { cn } from '@/lib/utils'
+import { Button } from './Button'
+import { cn } from './helpers'
 
 interface ImagePickerProps {
   readonly imageUrl?: string | null
