@@ -168,22 +168,39 @@ jobs:
       - name: Deploy to Vercel
         id: deploy
         run: |
+          trim() {
+            local s="$1"
+            s="${s//$'\r'/}"
+            s="${s#"${s%%[![:space:]]*}"}"
+            s="${s%"${s##*[![:space:]]}"}"
+            printf '%s' "$s"
+          }
+
+          export VERCEL_TOKEN
+          export VERCEL_ORG_ID
+          export VERCEL_PROJECT_ID
+          VERCEL_TOKEN="$(trim "$VERCEL_TOKEN")"
+          VERCEL_ORG_ID="$(trim "$VERCEL_ORG_ID")"
+          VERCEL_PROJECT_ID="$(trim "$VERCEL_PROJECT_ID")"
+
           if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
             echo "Missing VERCEL_TOKEN, VERCEL_ORG_ID, or VERCEL_PROJECT_ID GitHub secrets."
-            echo "Add them under Settings → Secrets and variables → Actions before this job can deploy."
             exit 1
           fi
 
+          echo "Using org ${VERCEL_ORG_ID:0:5}… project ${VERCEL_PROJECT_ID:0:4}…"
+
           npm install --global vercel@59.15.1
 
+          # vercel pull 403s on project-scoped tokens (vercel/vercel#17506).
+          # Link from secrets and let Vercel build remotely with dashboard env vars.
+          mkdir -p .vercel
+          python3 -c 'import json, os; print(json.dumps({"orgId": os.environ["VERCEL_ORG_ID"], "projectId": os.environ["VERCEL_PROJECT_ID"]}))' > .vercel/project.json
+
           if [ "${GITHUB_EVENT_NAME}" = "push" ] && [ "${GITHUB_REF}" = "refs/heads/main" ]; then
-            vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
-            vercel build --prod --token="$VERCEL_TOKEN"
-            URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tee /dev/stderr | tail -n 1)
+            URL=$(vercel deploy --yes --prod --scope="$VERCEL_ORG_ID")
           else
-            vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
-            vercel build --token="$VERCEL_TOKEN"
-            URL=$(vercel deploy --prebuilt --token="$VERCEL_TOKEN" | tee /dev/stderr | tail -n 1)
+            URL=$(vercel deploy --yes --scope="$VERCEL_ORG_ID")
           fi
 
           echo "url=$URL" >> "$GITHUB_OUTPUT"
