@@ -7,8 +7,9 @@ function hasDatabase(): boolean {
 test('visitor opens work from primary nav and reads a case study', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-  // Wait until a client island has painted so next/link is hydrated.
-  await expect(page.getByText(/engineer\.config/i)).toBeVisible()
+  // Hero code chrome is a client island; filename differs between MDX default
+  // (`engineer.config.ts`) and the DB seed (`developer.config.ts`).
+  await expect(page.getByText(/\.config\.ts/i)).toBeVisible()
 
   const workNav = page
     .getByRole('navigation', { name: 'Primary' })

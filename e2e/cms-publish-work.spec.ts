@@ -81,8 +81,8 @@ test.describe('CMS work publish flow', () => {
     await page.getByRole('button', { name: 'Save draft' }).click()
     await page.waitForURL('**/admin/work', { timeout: 30_000 })
 
-    const response = await page.goto(`/work/${slug}`)
-    expect(response?.status()).toBe(404)
+    await page.goto(`/work/${slug}`)
     await expect(page.getByRole('heading', { name: title, level: 1 })).toHaveCount(0)
+    await expect(page.getByText(/this page could not be found/i)).toBeVisible()
   })
 })
