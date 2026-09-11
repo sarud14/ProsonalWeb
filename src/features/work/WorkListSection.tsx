@@ -17,7 +17,11 @@ export function WorkListSection({
   return (
     <>
       <section className="flex flex-wrap items-center justify-between gap-4 border-b border-border py-6">
-        <div className="flex flex-wrap gap-2">
+        <div
+          className="flex flex-wrap gap-2"
+          role="group"
+          aria-label="Problem domain"
+        >
           {filters.map((filter) => {
             const isActive = activeFilter === filter
 
@@ -25,6 +29,7 @@ export function WorkListSection({
               <button
                 key={filter}
                 type="button"
+                aria-pressed={isActive}
                 onClick={() => setActiveFilter(filter)}
                 className={cn(
                   'cursor-pointer border px-3.5 py-2 font-mono text-[11px] tracking-[0.08em] uppercase transition-[border-color,background,color] duration-150',

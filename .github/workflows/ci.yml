@@ -106,6 +106,9 @@ jobs:
       - name: Push database schema
         run: yarn prisma db push
 
+      - name: Seed CMS from MDX
+        run: yarn prisma:seed
+
       - name: Build
         run: yarn build
 

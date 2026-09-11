@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 
-const PORT = 3000
+const PORT = Number(process.env.PORT) || 3000
 const baseURL = `http://localhost:${PORT}`
 
 export default defineConfig({
@@ -17,7 +17,11 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // NavBar primary landmark is `xl:flex` (1280px). Stay above that edge.
+        viewport: { width: 1440, height: 900 },
+      },
     },
   ],
   webServer: {

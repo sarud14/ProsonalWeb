@@ -165,6 +165,7 @@ export function WorkForm({
             <TagInput
               tags={values.stack}
               onChange={(stack) => updateField('stack', stack)}
+              ariaLabel="Stack"
               placeholder="Add stack item…"
             />
           </AdminFormField>
@@ -172,6 +173,7 @@ export function WorkForm({
             <TagInput
               tags={values.domains}
               onChange={(domains) => updateField('domains', domains)}
+              ariaLabel="Domains"
               placeholder="Domain label (must exist in taxonomy)…"
             />
           </AdminFormField>

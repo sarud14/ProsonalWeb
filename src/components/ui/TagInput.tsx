@@ -6,12 +6,14 @@ interface TagInputProps {
   readonly tags: readonly string[]
   readonly onChange: (tags: readonly string[]) => void
   readonly placeholder?: string
+  readonly ariaLabel?: string
 }
 
 export function TagInput({
   tags,
   onChange,
   placeholder = 'Type and press Enter…',
+  ariaLabel,
 }: TagInputProps): React.JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -59,6 +61,7 @@ export function TagInput({
       <input
         ref={inputRef}
         onKeyDown={handleKeyDown}
+        aria-label={ariaLabel}
         placeholder={tags.length === 0 ? placeholder : ''}
         className="min-w-[120px] flex-1 border-none bg-transparent p-1 text-[13px] text-black outline-none placeholder:text-black/45"
       />

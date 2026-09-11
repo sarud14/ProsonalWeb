@@ -277,10 +277,10 @@ Admin form card with mono label + CSS grid.
 
 Enter-to-add chips; each chip has a remove control labelled `Remove {tag}`.
 
-- `tags` · `onChange` · `placeholder` (`Type and press Enter…`)
+- `tags` · `onChange` · `placeholder` (`Type and press Enter…`) · `ariaLabel` (accessible name of the textbox; required when the field is not a native labelled control)
 
 ```tsx
-<TagInput tags={tags} onChange={setTags} />
+<TagInput tags={tags} onChange={setTags} ariaLabel="Stack" />
 ```
 
 #### ImagePicker
@@ -408,7 +408,7 @@ The design system carries these guarantees; do not regress them:
 - `ConfirmDialog` → `role="dialog"`, `aria-modal`, `aria-labelledby`
 - `Toast` → `role="status"`, `aria-live="polite"`
 - `StatusBadge` → `data-status="published" | "draft"`
-- `TagInput` → remove buttons labelled `Remove {tag}`
+- `TagInput` → textbox `aria-label` when passed; remove buttons labelled `Remove {tag}`
 - `dropdown-menu` → Base UI `data-slot` / open-state attrs; keep keyboard behaviour from the primitive
 - Landing motion (global, not a component) → `prefers-reduced-motion` disables animation
 - Print → `[data-noprint]` hidden
