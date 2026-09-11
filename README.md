@@ -398,9 +398,9 @@ Uploads are session-gated (admin login required). After upload, the client saves
 | Secret | Where to get it |
 |---|---|
 | `DISCORD_WEBHOOK_URL` | Discord channel → Integrations → Webhooks |
-| `VERCEL_TOKEN` | [vercel.com/account/tokens](https://vercel.com/account/tokens) |
-| `VERCEL_ORG_ID` | `.vercel/project.json` → `orgId` after `npx vercel link`, or Vercel → Project → Settings → General |
-| `VERCEL_PROJECT_ID` | same file → `projectId` |
+| `VERCEL_TOKEN` | [vercel.com/account/tokens](https://vercel.com/account/tokens) — project or team scope is fine; `vercel pull` is not used |
+| `VERCEL_ORG_ID` | Team Settings → General → **Team ID** (`team_...`) for `sarud14's projects` — not Account Settings User ID |
+| `VERCEL_PROJECT_ID` | **sarut-portfolio** → Settings → General → Project ID (`prj_...`) |
 
 8. Provision the production database (run locally against prod `DIRECT_URL`):
 
