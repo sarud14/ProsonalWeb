@@ -8,9 +8,16 @@ test('adds a tag when Enter is pressed', async () => {
   const user = userEvent.setup()
   const onChange = vi.fn()
 
-  render(<TagInput tags={[]} onChange={onChange} placeholder="Add stack item…" />)
+  render(
+    <TagInput
+      tags={[]}
+      onChange={onChange}
+      ariaLabel="Stack"
+      placeholder="Add stack item…"
+    />
+  )
 
-  await user.type(screen.getByPlaceholderText('Add stack item…'), 'Next.js{Enter}')
+  await user.type(screen.getByRole('textbox', { name: 'Stack' }), 'Next.js{Enter}')
 
   expect(onChange).toHaveBeenCalledWith(['Next.js'])
 })
