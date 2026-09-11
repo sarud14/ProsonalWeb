@@ -393,7 +393,7 @@ Uploads are session-gated (admin login required). After upload, the client saves
 
 > **Admin access control:** Production sign-in is allowlist-gated. Add your owner email to `AUTH_ADMIN_EMAIL_ALLOWLIST`. If your GitHub email is private, also add the numeric GitHub user ID to `AUTH_ADMIN_GITHUB_ID_ALLOWLIST`.
 
-7. **GitHub Actions is the deployer.** `vercel.json` sets `git.deploymentEnabled: false`, so pushing to GitHub no longer auto-deploys. After tests pass, CI runs `Vercel-Production` (`vercel deploy --prebuilt --prod` on `main`, preview otherwise). Add these **GitHub Actions secrets** before the workflow lands on `main`, or production will stop updating:
+7. **GitHub Actions is the deployer.** `vercel.json` sets `git.deploymentEnabled: false`, so pushing to GitHub no longer auto-deploys. After tests pass, CI runs `Vercel-Production` (`vercel deploy --yes --prod` on `main`, preview otherwise). Do not use `vercel pull` with a project-scoped token — the CLI cannot load project settings. Add these **GitHub Actions secrets** before the workflow lands on `main`, or production will stop updating:
 
 | Secret | Where to get it |
 |---|---|
