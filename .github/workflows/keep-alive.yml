@@ -2,8 +2,12 @@ name: Keep-alive
 
 on:
   schedule:
-    # Every 2 days — backup if Vercel Hobby cron misses or 401s
-    - cron: '0 12 */2 * *'
+    # Supabase Free pauses a project that gets fewer than a few database
+    # requests each day. Vercel Hobby can only add one ping (vercel.json).
+    # 01:00, 07:00, and 13:00 UTC — 08:00, 14:00, and 20:00 Asia/Bangkok.
+    - cron: '0 1 * * *'
+    - cron: '0 7 * * *'
+    - cron: '0 13 * * *'
   workflow_dispatch:
 
 permissions:
@@ -21,4 +25,11 @@ jobs:
             echo "Set GitHub repo variable KEEP_ALIVE_URL to the production origin (e.g. https://your-app.vercel.app)."
             exit 1
           fi
-          curl -fsS --max-time 30 "${KEEP_ALIVE_URL%/}/api/health"
+          body="$(curl -sS --max-time 30 "${KEEP_ALIVE_URL%/}/api/health")"
+          echo "$body"
+          ok="$(printf '%s' "$body" | jq -r '.ok')"
+          database="$(printf '%s' "$body" | jq -r '.database')"
+          if [ "$ok" != "true" ] || [ "$database" != "connected" ]; then
+            echo "Keep-alive did not reach Postgres (ok=$ok database=$database)."
+            exit 1
+          fi

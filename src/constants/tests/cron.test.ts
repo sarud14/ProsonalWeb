@@ -22,4 +22,17 @@ describe('vercel cron config', () => {
       },
     ])
   })
+
+  it('pings Postgres three times a day and fails unless the database is connected', () => {
+    const workflow = readFileSync(
+      path.join(process.cwd(), '.github/workflows/keep-alive.yml'),
+      'utf8',
+    )
+
+    expect(workflow).toContain("cron: '0 1 * * *'")
+    expect(workflow).toContain("cron: '0 7 * * *'")
+    expect(workflow).toContain("cron: '0 13 * * *'")
+    expect(workflow).not.toContain('*/2')
+    expect(workflow).toContain('[ "$ok" != "true" ] || [ "$database" != "connected" ]')
+  })
 })

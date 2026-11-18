@@ -380,7 +380,7 @@ Uploads are session-gated (admin login required). After upload, the client saves
 
 5. **Keep-alive (Supabase Free):** no extra Vercel env vars. After this commit is on **production `main`**, Vercel reads `vercel.json` and pings `GET /api/health` once per day at 03:00 UTC (`SELECT 1`). Hobby cron is production-only and once per day. Confirm **Vercel → Cron Jobs** lists `/api/health`.
 
-   Optional backup: GitHub Actions `.github/workflows/keep-alive.yml` every 2 days. Set repo **variable** `KEEP_ALIVE_URL` (not a Vercel env) to the production origin, then **Actions → Keep-alive → Run workflow** once.
+   GitHub Actions `.github/workflows/keep-alive.yml` pings the same endpoint three times a day (01:00, 07:00, and 13:00 UTC) and fails unless the body has `"database":"connected"`. One query every other day is below the Free-plan activity bar, and a paused project still has to be restored by hand. Set repo **variable** `KEEP_ALIVE_URL` (not a Vercel env) to the production origin, then **Actions → Keep-alive → Run workflow** once. The schedule runs only after this file is on `main`.
 
    A paused project cannot be woken by these pings — Restore in the Supabase Dashboard first.
 
