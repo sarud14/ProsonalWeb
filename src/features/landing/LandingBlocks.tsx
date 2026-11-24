@@ -7,8 +7,10 @@ import {
   parseLandingModules,
   visibleLandingModules,
 } from '@/lib/admin/landing-block-props'
+import { fillLandingCountTokens } from '@/lib/content/landing-counts'
 import {
   getLandingBlockItems,
+  getLandingCounts,
   getVisibleLandingBlocks,
 } from '@/lib/content/landing-page'
 import type { LandingBlocksProps, LandingStat } from '@/types/landing.types'
@@ -16,7 +18,10 @@ import type { LandingBlocksProps, LandingStat } from '@/types/landing.types'
 export async function LandingBlocks({
   renderContactForm,
 }: LandingBlocksProps): Promise<React.JSX.Element> {
-  const blocks = await getVisibleLandingBlocks()
+  const [blocks, counts] = await Promise.all([
+    getVisibleLandingBlocks(),
+    getLandingCounts(),
+  ])
 
   return (
     <>
@@ -28,14 +33,22 @@ export async function LandingBlocks({
             return (
               <StatsSection
                 key={key}
-                items={getLandingBlockItems<LandingStat>(block)}
+                items={getLandingBlockItems<LandingStat>(block).map((stat) => ({
+                  ...stat,
+                  value: fillLandingCountTokens(stat.value, counts),
+                }))}
               />
             )
           case 'modules':
             return (
               <ModulesSection
                 key={key}
-                items={visibleLandingModules(parseLandingModules(block.props))}
+                items={visibleLandingModules(parseLandingModules(block.props)).map(
+                  (module) => ({
+                    ...module,
+                    linkLabel: fillLandingCountTokens(module.linkLabel, counts),
+                  }),
+                )}
               />
             )
           case 'techStack':

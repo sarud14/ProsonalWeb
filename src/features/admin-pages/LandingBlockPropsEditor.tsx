@@ -1,5 +1,6 @@
 'use client'
 
+import { LANDING_COUNT_TOKENS } from '@/constants/landing-count-tokens'
 import { TagInput } from '@/components/ui'
 import {
   AdminFormField,
@@ -52,7 +53,7 @@ function StatsPropsEditor({
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted-foreground">
-        Number highlights shown in a row on the landing page.
+        Number highlights shown in a row on the landing page. Use {LANDING_COUNT_TOKENS.WORK_COUNT} or {LANDING_COUNT_TOKENS.DOMAIN_COUNT} to show live counts of published case studies and their problem domains.
       </p>
       {items.map((item, index) => (
         <div
@@ -78,7 +79,7 @@ function StatsPropsEditor({
               <input
                 className={adminInputClassName}
                 value={item.value}
-                placeholder="e.g. 06"
+                placeholder={`e.g. 2025, or ${LANDING_COUNT_TOKENS.WORK_COUNT}`}
                 onChange={(e) => {
                   const next = [...items]
                   next[index] = { ...item, value: e.target.value }
@@ -220,7 +221,7 @@ function ModulesPropsEditor({
               <input
                 className={adminInputClassName}
                 value={item.linkLabel}
-                placeholder="6 ENTRIES"
+                placeholder={`${LANDING_COUNT_TOKENS.WORK_COUNT} ENTRIES`}
                 onChange={(e) => {
                   const next = [...items]
                   next[index] = { ...item, linkLabel: e.target.value }

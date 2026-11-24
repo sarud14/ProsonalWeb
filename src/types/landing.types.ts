@@ -90,3 +90,8 @@ export interface ModulesSectionProps {
 export interface StatsSectionProps {
   readonly items?: readonly LandingStat[]
 }
+
+export interface LandingCounts {
+  readonly workCount: number
+  readonly domainCount: number
+}
