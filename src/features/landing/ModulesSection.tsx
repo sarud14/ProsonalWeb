@@ -6,6 +6,7 @@ import {
   LANDING_MOTION_MODULES_ITEM_BASE_DELAY_MS,
 } from "@/constants/landing-motion";
 import Link from "next/link";
+import { padLandingNumber } from '@/lib/content/landing-counts'
 import type { ModulesSectionProps } from '@/types/landing.types'
 
 const MODULE_CELL_CLASS =
@@ -16,7 +17,7 @@ export default function ModulesSection({
 }: ModulesSectionProps): React.JSX.Element | null {
   if (items.length === 0) return null
 
-  const visibleCount = String(items.length).padStart(2, '0')
+  const visibleCount = padLandingNumber(items.length)
 
   return (
     <section id="modules" className="pt-20 pb-10">
@@ -31,7 +32,7 @@ export default function ModulesSection({
         <div className="grid grid-cols-1 border border-white/[0.09] md:grid-cols-2 lg:grid-cols-3">
           {items.map((mod, index) => (
             <LandingReveal
-              key={mod.num}
+              key={mod.link}
               className={MODULE_CELL_CLASS}
               delay={
                 LANDING_MOTION_MODULES_ITEM_BASE_DELAY_MS +
@@ -45,7 +46,8 @@ export default function ModulesSection({
               >
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground">
-                    {mod.num}
+                    {/* Numbered by display order so hiding a card never leaves gaps or duplicates. */}
+                    {padLandingNumber(index + 1)}
                   </span>
                   {mod.badge && (
                     <span className="bg-success px-[7px] py-0.5 font-mono text-[9.5px] tracking-[0.12em] text-background uppercase">

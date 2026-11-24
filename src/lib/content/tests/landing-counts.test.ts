@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildLandingCounts, fillLandingCountTokens } from '../landing-counts'
+import { buildLandingCounts, fillLandingCountTokens, padLandingNumber } from '../landing-counts'
 
 describe('buildLandingCounts', () => {
   it('counts works and distinct trimmed domains', () => {
@@ -29,5 +29,12 @@ describe('fillLandingCountTokens', () => {
 
   it('leaves text without tokens unchanged', () => {
     expect(fillLandingCountTokens('2025', counts)).toBe('2025')
+  })
+})
+
+describe('padLandingNumber', () => {
+  it('pads to two digits', () => {
+    expect(padLandingNumber(3)).toBe('03')
+    expect(padLandingNumber(12)).toBe('12')
   })
 })

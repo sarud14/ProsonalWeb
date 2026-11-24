@@ -157,18 +157,6 @@ function ModulesPropsEditor({
             Show on landing page
           </label>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <AdminFormField label="Number">
-              <input
-                className={adminInputClassName}
-                value={item.num}
-                placeholder="01"
-                onChange={(e) => {
-                  const next = [...items]
-                  next[index] = { ...item, num: e.target.value }
-                  updateItems(next)
-                }}
-              />
-            </AdminFormField>
             <AdminFormField label="Badge (optional)">
               <input
                 className={adminInputClassName}
