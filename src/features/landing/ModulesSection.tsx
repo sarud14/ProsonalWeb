@@ -1,19 +1,15 @@
 import { LANDING_MODULES } from '@/constants/landing'
-import { LandingReveal } from "@/features/landing/LandingReveal";
+import { LandingReveal } from "./LandingReveal";
 import { Container, SectionHeader } from '@/components/ui'
-import type { LandingModule } from '@/types/landing.types'
 import {
   LANDING_MOTION_MODULES_HEADER_DELAY_MS,
   LANDING_MOTION_MODULES_ITEM_BASE_DELAY_MS,
 } from "@/constants/landing-motion";
 import Link from "next/link";
+import type { ModulesSectionProps } from '@/types/landing.types'
 
 const MODULE_CELL_CLASS =
   "flex flex-col gap-3.5 border-b border-white/[0.07] max-md:last:border-b-0 md:border-r md:[&:nth-child(2n)]:border-r-0 md:[&:nth-last-child(-n+2)]:border-b-0 lg:border-r lg:[&:nth-child(2n)]:border-r lg:[&:nth-child(3n)]:border-r-0 lg:[&:nth-last-child(-n+2)]:border-b lg:[&:nth-last-child(-n+3)]:border-b-0";
-
-interface ModulesSectionProps {
-  readonly items?: readonly LandingModule[]
-}
 
 export default function ModulesSection({
   items = LANDING_MODULES,

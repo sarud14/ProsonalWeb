@@ -4,13 +4,7 @@ import type { AdminMediaOption } from '@/types/admin-content.types'
 
 import { MediaGrid } from '@/components/admin/MediaGrid'
 import type { AdminMediaItem } from '@/types/admin-media.types'
-
-interface MediaPickerDialogProps {
-  readonly open: boolean
-  readonly media: readonly AdminMediaOption[]
-  readonly onSelect: (mediaId: string) => void
-  readonly onClose: () => void
-}
+import type { MediaPickerDialogProps } from '@/types/admin-components.types'
 
 function toPickerItems(media: readonly AdminMediaOption[]): AdminMediaItem[] {
   return media.map((asset) => ({

@@ -4,20 +4,14 @@ import { useCallback, useSyncExternalStore } from 'react'
 import { usePathname } from 'next/navigation'
 
 import type { AdminLayoutMode } from '@/types/admin-page.types'
-import type { AdminSessionUser } from '@/types/auth.types'
 
 import { ADMIN_LAYOUT_STORAGE_KEY, ADMIN_NAV_ITEMS } from '@/constants/admin-nav'
 
-import { AdminBreadcrumb } from '@/features/admin-shell/AdminBreadcrumb'
-import { MastheadNav } from '@/features/admin-shell/MastheadNav'
-import { SidebarNav } from '@/features/admin-shell/SidebarNav'
-import { SplitNav } from '@/features/admin-shell/SplitNav'
-
-interface AdminShellProps {
-  readonly children: React.ReactNode
-  readonly unreadCount?: number
-  readonly user: AdminSessionUser
-}
+import { AdminBreadcrumb } from './AdminBreadcrumb'
+import { MastheadNav } from './MastheadNav'
+import { SidebarNav } from './SidebarNav'
+import { SplitNav } from './SplitNav'
+import type { AdminShellProps } from '@/types/admin-shell.types'
 
 function getActiveKey(pathname: string): string {
   const segment = pathname.replace('/admin', '').split('/').filter(Boolean)[0]

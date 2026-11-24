@@ -2,18 +2,12 @@
 
 import { useCallback, useState } from 'react'
 
-import type { StackGroupModalState } from '@/types/admin-pages.types'
 
 import {
   AdminFormField,
   adminInputClassName,
 } from '@/components/admin/AdminFormField'
-
-interface StackGroupModalProps {
-  readonly state: StackGroupModalState
-  readonly onClose: () => void
-  readonly onSave: (group: StackGroupModalState['group']) => void
-}
+import type { StackGroupModalProps } from '@/types/admin-pages.types'
 
 export function StackGroupModal({
   state,

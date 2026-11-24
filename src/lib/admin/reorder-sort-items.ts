@@ -1,7 +1,5 @@
-interface SortableItem {
-  readonly id: string
-  readonly sortOrder: number
-}
+import type { SortableItem } from '@/types/shared/sortable-item.types'
+
 
 export function getReorderedPair<T extends SortableItem>(
   items: readonly T[],

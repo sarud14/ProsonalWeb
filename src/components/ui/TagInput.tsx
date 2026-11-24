@@ -1,13 +1,7 @@
 'use client'
 
 import { useCallback, useRef } from 'react'
-
-interface TagInputProps {
-  readonly tags: readonly string[]
-  readonly onChange: (tags: readonly string[]) => void
-  readonly placeholder?: string
-  readonly ariaLabel?: string
-}
+import type { TagInputProps } from './types'
 
 export function TagInput({
   tags,

@@ -1,4 +1,5 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
+import type { ResumePdfData } from '@/types/resume-pdf.types'
 
 const styles = StyleSheet.create({
   page: {
@@ -139,41 +140,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
   },
 })
-
-interface ResumeExperience {
-  title: string
-  org: string
-  period: string
-  bullets: string[]
-}
-
-interface ResumeSelectedWork {
-  name: string
-  note: string
-}
-
-interface ResumeEducation {
-  title: string
-  note: string
-  period: string
-}
-
-interface ResumeLanguage {
-  name: string
-  level: string
-}
-
-export interface ResumePdfData {
-  name: string
-  role: string
-  contactLine: string
-  experience: ResumeExperience[]
-  selectedWork: ResumeSelectedWork[]
-  skills: string[]
-  coreTools: string[]
-  education: ResumeEducation[]
-  languages: ResumeLanguage[]
-}
 
 export function ResumePdfDocument({
   data,

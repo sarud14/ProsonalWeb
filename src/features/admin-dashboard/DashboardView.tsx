@@ -1,10 +1,10 @@
 import type { DashboardViewProps } from '@/types/dashboard.types'
 
-import { DashboardGreeting } from '@/features/admin-dashboard/DashboardGreeting'
-import { InboxCard } from '@/features/admin-dashboard/InboxCard'
-import { LibraryStatsCard } from '@/features/admin-dashboard/LibraryStatsCard'
-import { QuickActions } from '@/features/admin-dashboard/QuickActions'
-import { RecentContentCard } from '@/features/admin-dashboard/RecentContentCard'
+import { DashboardGreeting } from './DashboardGreeting'
+import { InboxCard } from './InboxCard'
+import { LibraryStatsCard } from './LibraryStatsCard'
+import { QuickActions } from './QuickActions'
+import { RecentContentCard } from './RecentContentCard'
 
 export function DashboardView({ data, userName }: DashboardViewProps): React.JSX.Element {
   return (

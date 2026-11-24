@@ -15,14 +15,8 @@ import {
   unpublishJournal,
 } from '@/actions/journal.actions'
 import { deleteWork, publishWork, unpublishWork } from '@/actions/work.actions'
-import { DataTable, ConfirmDialog, SectionHeading, Toast, type DataTableColumn, type DataTableRow } from '@/components/ui'
-import type { AdminContentListConfig } from '@/types/admin-content.types'
-
-interface ContentListClientProps {
-  readonly config: AdminContentListConfig
-  readonly columns: readonly DataTableColumn[]
-  readonly rows: readonly DataTableRow[]
-}
+import { DataTable, ConfirmDialog, SectionHeading, Toast } from '@/components/ui'
+import type { ContentListClientProps } from '@/types/admin-components.types'
 
 export function ContentListClient({
   config,

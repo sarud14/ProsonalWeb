@@ -3,25 +3,19 @@
 import { useCallback, useState } from 'react'
 
 import { FOCUS_ROADMAP_DOT } from '@/constants/focus'
-import type { FocusRoadmapItemModalState } from '@/types/admin-pages.types'
 
 import {
   AdminFormField,
   adminInputClassName,
   adminTextareaClassName,
 } from '@/components/admin/AdminFormField'
+import type { FocusRoadmapItemModalProps } from '@/types/admin-pages.types'
 
 const DOT_OPTIONS = [
   { value: FOCUS_ROADMAP_DOT.ACTIVE, label: 'Active' },
   { value: FOCUS_ROADMAP_DOT.QUEUED, label: 'Queued' },
   { value: FOCUS_ROADMAP_DOT.EXPLORING, label: 'Exploring' },
 ] as const
-
-interface FocusRoadmapItemModalProps {
-  readonly state: FocusRoadmapItemModalState
-  readonly onClose: () => void
-  readonly onSave: (item: FocusRoadmapItemModalState['item']) => void
-}
 
 export function FocusRoadmapItemModal({
   state,

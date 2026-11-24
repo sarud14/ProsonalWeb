@@ -23,3 +23,13 @@ export interface MessagesQueryResult {
   readonly setFilter: (filter: AdminMessageFilterKey) => void
   readonly filteredMessages: readonly AdminMessageItem[]
 }
+
+export type ContactRow = {
+  readonly id: string
+  readonly name: string
+  readonly email: string
+  readonly message: string
+  readonly read: boolean
+  readonly archived: boolean
+  readonly createdAt: Date
+}

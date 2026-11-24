@@ -67,3 +67,26 @@ export interface LandingHeroData {
   readonly codeFocus: string
   readonly codeStatus: string
 }
+
+export interface CodeTypingBlockProps {
+  readonly config: Pick<
+    LandingHeroData,
+    'codeFilename' | 'codeRole' | 'codeStack' | 'codeDomains' | 'codeFocus' | 'codeStatus'
+  >
+}
+
+export interface ExploreStackSectionProps {
+  readonly items?: readonly string[]
+}
+
+export interface HeroSectionProps {
+  readonly hero: LandingHeroData
+}
+
+export interface ModulesSectionProps {
+  readonly items?: readonly LandingModule[]
+}
+
+export interface StatsSectionProps {
+  readonly items?: readonly LandingStat[]
+}

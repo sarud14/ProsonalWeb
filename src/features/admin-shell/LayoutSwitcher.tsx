@@ -3,11 +3,7 @@
 import type { AdminLayoutMode } from '@/types/admin-page.types'
 
 import { cn } from '@/components/ui'
-
-interface LayoutSwitcherProps {
-  readonly layout: AdminLayoutMode
-  readonly onChange: (mode: AdminLayoutMode) => void
-}
+import type { LayoutSwitcherProps } from '@/types/admin-shell.types'
 
 const MODES: readonly { readonly mode: AdminLayoutMode; readonly label: string }[] = [
   { mode: 'masthead', label: 'Bar' },

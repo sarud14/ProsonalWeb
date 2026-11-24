@@ -1,5 +1,5 @@
-import { CodeTypingBlock } from '@/features/landing/CodeTypingBlock'
-import { LandingReveal } from '@/features/landing/LandingReveal'
+import { CodeTypingBlock } from './CodeTypingBlock'
+import { LandingReveal } from './LandingReveal'
 import { Button, Card, Container } from '@/components/ui'
 import {
   LANDING_MOTION_HERO_BODY_DELAY_MS,
@@ -15,12 +15,8 @@ import {
   pickHeroEngineerConfig,
   renderBodyWithHighlights,
 } from '@/lib/landing/render-body-highlights'
-import type { LandingHeroData } from '@/types/landing.types'
 import Link from 'next/link'
-
-interface HeroSectionProps {
-  readonly hero: LandingHeroData
-}
+import type { HeroSectionProps } from '@/types/landing.types'
 
 export default function HeroSection({ hero }: HeroSectionProps): React.JSX.Element {
   const engineerConfig = pickHeroEngineerConfig(hero)

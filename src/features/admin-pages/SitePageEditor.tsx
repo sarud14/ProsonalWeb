@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react'
 
 import { updatePage } from '@/actions/page.actions'
 import { MediaPickerDialog } from '@/components/admin/MediaPickerDialog'
-import { NavItemModal } from '@/features/admin-pages/NavItemModal'
+import { NavItemModal } from './NavItemModal'
 import {
   AdminFormField,
   adminInputClassName,

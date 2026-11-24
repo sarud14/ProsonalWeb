@@ -1,15 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useId } from 'react'
-
-interface ConfirmDialogProps {
-  readonly open: boolean
-  readonly title: string
-  readonly body: string
-  readonly confirmLabel?: string
-  readonly onConfirm: () => void
-  readonly onCancel: () => void
-}
+import type { ConfirmDialogProps } from './types'
 
 export function ConfirmDialog({
   open,

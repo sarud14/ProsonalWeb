@@ -1,13 +1,7 @@
 'use client'
 
 import { useCallback, useEffect } from 'react'
-
-interface ToastProps {
-  readonly message: string
-  readonly open: boolean
-  readonly onClose: () => void
-  readonly duration?: number
-}
+import type { ToastProps } from './types'
 
 export function Toast({
   message,

@@ -23,3 +23,19 @@ export interface DashboardViewProps {
   readonly data: DashboardData
   readonly userName: string
 }
+
+export interface DashboardGreetingProps {
+  readonly userName: string
+}
+
+export interface InboxCardProps {
+  readonly unreadCount: number
+}
+
+export interface LibraryStatsCardProps {
+  readonly stats: readonly DashboardLibraryStat[]
+}
+
+export interface RecentContentCardProps {
+  readonly recents: readonly DashboardRecentItem[]
+}

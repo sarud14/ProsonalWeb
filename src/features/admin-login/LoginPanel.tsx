@@ -1,14 +1,5 @@
 import { signInWithGitHubAction, signInWithGoogleAction } from '@/actions/auth.actions'
-
-interface LoginPanelProps {
-  readonly hasGithub: boolean
-  readonly hasGoogle: boolean
-}
-
-interface ProviderIconBadgeProps {
-  readonly variant: 'github' | 'google'
-  readonly children: React.ReactNode
-}
+import type { LoginPanelProps, ProviderIconBadgeProps } from '@/types/auth.types'
 
 function BrandMark(): React.JSX.Element {
   return (

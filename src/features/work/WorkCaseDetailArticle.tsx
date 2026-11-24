@@ -1,10 +1,6 @@
-import { WorkCaseSectionBlock } from '@/features/work/WorkCaseSectionHeader'
+import { WorkCaseSectionBlock } from './WorkCaseSectionHeader'
 import { WORK_CASE_SECTIONS } from '@/constants/work-case-sections'
-import type { WorkCaseDetail } from '@/types/work-case-detail.types'
-
-interface WorkCaseDetailArticleProps {
-  readonly detail: WorkCaseDetail
-}
+import type { WorkCaseDetailArticleProps } from '@/types/work-case-detail.types'
 
 export function WorkCaseDetailArticle({
   detail,

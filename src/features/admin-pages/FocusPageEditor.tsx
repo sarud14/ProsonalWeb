@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 
 import { updatePage } from '@/actions/page.actions'
-import { FocusReadingModal } from '@/features/admin-pages/FocusReadingModal'
-import { FocusRoadmapItemModal } from '@/features/admin-pages/FocusRoadmapItemModal'
+import { FocusReadingModal } from './FocusReadingModal'
+import { FocusRoadmapItemModal } from './FocusRoadmapItemModal'
 import {
   AdminFormField,
   adminInputClassName,
@@ -21,10 +21,7 @@ import type {
   FocusRoadmapItemModalState,
 } from '@/types/admin-pages.types'
 import type { FocusPageData, FocusReadingItem, FocusRoadmapItem } from '@/types/focus.types'
-
-interface ClientReadingItem extends FocusReadingItem {
-  readonly clientId: string
-}
+import type { ClientReadingItem } from '@/types/admin-pages.types'
 
 function toClientReading(items: readonly FocusReadingItem[]): ClientReadingItem[] {
   return items.map((item, index) => ({

@@ -110,7 +110,7 @@ Adjust a design value by editing `globals.css` (and `site-theme.ts` if it is a C
 
 ## Shared types
 
-Target: one `src/components/ui/types.ts`. Today, some prop types live in `src/types/` (`BadgeProps`, `NavBarProps`, `ContainerProps`, `PageRouteHeaderProps`, `SectionHeaderProps`, `NavBarLinkProps`); others are still inline in the component file.
+Prop interfaces and shared UI unions (`DataTableColumn`, `DataTableRow`, `CellType`, …) live in `src/components/ui/types.ts`, re-exported from the barrel via `export type * from './types'`. A few older ones still live in `src/types/` (`BadgeProps`, `NavBarProps`, `ContainerProps`, `PageRouteHeaderProps`, `SectionHeaderProps`, `NavBarLinkProps`). No component declares its props inline.
 
 There is no shared `Size` / `Tone` union across the library. Closest existing unions:
 
@@ -424,7 +424,7 @@ The design system carries these guarantees; do not regress them:
 ## Adding or changing a component
 
 1. Add the file under `src/components/ui/` (flat until grouping lands). One component per file, PascalCase, except the existing `dropdown-menu.tsx`.
-2. Add/extend its prop interface in `src/types/<name>.types.ts` — not inline in a new file. (Existing inline props are debt; don't add more.)
+2. Add/extend its prop interface in `src/components/ui/types.ts` — never inline in the component file.
 3. Export it from `index.ts` (keep related exports grouped) unless it is an async Server Component that fetches or imports `server-only` — those go on `server.ts`. Consumers import from `@/components/ui` or `@/components/ui/server`, never a component file.
 4. Style with token utility classes (`bg-card`, `text-muted-foreground`, `border-border`). Add a token in `src/components/ui/tokens/` first if a value is missing — never hardcode (see AGENTS.md's Design Tokens rule). If the colour is CMS-overridable, update `site-theme.ts` in the same PR.
 5. Add `tests/<Component>.test.tsx` asserting semantics and any `data-*`/ARIA contract (Vitest jsdom + Testing Library). Do not drop the test file next to the component.
@@ -440,9 +440,7 @@ The design system carries these guarantees; do not regress them:
 - **Available, not yet used by any screen:** none known — don't add unused primitives "for later"
 - **Ported but not yet finished:**
   - Components still sit in a flat folder (`core/` grouping not done)
-  - No `ui/types.ts` — prop types live in `src/types/` or inline
   - `Footer` fetches instead of receiving props
-  - Several prop interfaces still inline
 - **Known substitutions:**
   - Admin light cards often use `text-black` / `bg-white` / `border-black/15` instead of semantic tokens (`.admin-theme` only remaps `--card`)
   - `LoginPanel` GitHub/Google brand hex (`#24292f`, Google SVG fills) — third-party marks, not theme tokens

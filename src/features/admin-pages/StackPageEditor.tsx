@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 
 import { updatePage } from '@/actions/page.actions'
-import { StackGroupModal } from '@/features/admin-pages/StackGroupModal'
+import { StackGroupModal } from './StackGroupModal'
 import { ReorderableList, SectionHeading, Toast } from '@/components/ui'
 import { moveItemByClientId, omitClientIds } from '@/lib/admin/client-list'
 import type {

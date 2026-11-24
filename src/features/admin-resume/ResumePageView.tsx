@@ -15,7 +15,7 @@ import {
   upsertExperience,
   upsertLanguage,
 } from '@/actions/resume.actions'
-import { ResumeEntryModal } from '@/features/admin-resume/ResumeEntryModal'
+import { ResumeEntryModal } from './ResumeEntryModal'
 import {
   AdminFormField,
   adminInputClassName,
@@ -35,14 +35,7 @@ import type {
   ResumeSelectedWorkDraft,
   ResumeSelectedWorkItem,
 } from '@/types/admin-resume.types'
-
-interface ModalState {
-  readonly kind: ResumeEntryKind
-  readonly experience?: ResumeExperienceDraft
-  readonly education?: ResumeEducationDraft
-  readonly language?: ResumeLanguageDraft
-  readonly selectedWork?: ResumeSelectedWorkDraft
-}
+import type { ModalState } from '@/types/admin-resume.types'
 
 export function ResumePageView({ initialData }: ResumePageViewProps): React.JSX.Element {
   const router = useRouter()

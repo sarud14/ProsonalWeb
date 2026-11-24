@@ -1,10 +1,7 @@
 import Link from 'next/link'
 
 import { DASHBOARD_MESSAGES_HREF } from '@/constants/dashboard'
-
-interface InboxCardProps {
-  readonly unreadCount: number
-}
+import type { InboxCardProps } from '@/types/dashboard.types'
 
 export function InboxCard({ unreadCount }: InboxCardProps): React.JSX.Element {
   return (

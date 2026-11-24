@@ -1,18 +1,5 @@
 import type { AdminMediaItem } from '@/types/admin-media.types'
-
-type MediaRow = {
-  readonly id: string
-  readonly url: string
-  readonly alt: string
-  readonly mimeType: string
-  readonly folder: string | null
-  readonly createdAt: Date
-  readonly _count: {
-    readonly workCovers: number
-    readonly journalCovers: number
-    readonly engineeringCovers: number
-  }
-}
+import type { MediaRow } from '@/types/admin-media.types'
 
 export function mapMediaLibraryItems(assets: readonly MediaRow[]): AdminMediaItem[] {
   return assets.map((asset) => ({

@@ -4,15 +4,11 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import { WORK_CASE_SECTIONS } from '@/constants/work-case-sections'
-import { buildWorkCaseMeta } from '@/lib/work-case-detail'
+import { buildWorkCaseMeta } from './query/workCaseDetail'
 import { cn } from '@/components/ui'
-import type { WorkCaseStudy } from '@/types/work.types'
 
 import { articleReadProgressPercent } from './query/workQuery'
-
-interface WorkCaseHeroProps {
-  readonly work: WorkCaseStudy
-}
+import type { WorkCaseHeroProps, WorkCaseContentsRailProps } from '@/types/work-case-detail.types'
 
 export function WorkCaseHero({ work }: WorkCaseHeroProps): React.JSX.Element {
   const meta = buildWorkCaseMeta(work)
@@ -65,10 +61,6 @@ export function WorkCaseHero({ work }: WorkCaseHeroProps): React.JSX.Element {
       </div>
     </section>
   )
-}
-
-interface WorkCaseContentsRailProps {
-  readonly sectionCount?: number
 }
 
 export function WorkCaseContentsRail({

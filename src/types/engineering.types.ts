@@ -14,3 +14,15 @@ export interface EngineeringListSectionProps {
 export type EngineeringTypeFilter =
   | 'ALL'
   | EngineeringNoteType
+
+export interface EngineeringTypePageViewProps {
+  readonly pathSegment: string
+  readonly noteType: EngineeringNoteType
+  readonly notes: readonly EngineeringNote[]
+}
+
+export interface EngineeringTypePageModel {
+  readonly pathSegment: string
+  readonly noteType: EngineeringNoteType
+  readonly notes: readonly EngineeringNote[]
+}

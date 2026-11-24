@@ -1,13 +1,7 @@
 'use client'
 
-interface InlineEditRowProps {
-  readonly id: string
-  readonly label: string
-  readonly sortOrder: number
-  readonly referenceCount: number
-  readonly onLabelChange: (id: string, label: string) => void
-  readonly onDelete: (id: string) => void
-}
+import type { InlineEditRowProps } from './types'
+
 
 export function InlineEditRow({
   id,

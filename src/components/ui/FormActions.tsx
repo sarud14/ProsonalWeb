@@ -1,12 +1,7 @@
 'use client'
 
-interface FormActionsProps {
-  readonly onPublish: () => void
-  readonly onSaveDraft: () => void
-  readonly onPreview?: () => void
-  readonly onCancel: () => void
-  readonly isSubmitting?: boolean
-}
+import type { FormActionsProps } from './types'
+
 
 export function FormActions({
   onPublish,

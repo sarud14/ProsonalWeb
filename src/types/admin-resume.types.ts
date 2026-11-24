@@ -85,3 +85,63 @@ export interface ResumeSelectedWorkDraft {
   readonly workId: string
   readonly noteOverride: string
 }
+
+export interface ResumeEntryModalProps {
+  readonly open: boolean
+  readonly kind: ResumeEntryKind
+  readonly workOptions: readonly ResumeWorkOption[]
+  readonly initialExperience?: ResumeExperienceDraft
+  readonly initialEducation?: ResumeEducationDraft
+  readonly initialLanguage?: ResumeLanguageDraft
+  readonly initialSelectedWork?: ResumeSelectedWorkDraft
+  readonly onClose: () => void
+  readonly onSaveExperience: (draft: ResumeExperienceDraft) => void
+  readonly onSaveEducation: (draft: ResumeEducationDraft) => void
+  readonly onSaveLanguage: (draft: ResumeLanguageDraft) => void
+  readonly onSaveSelectedWork: (draft: ResumeSelectedWorkDraft) => void
+}
+
+export interface ModalState {
+  readonly kind: ResumeEntryKind
+  readonly experience?: ResumeExperienceDraft
+  readonly education?: ResumeEducationDraft
+  readonly language?: ResumeLanguageDraft
+  readonly selectedWork?: ResumeSelectedWorkDraft
+}
+
+export interface DbResumeProfile {
+  readonly id: string
+  readonly name: string
+  readonly role: string
+  readonly contactLine: string
+  readonly skills: readonly string[]
+  readonly coreTools: readonly string[]
+  readonly experiences: readonly {
+    readonly id: string
+    readonly title: string
+    readonly org: string
+    readonly period: string
+    readonly bullets: readonly string[]
+    readonly sortOrder: number
+  }[]
+  readonly education: readonly {
+    readonly id: string
+    readonly title: string
+    readonly note: string
+    readonly period: string
+    readonly sortOrder: number
+  }[]
+  readonly languages: readonly {
+    readonly id: string
+    readonly name: string
+    readonly level: string
+    readonly sortOrder: number
+  }[]
+  readonly selectedWork: readonly {
+    readonly id: string
+    readonly workId: string
+    readonly noteOverride: string | null
+    readonly sortOrder: number
+    readonly work: { readonly title: string }
+  }[]
+}

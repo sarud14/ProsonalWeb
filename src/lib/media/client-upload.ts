@@ -3,10 +3,7 @@
 import { upload } from '@vercel/blob/client'
 
 import { createMedia } from '@/actions/media.actions'
-
-export type MediaUploadResult =
-  | { readonly success: true; readonly id: string; readonly url: string }
-  | { readonly success: false; readonly error: string }
+import type { MediaUploadResult } from '@/types/admin-media.types'
 
 export async function uploadMediaFile(
   file: File,

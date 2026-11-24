@@ -16,12 +16,7 @@ import type {
   LandingModule,
   LandingStat,
 } from '@/types/landing.types'
-
-interface LandingBlockPropsEditorProps {
-  readonly type: string
-  readonly props: Record<string, unknown>
-  readonly onChange: (props: Record<string, unknown>) => void
-}
+import type { LandingBlockPropsEditorProps } from '@/types/admin-pages.types'
 
 function ListActions({
   onAdd,

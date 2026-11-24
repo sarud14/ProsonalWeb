@@ -1,8 +1,5 @@
-interface FormSectionProps {
-  readonly label: string
-  readonly columns?: string
-  readonly children: React.ReactNode
-}
+import type { FormSectionProps } from './types'
+
 
 export function FormSection({
   label,
