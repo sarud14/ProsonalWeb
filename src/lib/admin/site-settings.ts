@@ -20,7 +20,7 @@ export const DEFAULT_SITE_CONTACT: SiteContactSettings = {
 export const DEFAULT_SITE_FOOTER: SiteFooterSettings = {
   copyrightName: 'Sarut Dumrongprechachan',
   tagline: 'Designed as a system, not a page',
-  buildLabel: 'Build 2026.06 · All systems nominal',
+  buildLabel: 'Build {buildMonth} · All systems nominal',
 }
 
 export const DEFAULT_SITE_SOCIAL_LINKS: readonly SiteSocialLink[] = [

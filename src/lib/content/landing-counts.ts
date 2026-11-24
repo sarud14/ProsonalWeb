@@ -12,12 +12,12 @@ export function buildLandingCounts(
   return { workCount: works.length, domainCount: domains.size }
 }
 
-function padCount(count: number): string {
+export function padLandingNumber(count: number): string {
   return String(count).padStart(LANDING_COUNT_MIN_DIGITS, '0')
 }
 
 export function fillLandingCountTokens(text: string, counts: LandingCounts): string {
   return text
-    .replaceAll(LANDING_COUNT_TOKENS.WORK_COUNT, padCount(counts.workCount))
-    .replaceAll(LANDING_COUNT_TOKENS.DOMAIN_COUNT, padCount(counts.domainCount))
+    .replaceAll(LANDING_COUNT_TOKENS.WORK_COUNT, padLandingNumber(counts.workCount))
+    .replaceAll(LANDING_COUNT_TOKENS.DOMAIN_COUNT, padLandingNumber(counts.domainCount))
 }

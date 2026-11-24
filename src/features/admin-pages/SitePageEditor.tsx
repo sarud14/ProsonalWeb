@@ -1,5 +1,6 @@
 'use client'
 
+import { SITE_FOOTER_BUILD_MONTH_TOKEN } from '@/constants/site-footer'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 
@@ -490,6 +491,7 @@ export function SitePageEditor({
             <input
               className={adminInputClassName}
               value={footer.buildLabel}
+              placeholder={`Build ${SITE_FOOTER_BUILD_MONTH_TOKEN} · All systems nominal`}
               onChange={(e) =>
                 setFooter((current) => ({ ...current, buildLabel: e.target.value }))
               }

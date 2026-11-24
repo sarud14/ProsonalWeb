@@ -1,5 +1,6 @@
 import 'server-only'
 
+import { fillBuildMonthToken } from '@/lib/content/site-footer-label'
 import { env } from '@/env'
 import { DEFAULT_SITE_CONFIG } from '@/lib/admin/page-section-defaults'
 import { loadSiteConfig } from '@/lib/admin/load-page-section'
@@ -39,7 +40,10 @@ export async function getSiteTheme(): Promise<SiteThemeSettings> {
 
 export async function getSiteFooter(): Promise<SiteFooterSettings> {
   const site = await resolveSiteConfig()
-  return site.footer
+  return {
+    ...site.footer,
+    buildLabel: fillBuildMonthToken(site.footer.buildLabel, new Date()),
+  }
 }
 
 export async function getSiteSocialLinks(): Promise<readonly SiteSocialLink[]> {
