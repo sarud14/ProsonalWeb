@@ -13,15 +13,10 @@ import { MediaPickerDialog } from '@/components/admin/MediaPickerDialog'
 import { FormActions, FormSection, ImagePicker, StatusBadge, TagInput, Toast } from '@/components/ui'
 import { getPublicPreviewPath } from '@/lib/admin/content-form-mappers'
 import { findMediaOption } from '@/lib/admin/map-media-options'
-import type { AdminMediaOption, WorkFormState } from '@/types/admin-content.types'
+import type { WorkFormState } from '@/types/admin-content.types'
 
 import { buildWorkMutationPayload } from './query/workFormQuery'
-
-interface WorkFormProps {
-  readonly initialValues: WorkFormState
-  readonly media: readonly AdminMediaOption[]
-  readonly listHref: string
-}
+import type { WorkFormProps } from '@/types/admin-content.types'
 
 export function WorkForm({
   initialValues,

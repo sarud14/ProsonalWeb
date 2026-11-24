@@ -1,4 +1,4 @@
-import { ResumeSavePdfButton } from '@/features/resume/ResumeSavePdfButton'
+import { ResumeSavePdfButton } from './ResumeSavePdfButton'
 import type { ResumePageData } from '@/types/resume.types'
 
 function ResumeChipList({

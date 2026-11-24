@@ -2,15 +2,7 @@
 
 import Image from 'next/image'
 
-import type { AdminMediaItem } from '@/types/admin-media.types'
-
-interface MediaGridProps {
-  readonly items: readonly AdminMediaItem[]
-  readonly mode?: 'library' | 'picker'
-  readonly onSelect?: (id: string) => void
-  readonly onEditAlt?: (item: AdminMediaItem) => void
-  readonly onDelete?: (id: string) => void
-}
+import type { MediaGridProps } from '@/types/admin-components.types'
 
 export function MediaGrid({
   items,

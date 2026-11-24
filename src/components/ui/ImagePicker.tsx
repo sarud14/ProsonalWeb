@@ -5,17 +5,7 @@ import { useRef } from 'react'
 
 import { Button } from './Button'
 import { cn } from './helpers'
-
-interface ImagePickerProps {
-  readonly imageUrl?: string | null
-  readonly altText?: string
-  readonly uploadEnabled?: boolean
-  readonly isUploading?: boolean
-  readonly onUpload?: (file: File) => void | Promise<void>
-  readonly onPickFromMedia?: () => void
-  readonly onRemove?: () => void
-  readonly className?: string
-}
+import type { ImagePickerProps } from './types'
 
 export function ImagePicker({
   imageUrl,

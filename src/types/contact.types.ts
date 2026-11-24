@@ -24,3 +24,10 @@ export interface ContactSubmitInput {
 }
 
 export type { LandingContactProps }
+
+export interface ContactRateLimitCounts {
+  readonly ipCount: number
+  readonly emailCount: number
+  readonly globalCount: number
+  readonly hasIpHash: boolean
+}

@@ -2,18 +2,12 @@
 
 import { useCallback, useState } from 'react'
 
-import type { FocusReadingModalState } from '@/types/admin-pages.types'
 
 import {
   AdminFormField,
   adminInputClassName,
 } from '@/components/admin/AdminFormField'
-
-interface FocusReadingModalProps {
-  readonly state: FocusReadingModalState
-  readonly onClose: () => void
-  readonly onSave: (item: FocusReadingModalState['item']) => void
-}
+import type { FocusReadingModalProps } from '@/types/admin-pages.types'
 
 export function FocusReadingModal({
   state,

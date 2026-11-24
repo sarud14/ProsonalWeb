@@ -7,43 +7,7 @@ import type {
   ResumeSelectedWorkItem,
   ResumeWorkOption,
 } from '@/types/admin-resume.types'
-
-interface DbResumeProfile {
-  readonly id: string
-  readonly name: string
-  readonly role: string
-  readonly contactLine: string
-  readonly skills: readonly string[]
-  readonly coreTools: readonly string[]
-  readonly experiences: readonly {
-    readonly id: string
-    readonly title: string
-    readonly org: string
-    readonly period: string
-    readonly bullets: readonly string[]
-    readonly sortOrder: number
-  }[]
-  readonly education: readonly {
-    readonly id: string
-    readonly title: string
-    readonly note: string
-    readonly period: string
-    readonly sortOrder: number
-  }[]
-  readonly languages: readonly {
-    readonly id: string
-    readonly name: string
-    readonly level: string
-    readonly sortOrder: number
-  }[]
-  readonly selectedWork: readonly {
-    readonly id: string
-    readonly workId: string
-    readonly noteOverride: string | null
-    readonly sortOrder: number
-    readonly work: { readonly title: string }
-  }[]
-}
+import type { DbResumeProfile } from '@/types/admin-resume.types'
 
 export function emptyResumeProfile(): ResumeProfileFormState {
   return {

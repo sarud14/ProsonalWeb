@@ -1,12 +1,8 @@
 import { Container } from '@/components/ui'
-import { WorkCaseContentsRail, WorkCaseHero } from '@/features/work/WorkCaseHero'
-import { WorkCaseDetailArticle } from '@/features/work/WorkCaseDetailArticle'
-import { getWorkCaseDetail } from '@/lib/work-case-detail'
-import type { WorkCaseStudy } from '@/types/work.types'
-
-interface WorkCaseDetailViewProps {
-  readonly work: WorkCaseStudy
-}
+import { WorkCaseContentsRail, WorkCaseHero } from './WorkCaseHero'
+import { WorkCaseDetailArticle } from './WorkCaseDetailArticle'
+import { getWorkCaseDetail } from './query/workCaseDetail'
+import type { WorkCaseDetailViewProps } from '@/types/work-case-detail.types'
 
 export function WorkCaseDetailView({
   work,

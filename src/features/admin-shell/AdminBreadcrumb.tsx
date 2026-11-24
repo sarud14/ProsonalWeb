@@ -3,16 +3,11 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import type { AdminLayoutMode } from '@/types/admin-page.types'
 
 import { ADMIN_NAV_ITEMS } from '@/constants/admin-nav'
 
-import { LayoutSwitcher } from '@/features/admin-shell/LayoutSwitcher'
-
-interface AdminBreadcrumbProps {
-  readonly layout: AdminLayoutMode
-  readonly onLayoutChange: (mode: AdminLayoutMode) => void
-}
+import { LayoutSwitcher } from './LayoutSwitcher'
+import type { AdminBreadcrumbProps } from '@/types/admin-shell.types'
 
 function buildCrumbs(pathname: string): readonly { label: string; href?: string }[] {
   const crumbs: { label: string; href?: string }[] = [{ label: 'Admin', href: '/admin' }]

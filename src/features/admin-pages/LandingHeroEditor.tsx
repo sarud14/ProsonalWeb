@@ -11,20 +11,8 @@ import {
 } from '@/components/admin/AdminFormField'
 import { FormSection, ImagePicker, ReorderableList, TagInput, Toast } from '@/components/ui'
 import { uploadMediaFile } from '@/lib/media/client-upload'
-import type { AdminMediaOption } from '@/types/admin-content.types'
 import type { LandingFocusItem, LandingHeroData } from '@/types/landing.types'
-
-interface ClientMetaItem extends LandingFocusItem {
-  readonly clientId: string
-}
-
-interface LandingHeroEditorProps {
-  readonly hero: LandingHeroData
-  readonly media: readonly AdminMediaOption[]
-  readonly uploadEnabled: boolean
-  readonly isSaving: boolean
-  readonly onSave: (hero: LandingHeroData) => void
-}
+import type { ClientMetaItem, LandingHeroEditorProps } from '@/types/admin-pages.types'
 
 function toClientMeta(items: readonly LandingFocusItem[]): ClientMetaItem[] {
   return items.map((item, index) => ({

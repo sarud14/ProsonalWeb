@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { env } from '@/env'
-import type { ResumePdfData } from '@/lib/resume/pdf-document'
+import type { ResumePdfData } from '@/types/resume-pdf.types'
 
 async function getResumeFromConstants(): Promise<ResumePdfData> {
   const { RESUME_PAGE_DATA } = await import('@/constants/resume-page-data')

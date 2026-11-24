@@ -16,21 +16,7 @@ import type {
   ResumeSelectedWorkDraft,
   ResumeWorkOption,
 } from '@/types/admin-resume.types'
-
-interface ResumeEntryModalProps {
-  readonly open: boolean
-  readonly kind: ResumeEntryKind
-  readonly workOptions: readonly ResumeWorkOption[]
-  readonly initialExperience?: ResumeExperienceDraft
-  readonly initialEducation?: ResumeEducationDraft
-  readonly initialLanguage?: ResumeLanguageDraft
-  readonly initialSelectedWork?: ResumeSelectedWorkDraft
-  readonly onClose: () => void
-  readonly onSaveExperience: (draft: ResumeExperienceDraft) => void
-  readonly onSaveEducation: (draft: ResumeEducationDraft) => void
-  readonly onSaveLanguage: (draft: ResumeLanguageDraft) => void
-  readonly onSaveSelectedWork: (draft: ResumeSelectedWorkDraft) => void
-}
+import type { ResumeEntryModalProps } from '@/types/admin-resume.types'
 
 const MODAL_TITLES: Readonly<Record<ResumeEntryKind, string>> = {
   experience: 'Experience',

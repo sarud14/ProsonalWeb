@@ -1,3 +1,5 @@
+import type { WorkCaseStudy } from '@/types/work.types'
+
 export interface WorkCaseMetaItem {
   readonly label: string
   readonly value: string
@@ -63,16 +65,23 @@ export interface WorkCaseSectionLink {
   readonly label: string
 }
 
-export interface WorkCaseDetailViewProps {
-  readonly work: import('@/types/work.types').WorkCaseStudy
-  readonly detail: WorkCaseDetail
-}
-
-export interface WorkCaseContentsRailProps {
-  readonly sections: readonly WorkCaseSectionLink[]
-}
-
 export interface WorkCaseSectionHeaderProps {
   readonly num: string
   readonly label: string
+}
+
+export interface WorkCaseDetailArticleProps {
+  readonly detail: WorkCaseDetail
+}
+
+export interface WorkCaseDetailViewProps {
+  readonly work: WorkCaseStudy
+}
+
+export interface WorkCaseHeroProps {
+  readonly work: WorkCaseStudy
+}
+
+export interface WorkCaseContentsRailProps {
+  readonly sectionCount?: number
 }

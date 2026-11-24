@@ -1,33 +1,7 @@
 import { type DataTableRow } from '@/components/ui'
 import { ENGINEERING_TYPE_LABELS } from '@/constants/admin-content-list'
 import { formatAdminDate } from '@/lib/admin/format-admin-date'
-
-interface WorkListItem {
-  readonly id: string
-  readonly title: string
-  readonly status: 'PUBLISHED' | 'DRAFT'
-  readonly year: string
-  readonly sortOrder: number
-  readonly domains: readonly { readonly label: string }[]
-}
-
-interface JournalListItem {
-  readonly id: string
-  readonly title: string
-  readonly status: 'PUBLISHED' | 'DRAFT'
-  readonly tag: string
-  readonly publishedAt: Date | null
-  readonly sortOrder: number
-}
-
-interface EngineeringListItem {
-  readonly id: string
-  readonly title: string
-  readonly status: 'PUBLISHED' | 'DRAFT'
-  readonly type: 'ARCHITECTURE' | 'DECISIONS' | 'PERFORMANCE'
-  readonly noteDate: string
-  readonly sortOrder: number
-}
+import type { WorkListItem, JournalListItem, EngineeringListItem } from '@/types/admin-content.types'
 
 export function mapWorkToTableRows(items: readonly WorkListItem[]): DataTableRow[] {
   return items.map((item) => ({

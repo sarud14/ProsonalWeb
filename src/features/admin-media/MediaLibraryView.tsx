@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useRef, useState } from 'react'
 
 import { deleteMedia, updateMediaAlt } from '@/actions/media.actions'
-import { MediaAltModal } from '@/features/admin-media/MediaAltModal'
+import { MediaAltModal } from './MediaAltModal'
 import { MediaGrid } from '@/components/admin/MediaGrid'
 import { ConfirmDialog, SectionHeading, Toast } from '@/components/ui'
 import { uploadMediaFile } from '@/lib/media/client-upload'

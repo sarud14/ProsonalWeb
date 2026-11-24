@@ -2,18 +2,12 @@
 
 import { useCallback, useState } from 'react'
 
-import type { MediaAltModalState } from '@/types/admin-media.types'
 
 import {
   AdminFormField,
   adminInputClassName,
 } from '@/components/admin/AdminFormField'
-
-interface MediaAltModalProps {
-  readonly state: MediaAltModalState
-  readonly onClose: () => void
-  readonly onSave: (id: string, alt: string) => void
-}
+import type { MediaAltModalProps } from '@/types/admin-media.types'
 
 export function MediaAltModal({
   state,

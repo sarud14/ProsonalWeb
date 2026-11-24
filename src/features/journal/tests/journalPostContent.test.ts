@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { parseJournalBlocks } from '@/lib/journal-post-content'
+import { parseJournalBlocks } from '../query/journalPostContent'
 
 describe('parseJournalBlocks', () => {
   it('parses markdown sections into heading and paragraph blocks', () => {

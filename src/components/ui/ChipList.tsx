@@ -1,6 +1,5 @@
-interface ChipListProps {
-  readonly items: readonly string[]
-}
+import type { ChipListProps } from './types'
+
 
 export function ChipList({ items }: ChipListProps): React.JSX.Element {
   return (

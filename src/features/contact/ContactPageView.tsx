@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { ContactForm } from '@/features/contact/ContactForm'
+import { ContactForm } from './ContactForm'
 import { Container } from '@/components/ui'
 import type { ContactPageViewProps } from '@/types/contact.types'
 

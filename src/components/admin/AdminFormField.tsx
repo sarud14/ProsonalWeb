@@ -1,9 +1,5 @@
-interface AdminFormFieldProps {
-  readonly label: string
-  readonly required?: boolean
-  readonly span?: string
-  readonly children: React.ReactNode
-}
+import type { AdminFormFieldProps } from '@/types/admin-components.types'
+
 
 export function AdminFormField({
   label,

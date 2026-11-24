@@ -1,14 +1,5 @@
 import type { AdminMessageItem } from '@/types/admin-messages.types'
-
-type ContactRow = {
-  readonly id: string
-  readonly name: string
-  readonly email: string
-  readonly message: string
-  readonly read: boolean
-  readonly archived: boolean
-  readonly createdAt: Date
-}
+import type { ContactRow } from '@/types/admin-messages.types'
 
 export function mapContactMessages(messages: readonly ContactRow[]): AdminMessageItem[] {
   return messages.map((message) => ({

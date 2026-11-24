@@ -1,37 +1,9 @@
 'use client'
 
-import type { ReactNode } from 'react'
 
 import { ChipList } from './ChipList'
 import { StatusBadge } from './StatusBadge'
-
-export interface DataTableColumn {
-  readonly key: string
-  readonly label: string
-  readonly align?: 'left' | 'center' | 'right'
-}
-
-export type CellType =
-  | { readonly kind: 'title'; readonly text: string }
-  | { readonly kind: 'text'; readonly text: string; readonly mono?: boolean }
-  | { readonly kind: 'badge'; readonly status: 'PUBLISHED' | 'DRAFT' }
-  | { readonly kind: 'chips'; readonly items: readonly string[] }
-  | { readonly kind: 'custom'; readonly render: ReactNode }
-
-export interface DataTableRow {
-  readonly id: string
-  readonly cells: readonly CellType[]
-  readonly status: 'PUBLISHED' | 'DRAFT'
-}
-
-interface DataTableProps {
-  readonly columns: readonly DataTableColumn[]
-  readonly rows: readonly DataTableRow[]
-  readonly gridTemplate: string
-  readonly onEdit: (id: string) => void
-  readonly onTogglePublish: (id: string) => void
-  readonly onDelete: (id: string) => void
-}
+import type { DataTableProps } from './types'
 
 export function DataTable({
   columns,

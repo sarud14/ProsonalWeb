@@ -1,8 +1,5 @@
 import { cn } from './helpers'
-
-interface StatusBadgeProps {
-  readonly status: 'PUBLISHED' | 'DRAFT'
-}
+import type { StatusBadgeProps } from './types'
 
 export function StatusBadge({ status }: StatusBadgeProps): React.JSX.Element {
   return (

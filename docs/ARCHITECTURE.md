@@ -96,7 +96,7 @@ design/                        # local-only mockups (gitignored)
 
 - `src/features/` — **present.** Public domains are unprefixed (`landing`, `work`, …). Admin CMS screens use an `admin-*` prefix so they do not sit in the same folder as the public page for that domain (different routes, different chrome). `app/` stays thin: fetch + compose. Inside a feature: **UI at the root**, **`query/`** for pure modules + hooks, **`tests/`** for every `*.test.ts(x)`. Do not mix tests or query files into the screen listing.
 - `src/components/admin/` — extra vs default. Shared CMS widgets (`AdminFormField`, `ContentListClient`, `MediaGrid`, `MediaPickerDialog`) used by two or more admin features. Not the design system: they may import Server Actions. Do not add public-site UI here.
-- `src/components/ui/` — **barrel + tokens present.** Components still sit in a flat folder (no `core/` groups). Tests live in `ui/tests/`; token CSS tests in `ui/tokens/tests/`. No `ui/types.ts` yet — prop types live in `src/types/` or inline. See [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md).
+- `src/components/ui/` — **barrel + tokens present.** Components still sit in a flat folder (no `core/` groups). Tests live in `ui/tests/`; token CSS tests in `ui/tokens/tests/`. Design-system prop interfaces live in `ui/types.ts` (re-exported from the barrel); a few older ones are still in `src/types/` (`BadgeProps`, `NavBarProps`, …). See [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md).
 - `docs/` — committed inspectable docs only (`ARCHITECTURE.md`, `DESIGN_SYSTEM.md`). Do not add reference `.md` next to source. Local planning: `requirement/`. Skills: `.claude/skills/`.
 - `e2e/` — Playwright. Public-route spec always runs; CMS publish spec needs `CONTENT_SOURCE=db` + `DATABASE_URL` (CI e2e job provides Postgres).
 - Extra vs default: `src/providers/`, `src/components/admin/`, `src/lib/{admin,auth,content,data,db,media,resume,landing,contact,format,actions}/`, repo-root `content/`, `prisma/`, `scripts/`.
@@ -134,7 +134,7 @@ Configured in **both** `tsconfig.json` (`compilerOptions.paths`) and `vitest.con
 | `@/*` | `./src/*` |
 | `@prisma/client` | `./node_modules/.prisma/client/index.d.ts` (tsconfig only) |
 
-Prefer aliases over `../../..` relative chains across layers. Relative imports are fine **within** one feature/module folder.
+Prefer aliases over `../../..` relative chains across layers. Inside one feature folder, use relative imports (`./InboxCard`, `./query/workQuery`, `../query/…` from `tests/`) — never `@/features/<same-feature>/…`, so a feature folder can be moved or renamed without touching its own imports.
 
 UI imports go through `@/components/ui` (client-safe barrel). Async Server UI (`Footer`) goes through `@/components/ui/server` so client modules do not pull `server-only`. Do not import `@/components/ui/Button`.
 
@@ -165,7 +165,7 @@ Not fixtures — live MDX and/or Postgres.
 - **Feature query modules:** filter / payload / list-mapping logic lives in `query/<feature>Query.ts` (no React). A thin `query/use<Feature>Query.ts` is the only React binding. Screens at the feature root import from `./query/…`. Shared list helpers used by more than one admin editor (`omitClientIds`, `moveItemByClientId`, `findMediaOption`) live in `src/lib/admin/`. Tests for those modules live in the same feature's `tests/` folder.
 - **Writes:** Server Actions → DAL. Production must not write MDX on Vercel — draft/publish is DB-backed when `CONTENT_SOURCE=db`.
 - **DAL:** `src/lib/data/*.data.ts` (see AGENTS.md Project-Specific Overrides for the file → entity table).
-- Presentation values derived from data are **pure helpers** in `src/lib/` or `src/constants/`, with tests in that module's `tests/` folder — never duplicated inline in a screen.
+- Presentation values derived from data are **pure helpers** in `src/lib/` or `src/constants/` (or the owning feature's `query/` when only one feature uses them, e.g. `work/query/workCaseDetail.ts`, `journal/query/journalPostContent.ts`), with tests in that module's `tests/` folder — never duplicated inline in a screen.
 
 ---
 
@@ -256,7 +256,7 @@ Full conformance to any accessibility standard cannot be claimed from automated 
 
 - **`src/features/` exists** with `query/` + `tests/` splits on work, messages, landing typing, CMS content forms, site/landing/stack page editors, and contact submit. Remaining screens without a query module: journal/engineering public lists, focus page editor, landing hero meta list, resume forms, media library, taxonomy, dashboard.
 - **`tests/*.test.tsx` per remaining screen** is still a gap (RTL is installed; add tests as those screens are touched).
-- **No UI `core/` grouping / `ui/types.ts`** — barrel and token files exist; components remain flat. See DESIGN_SYSTEM.md Status.
+- **No UI `core/` grouping** — barrel, `ui/types.ts`, and token files exist; components remain flat. See DESIGN_SYSTEM.md Status.
 - **`cn()` lives in `src/components/ui/helpers.ts`** — `src/lib/utils.ts` is a shadcn CLI re-export only.
 - **`Footer` fetches CMS data** — a `ui/` component importing `lib/content`. Exported from `@/components/ui/server` so the client barrel stays client-safe. Should become a presentational footer fed by the layout (then it can join `index.ts`).
 - **Inline prop interfaces** in several UI files (AGENTS.md Type Rules). New types go in `src/types/`.

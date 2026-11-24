@@ -1,4 +1,4 @@
-import { LandingReveal } from '@/features/landing/LandingReveal'
+import { LandingReveal } from './LandingReveal'
 import { Container } from '@/components/ui'
 import {
   CONTACT_DEFAULT_BODY,

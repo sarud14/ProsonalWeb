@@ -1,7 +1,7 @@
-import ContactSection from '@/features/landing/ContactSection'
-import ExploreStackSection from '@/features/landing/ExploreStackSection'
-import ModulesSection from '@/features/landing/ModulesSection'
-import StatsSection from '@/features/landing/StatsSection'
+import ContactSection from './ContactSection'
+import ExploreStackSection from './ExploreStackSection'
+import ModulesSection from './ModulesSection'
+import StatsSection from './StatsSection'
 import {
   parseLandingContact,
   parseLandingModules,

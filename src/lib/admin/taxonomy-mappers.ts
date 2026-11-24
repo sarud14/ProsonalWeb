@@ -1,11 +1,5 @@
 import type { AdminDomainItem } from '@/types/admin-taxonomy.types'
-
-type DomainRow = {
-  readonly id: string
-  readonly label: string
-  readonly sortOrder: number
-  readonly _count: { readonly works: number }
-}
+import type { DomainRow } from '@/types/admin-taxonomy.types'
 
 export function mapDomainItems(domains: readonly DomainRow[]): AdminDomainItem[] {
   return domains.map((domain) => ({

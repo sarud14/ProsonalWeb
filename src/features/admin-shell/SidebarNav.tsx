@@ -4,15 +4,9 @@ import Link from 'next/link'
 
 import { ADMIN_NAV_ITEMS } from '@/constants/admin-nav'
 
-import { AdminUserMenu } from '@/features/admin-shell/AdminUserMenu'
-import type { AdminSessionUser } from '@/types/auth.types'
+import { AdminUserMenu } from './AdminUserMenu'
 import { cn } from '@/components/ui'
-
-interface SidebarNavProps {
-  readonly activeKey: string
-  readonly unreadCount: number
-  readonly user: AdminSessionUser
-}
+import type { SidebarNavProps } from '@/types/admin-shell.types'
 
 export function SidebarNav({
   activeKey,

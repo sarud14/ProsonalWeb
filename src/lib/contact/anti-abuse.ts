@@ -5,6 +5,7 @@ import {
   CONTACT_RATE_LIMIT_GLOBAL_MAX,
   CONTACT_RATE_LIMIT_IP_MAX,
 } from '@/constants/contact'
+import type { ContactRateLimitCounts } from '@/types/contact.types'
 
 export function isHoneypotFilled(website: string | undefined): boolean {
   return typeof website === 'string' && website.trim().length > 0
@@ -27,13 +28,6 @@ export function resolveClientIp(
 
 export function hashClientIp(ip: string, salt: string): string {
   return createHash('sha256').update(`${salt}:${ip}`).digest('hex')
-}
-
-export interface ContactRateLimitCounts {
-  readonly ipCount: number
-  readonly emailCount: number
-  readonly globalCount: number
-  readonly hasIpHash: boolean
 }
 
 export function isContactRateLimited(counts: ContactRateLimitCounts): boolean {

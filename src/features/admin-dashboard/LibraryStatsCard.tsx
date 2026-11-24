@@ -1,8 +1,4 @@
-import type { DashboardLibraryStat } from '@/types/dashboard.types'
-
-interface LibraryStatsCardProps {
-  readonly stats: readonly DashboardLibraryStat[]
-}
+import type { LibraryStatsCardProps } from '@/types/dashboard.types'
 
 export function LibraryStatsCard({ stats }: LibraryStatsCardProps): React.JSX.Element {
   return (

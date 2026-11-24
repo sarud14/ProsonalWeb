@@ -1,14 +1,10 @@
 import Link from 'next/link'
 
-import type { DashboardRecentItem } from '@/types/dashboard.types'
 
 import { DASHBOARD_RECENT_LIMIT } from '@/constants/dashboard'
 
 import { StatusBadge } from '@/components/ui'
-
-interface RecentContentCardProps {
-  readonly recents: readonly DashboardRecentItem[]
-}
+import type { RecentContentCardProps } from '@/types/dashboard.types'
 
 export function RecentContentCard({ recents }: RecentContentCardProps): React.JSX.Element {
   return (

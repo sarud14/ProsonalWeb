@@ -2,18 +2,13 @@
 
 import { useCallback, useState } from 'react'
 
-import type { NavItemModalState, NavItemDraft } from '@/types/admin-pages.types'
+import type { NavItemDraft } from '@/types/admin-pages.types'
 
 import {
   AdminFormField,
   adminInputClassName,
 } from '@/components/admin/AdminFormField'
-
-interface NavItemModalProps {
-  readonly state: NavItemModalState
-  readonly onClose: () => void
-  readonly onSave: (item: NavItemModalState['item']) => void
-}
+import type { NavItemModalProps } from '@/types/admin-pages.types'
 
 export function NavItemModal({
   state,

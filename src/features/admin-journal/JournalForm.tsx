@@ -13,15 +13,10 @@ import { MediaPickerDialog } from '@/components/admin/MediaPickerDialog'
 import { FormActions, FormSection, ImagePicker, StatusBadge, Toast } from '@/components/ui'
 import { getPublicPreviewPath } from '@/lib/admin/content-form-mappers'
 import { findMediaOption } from '@/lib/admin/map-media-options'
-import type { AdminMediaOption, JournalFormState } from '@/types/admin-content.types'
+import type { JournalFormState } from '@/types/admin-content.types'
 
 import { buildJournalMutationPayload } from './query/journalFormQuery'
-
-interface JournalFormProps {
-  readonly initialValues: JournalFormState
-  readonly media: readonly AdminMediaOption[]
-  readonly listHref: string
-}
+import type { JournalFormProps } from '@/types/admin-content.types'
 
 export function JournalForm({
   initialValues,

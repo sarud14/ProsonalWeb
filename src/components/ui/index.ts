@@ -8,7 +8,7 @@ export { ChipList } from './ChipList'
 export { ConfirmDialog } from './ConfirmDialog'
 export { Container } from './Container'
 export { DataTable } from './DataTable'
-export type { CellType, DataTableColumn, DataTableRow } from './DataTable'
+export type * from './types'
 export {
   DropdownMenu,
   DropdownMenuPortal,

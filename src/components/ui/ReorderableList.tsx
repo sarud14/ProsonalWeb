@@ -1,22 +1,7 @@
 'use client'
 
-interface ReorderableItem {
-  readonly id: string
-  readonly primary: string
-  readonly secondary?: string
-  readonly bullets?: readonly string[]
-  readonly meta?: React.ReactNode
-}
+import type { ReorderableListProps } from './types'
 
-interface ReorderableListProps {
-  readonly label: string
-  readonly items: readonly ReorderableItem[]
-  readonly onMoveUp: (id: string) => void
-  readonly onMoveDown: (id: string) => void
-  readonly onRemove: (id: string) => void
-  readonly onAdd: () => void
-  readonly renderExtra?: (item: ReorderableItem) => React.ReactNode
-}
 
 export function ReorderableList({
   label,

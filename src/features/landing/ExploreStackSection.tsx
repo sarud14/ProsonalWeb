@@ -1,15 +1,12 @@
 import { LANDING_TECH_STACK } from '@/constants/landing'
-import { LandingReveal } from "@/features/landing/LandingReveal";
+import { LandingReveal } from "./LandingReveal";
 import { Container } from '@/components/ui'
 import {
   LANDING_MOTION_EXPLORE_DELAY_MS,
   LANDING_MOTION_STACK_DELAY_MS,
   LANDING_MOTION_STACK_TAG_STAGGER_MS,
 } from "@/constants/landing-motion";
-
-interface ExploreStackSectionProps {
-  readonly items?: readonly string[]
-}
+import type { ExploreStackSectionProps } from '@/types/landing.types'
 
 export default function ExploreStackSection({
   items = LANDING_TECH_STACK,

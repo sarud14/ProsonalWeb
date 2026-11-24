@@ -14,21 +14,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui'
-import type { AdminSessionUser } from '@/types/auth.types'
-
-interface AdminUserMenuProps {
-  readonly user: AdminSessionUser
-  readonly showLabel?: boolean
-}
-
-interface UserAvatarProps {
-  readonly user: AdminSessionUser
-  readonly className?: string
-}
+import type { AdminUserMenuProps, UserAvatarProps } from '@/types/admin-shell.types'
 
 function UserAvatar({ user, className }: UserAvatarProps): React.JSX.Element {
   if (user.image) {
+    // OAuth avatars come from arbitrary provider hosts and render at ~32px;
+    // next/image would need every host in remotePatterns for no real LCP gain.
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={user.image}
         alt=""

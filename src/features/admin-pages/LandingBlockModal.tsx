@@ -2,8 +2,7 @@
 
 import { useCallback, useState } from 'react'
 
-import { LandingBlockPropsEditor } from '@/features/admin-pages/LandingBlockPropsEditor'
-import type { LandingBlockModalState } from '@/types/admin-pages.types'
+import { LandingBlockPropsEditor } from './LandingBlockPropsEditor'
 import type { LandingBlock } from '@/types/site.types'
 
 import {
@@ -16,12 +15,7 @@ import {
   landingBlockTypeLabel,
   type LandingBlockType,
 } from '@/lib/admin/landing-block-props'
-
-interface LandingBlockModalProps {
-  readonly state: LandingBlockModalState
-  readonly onClose: () => void
-  readonly onSave: (block: LandingBlock) => void
-}
+import type { LandingBlockModalProps } from '@/types/admin-pages.types'
 
 export function LandingBlockModal({
   state,

@@ -7,11 +7,7 @@ import type { AdminSubNavItem } from '@/types/admin-page.types'
 import { ADMIN_NAV_ITEMS } from '@/constants/admin-nav'
 
 import { cn } from '@/components/ui'
-
-interface SplitNavProps {
-  readonly activeKey: string
-  readonly unreadCount: number
-}
+import type { SplitNavProps } from '@/types/admin-shell.types'
 
 function getSubNav(key: string): readonly AdminSubNavItem[] {
   switch (key) {

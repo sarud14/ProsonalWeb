@@ -1,8 +1,5 @@
-interface SectionHeadingProps {
-  readonly kicker: string
-  readonly title: string
-  readonly action?: React.ReactNode
-}
+import type { SectionHeadingProps } from './types'
+
 
 export function SectionHeading({ kicker, title, action }: SectionHeadingProps): React.JSX.Element {
   return (

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { parseJournalBlocks } from '@/lib/journal-post-content'
+import { parseJournalBlocks } from './query/journalPostContent'
 import type { JournalPostDetailViewProps } from '@/types/journal-post-detail.types'
 
 export function JournalPostDetailView({

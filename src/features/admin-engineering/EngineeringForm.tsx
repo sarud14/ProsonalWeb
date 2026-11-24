@@ -18,15 +18,10 @@ import { ENGINEERING_TYPE_OPTIONS } from '@/constants/admin-content-list'
 import { FormActions, FormSection, ImagePicker, StatusBadge, Toast } from '@/components/ui'
 import { getPublicPreviewPath } from '@/lib/admin/content-form-mappers'
 import { findMediaOption } from '@/lib/admin/map-media-options'
-import type { AdminMediaOption, EngineeringFormState } from '@/types/admin-content.types'
+import type { EngineeringFormState } from '@/types/admin-content.types'
 
 import { buildEngineeringMutationPayload } from './query/engineeringFormQuery'
-
-interface EngineeringFormProps {
-  readonly initialValues: EngineeringFormState
-  readonly media: readonly AdminMediaOption[]
-  readonly listHref: string
-}
+import type { EngineeringFormProps } from '@/types/admin-content.types'
 
 export function EngineeringForm({
   initialValues,

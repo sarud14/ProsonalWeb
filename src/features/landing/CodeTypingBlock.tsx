@@ -5,16 +5,9 @@ import { useMemo } from 'react'
 import { Card } from '@/components/ui'
 import { buildEngineerCodeLines } from '@/lib/landing/engineer-code-lines'
 import type { CodeLine } from '@/types/code-typing.types'
-import type { LandingHeroData } from '@/types/landing.types'
 
 import { useCodeTypingQuery } from './query/useCodeTypingQuery'
-
-interface CodeTypingBlockProps {
-  readonly config: Pick<
-    LandingHeroData,
-    'codeFilename' | 'codeRole' | 'codeStack' | 'codeDomains' | 'codeFocus' | 'codeStatus'
-  >
-}
+import type { CodeTypingBlockProps } from '@/types/landing.types'
 
 export function CodeTypingBlock({ config }: CodeTypingBlockProps): React.JSX.Element {
   const codeLines = useMemo(() => buildEngineerCodeLines(config), [config])

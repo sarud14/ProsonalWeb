@@ -1,12 +1,10 @@
+import type { DashboardGreetingProps } from '@/types/dashboard.types'
+
 function getTimeGreeting(): string {
   const hour = new Date().getHours()
   if (hour < 12) return 'Good morning'
   if (hour < 17) return 'Good afternoon'
   return 'Good evening'
-}
-
-interface DashboardGreetingProps {
-  readonly userName: string
 }
 
 export function DashboardGreeting({ userName }: DashboardGreetingProps): React.JSX.Element {

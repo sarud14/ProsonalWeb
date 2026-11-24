@@ -1,15 +1,11 @@
 import { LANDING_STATS } from '@/constants/landing'
-import { LandingReveal } from "@/features/landing/LandingReveal";
+import { LandingReveal } from "./LandingReveal";
 import { Container } from '@/components/ui'
-import type { LandingStat } from '@/types/landing.types'
 import {
   LANDING_MOTION_STATS_BASE_DELAY_MS,
   LANDING_MOTION_STAGGER_MS,
 } from "@/constants/landing-motion";
-
-interface StatsSectionProps {
-  readonly items?: readonly LandingStat[]
-}
+import type { StatsSectionProps } from '@/types/landing.types'
 
 export default function StatsSection({
   items = LANDING_STATS,
