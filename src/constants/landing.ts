@@ -5,8 +5,8 @@ import type {
 } from '@/types/landing.types'
 
 export const LANDING_STATS = [
-  { value: '06', label: 'Case Studies' },
-  { value: '04', label: 'Problem Domains' },
+  { value: '{workCount}', label: 'Case Studies' },
+  { value: '{domainCount}', label: 'Problem Domains' },
   { value: '5y', label: 'Shipping Products' },
   { value: '2', label: 'Languages — EN / TH' },
 ] as const satisfies readonly LandingStat[]
@@ -17,7 +17,7 @@ export const LANDING_MODULES: readonly LandingModule[] = [
     title: 'Work',
     desc: 'Case studies — architecture, decisions, and measured impact.',
     link: '/work',
-    linkLabel: '6 ENTRIES',
+    linkLabel: '{workCount} ENTRIES',
     badge: 'LIVE',
     enabled: true,
   },
