@@ -60,6 +60,7 @@ export function AdminUserMenu({
       <DropdownMenuTrigger
         className="flex cursor-pointer items-center gap-2.5 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
         disabled={isPending}
+        aria-label="Account menu"
       >
         <UserAvatar user={user} className="size-9 text-base" />
         {showLabel && (

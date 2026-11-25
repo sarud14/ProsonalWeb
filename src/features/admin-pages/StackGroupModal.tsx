@@ -78,18 +78,21 @@ export function StackGroupModal({
                 <input
                   className={adminInputClassName}
                   placeholder="Name"
+                  aria-label={`Tool ${index + 1} name`}
                   value={tool.name}
                   onChange={(e) => updateTool(index, 'name', e.target.value)}
                 />
                 <input
                   className={adminInputClassName}
                   placeholder="Note"
+                  aria-label={`Tool ${index + 1} note`}
                   value={tool.note}
                   onChange={(e) => updateTool(index, 'note', e.target.value)}
                 />
                 <button
                   type="button"
                   onClick={() => removeTool(index)}
+                  aria-label={`Remove tool ${index + 1}`}
                   className="shrink-0 cursor-pointer rounded-lg border border-border px-3 text-primary"
                 >
                   ×

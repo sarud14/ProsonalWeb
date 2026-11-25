@@ -36,6 +36,7 @@ export function ReorderableList({
               <button
                 type="button"
                 onClick={() => onMoveUp(item.id)}
+                aria-label={`Move ${item.primary} up`}
                 disabled={index === 0}
                 className="flex h-[22px] w-6 cursor-pointer items-center justify-center rounded-[5px] border border-black/15 bg-black/5 text-[10px] text-black/60 disabled:opacity-30"
               >
@@ -44,6 +45,7 @@ export function ReorderableList({
               <button
                 type="button"
                 onClick={() => onMoveDown(item.id)}
+                aria-label={`Move ${item.primary} down`}
                 disabled={index === items.length - 1}
                 className="flex h-[22px] w-6 cursor-pointer items-center justify-center rounded-[5px] border border-black/15 bg-black/5 text-[10px] text-black/60 disabled:opacity-30"
               >
@@ -69,6 +71,7 @@ export function ReorderableList({
             <button
               type="button"
               onClick={() => onRemove(item.id)}
+              aria-label={`Remove ${item.primary}`}
               className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-[7px] border border-black/15 bg-transparent text-sm text-primary"
             >
               ×

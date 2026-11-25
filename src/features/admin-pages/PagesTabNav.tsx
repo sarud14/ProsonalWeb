@@ -17,6 +17,7 @@ export function PagesTabNav(): React.JSX.Element {
           <Link
             key={tab.key}
             href={tab.href}
+            aria-current={isActive ? 'page' : undefined}
             className={cn(
               'border-b-2 px-3.5 py-2.5 font-mono text-[11px] uppercase tracking-[0.08em]',
               isActive

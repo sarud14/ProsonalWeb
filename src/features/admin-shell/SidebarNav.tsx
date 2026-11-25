@@ -30,6 +30,7 @@ export function SidebarNav({
             <Link
               key={item.key}
               href={item.href}
+              aria-current={isActive ? 'page' : undefined}
               className={cn(
                 'flex items-center justify-between rounded-md px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.08em]',
                 isActive

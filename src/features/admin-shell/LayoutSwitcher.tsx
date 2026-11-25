@@ -24,6 +24,7 @@ export function LayoutSwitcher({ layout, onChange }: LayoutSwitcherProps): React
             type="button"
             title={mode}
             onClick={() => onChange(mode)}
+            aria-pressed={layout === mode}
             className={cn(
               'cursor-pointer border-none px-[11px] py-1.5 font-mono text-[10px] uppercase tracking-[0.08em]',
               layout === mode

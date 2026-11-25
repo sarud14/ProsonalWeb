@@ -30,6 +30,7 @@ export function MastheadNav({
             <Link
               key={item.key}
               href={item.href}
+              aria-current={isActive ? 'page' : undefined}
               className={cn(
                 'flex h-full cursor-pointer items-center gap-[7px] whitespace-nowrap border-b-2 px-3.5 font-mono text-[11px] uppercase tracking-[0.12em]',
                 isActive

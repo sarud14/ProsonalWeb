@@ -117,6 +117,7 @@ export function StackPageEditor({ initialData }: StackPageEditorProps): React.JS
         renderExtra={(item) => (
           <button
             type="button"
+            aria-label={`Edit ${item.primary}`}
             onClick={() => {
               const group = groups.find((entry) => entry.clientId === item.id)
               if (group) {

@@ -142,6 +142,7 @@ export function WorkCaseContentsRail({
             <a
               key={section.id}
               href={`#${section.id}`}
+              aria-current={isActive ? 'location' : undefined}
               className={cn(
                 'flex items-center gap-2.5 border-l-2 py-2.5 pl-3 no-underline transition-[color,border-color] duration-150',
                 isActive
