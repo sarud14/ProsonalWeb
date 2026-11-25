@@ -54,6 +54,8 @@ export function SplitNav({ activeKey, unreadCount }: SplitNavProps): React.JSX.E
               key={item.key}
               href={item.href}
               title={item.label}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
               className={cn(
                 'relative flex size-10 items-center justify-center rounded-lg font-mono text-[13px] font-semibold',
                 isActive

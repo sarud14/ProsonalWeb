@@ -48,6 +48,7 @@ export function EngineeringListSection({
                   key={filter}
                   type="button"
                   onClick={() => setActiveFilter(filter)}
+                  aria-pressed={isActive}
                   className={cn(
                     'cursor-pointer border px-3.5 py-2 font-mono text-[11px] tracking-[0.08em] uppercase transition-[border-color,background,color] duration-150',
                     isActive

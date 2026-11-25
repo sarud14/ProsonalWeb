@@ -46,6 +46,7 @@ export function LandingReveal({
   return (
     <div
       ref={ref}
+      data-state={shouldRun ? 'revealed' : 'pending'}
       className={cn(
         VARIANT_CLASS[variant],
         shouldRun && 'landing-motion-run',

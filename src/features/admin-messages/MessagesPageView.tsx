@@ -77,6 +77,7 @@ export function MessagesPageView({
             key={tab.key}
             type="button"
             onClick={() => setFilter(tab.key)}
+            aria-pressed={filter === tab.key}
             className={cn(
               'cursor-pointer border-b-2 px-3.5 py-2.5 font-mono text-[11px] uppercase tracking-[0.08em]',
               filter === tab.key
@@ -111,6 +112,7 @@ export function MessagesPageView({
                   <button
                     type="button"
                     onClick={() => setExpandedId(isExpanded ? null : message.id)}
+                    aria-expanded={isExpanded}
                     className="min-w-0 flex-1 cursor-pointer border-none bg-transparent p-0 text-left"
                   >
                     <div className="flex flex-wrap items-center gap-2">

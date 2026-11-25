@@ -13,6 +13,7 @@ export function NavBarLink({ href, label, className }: NavBarLinkProps): React.J
   return (
     <Link
       href={href}
+      aria-current={isActive ? 'page' : undefined}
       className={cn(
         'border px-3 py-2 font-mono text-[11px] tracking-[0.1em] uppercase transition-colors',
         isActive

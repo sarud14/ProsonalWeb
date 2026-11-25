@@ -64,6 +64,7 @@ export function MediaGrid({
                 <button
                   type="button"
                   onClick={() => onDelete(item.id)}
+                  aria-label={`Delete ${item.alt || 'media asset'}`}
                   disabled={item.referenceCount > 0}
                   title={
                     item.referenceCount > 0
