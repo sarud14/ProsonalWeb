@@ -7,3 +7,16 @@ afterEach(() => {
     cleanup()
   }
 })
+
+// jsdom has no IntersectionObserver; scroll-reveal components only need a no-op.
+if (typeof window !== 'undefined' && !('IntersectionObserver' in window)) {
+  class NoopIntersectionObserver {
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+    takeRecords(): IntersectionObserverEntry[] {
+      return []
+    }
+  }
+  Object.defineProperty(window, 'IntersectionObserver', { writable: true, value: NoopIntersectionObserver })
+}
